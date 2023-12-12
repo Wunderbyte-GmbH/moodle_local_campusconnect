@@ -43,7 +43,7 @@ $table->head = [
     get_string('title', 'local_campusconnect'),
     get_string('links', 'local_campusconnect'),
     get_string('importedfrom', 'local_campusconnect'),
-    get_string('metadata', 'local_campusconnect')
+    get_string('metadata', 'local_campusconnect'),
 ];
 
 $table->data = [];
@@ -57,7 +57,7 @@ foreach ($ecslist as $ecsid => $ecsname) {
             format_string($link->get_title()),
             $link->get_link(),
             format_string($link->get_participantname()),
-            format_text($link->get_summary(), FORMAT_HTML)
+            format_text($link->get_summary(), FORMAT_HTML),
         ];
         $table->data[] = $row;
     }

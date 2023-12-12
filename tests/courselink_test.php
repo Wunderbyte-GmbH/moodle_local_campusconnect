@@ -126,7 +126,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         // Check there are currently no course links on 'unittest2'.
         $courselinks = $DB->get_records('local_campusconnect_clink', [
             'ecsid' => $this->connect[2]->get_ecs_id(),
-            'mid' => $this->mid[1]
+            'mid' => $this->mid[1],
         ]);
         $this->assertEmpty($courselinks);
 
@@ -144,7 +144,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         // Retrieve the courselinks on 'unittest2'.
         $courselinks = $DB->get_records('local_campusconnect_clink', [
             'ecsid' => $this->connect[2]->get_ecs_id(),
-            'mid' => $this->mid[1]
+            'mid' => $this->mid[1],
         ]);
         $this->assertCount(1, $courselinks); // Should only have imported 1 course link.
         $courselink = reset($courselinks);
@@ -167,7 +167,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
                 'firstname' => 'firstname1',
                 'lastname' => 'lastname1',
                 'email' => 'testuser1@example.com',
-                'username' => 'firstname1.lastname1'
+                'username' => 'firstname1.lastname1',
             ]
         );
         $url = courselink::check_redirect($dstcourseid, $authuser);
@@ -202,7 +202,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
                 'firstname' => 'firstname1',
                 'lastname' => 'lastname1',
                 'email' => 'testuser1@example.com',
-                'username' => 'firstname1.lastname1'
+                'username' => 'firstname1.lastname1',
             ]
         );
         list($dstcourseid, $part1, $part2) = $this->setup_courselink();
@@ -240,7 +240,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
                 'firstname' => 'firstname1',
                 'lastname' => 'lastname1',
                 'email' => 'testuser1@example.com',
-                'username' => 'firstname1.lastname1'
+                'username' => 'firstname1.lastname1',
             ]
         );
         $url = courselink::check_redirect($dstcourseid, $authuser);
@@ -353,7 +353,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
                 'lastname' => 'lastname1',
                 'email' => 'testuser1@example.com',
                 'username' => 'firstname1.lastname1',
-                'department' => 'department1'
+                'department' => 'department1',
             ] // Mapped on to 'ecs_PersonalUniqueCode.
         );
         $this->set_profile_field($authuser, 'eppn', 'myeppn');
@@ -413,7 +413,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $part2->save_settings([
                                   'exportfields' => $exportfields,
                                   'exportfieldmapping' => $exportmappings,
-                                  'personuidtype' => $personuidtype
+                                  'personuidtype' => $personuidtype,
                               ]);
 
         $importfields = $part1->get_import_mappings();
@@ -427,7 +427,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
                 'lastname' => 'lastname1',
                 'email' => 'testuser1@example.com',
                 'username' => 'firstname1.lastname1',
-                'idnumber' => 'myloginuid1'
+                'idnumber' => 'myloginuid1',
             ] // Mapped on to PERSON_LOGINUID in export / import.
         );
         $url = courselink::check_redirect($dstcourseid, $authuser);

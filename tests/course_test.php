@@ -190,7 +190,7 @@ class local_campusconnect_course_test extends advanced_testcase {
             'receivers' => [0 => (object)['itsyou' => 1, 'mid' => $this->mid[2]]],
             'senders' => [0 => (object)['mid' => $this->mid[1]]],
             'owner' => (object)['itsyou' => 0],
-            'content_type' => event::RES_COURSE
+            'content_type' => event::RES_COURSE,
         ]);
     }
 
@@ -273,7 +273,7 @@ class local_campusconnect_course_test extends advanced_testcase {
             ],
             (object)[
                 'parentID' => $this->directory[2]->get_directory_id(),
-            ]
+            ],
         ];
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
         $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
@@ -312,7 +312,7 @@ class local_campusconnect_course_test extends advanced_testcase {
         $course->allocations = [
             (object)[
                 'parentID' => $this->directory[2]->get_directory_id(),
-            ]
+            ],
         ];
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
         $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');

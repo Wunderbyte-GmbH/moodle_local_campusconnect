@@ -36,7 +36,7 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
         'ecsauth' => 'test1',
         'importcategory' => null,  // Set via 'setUp' function, below.
         'importrole' => 'student',
-        'importperiod' => 6
+        'importperiod' => 6,
     ];
 
     public function setUp() {
@@ -222,7 +222,7 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
         $this->assertTrue(is_array($ecslist));
         $this->assertEquals([
             $id1 => 'test1name',
-            $id2 => 'test2name'
+            $id2 => 'test2name',
         ], $ecslist);
 
         // Delete the first ECS and test the list only contains the second one.
@@ -316,7 +316,7 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
             'keypass' => 'supersecretpass',
             'notifyusers' => implode(',', $notifyusers),
             'notifycontent' => implode(',', $notifycontent),
-            'notifycourses' => implode(',', $notifycourses)
+            'notifycourses' => implode(',', $notifycourses),
         ]);
 
         $settings = new ecssettings();

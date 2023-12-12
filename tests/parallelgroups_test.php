@@ -266,7 +266,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
             'receivers' => [0 => (object)['itsyou' => 1, 'mid' => $this->mid[2]]],
             'senders' => [0 => (object)['mid' => $this->mid[1]]],
             'owner' => (object)['itsyou' => 0],
-            'content_type' => event::RES_COURSE
+            'content_type' => event::RES_COURSE,
         ]);
 
         // Moodle seems to want to create a dummy course - get rid of it.

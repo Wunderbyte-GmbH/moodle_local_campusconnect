@@ -33,7 +33,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
     public function test_set_import_mapping() {
         $defaultmappings = [
             'fullname' => '{title}', 'shortname' => '{id}', 'idnumber' => '', 'startdate' => 'firstDate',
-            'lang' => 'lang', 'timecreated' => '', 'timemodified' => ''
+            'lang' => 'lang', 'timecreated' => '', 'timemodified' => '',
         ];
 
         // Test the default settings.
@@ -98,7 +98,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
             'datesAndVenues.firstDate.endDatetime' => '',
             'datesAndVenues.lastDate.startDatetime' => '',
             'datesAndVenues.lastDate.endDatetime' => '',
-            'degreeProgrammes' => '', 'lecturers' => ''
+            'degreeProgrammes' => '', 'lecturers' => '',
         ];
 
         // Test the default settings.
@@ -155,7 +155,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
         $mappings = [
             'fullname' => 'Title: {title}', 'shortname' => '{title}', 'idnumber' => '{id}', 'startdate' => 'firstDate',
             'lang' => 'lang', 'timecreated' => '', 'timemodified' => '',
-            'summary' => 'Destination: {destinationForDisplay}, firstDate: {firstDate}'
+            'summary' => 'Destination: {destinationForDisplay}, firstDate: {firstDate}',
         ];
 
         $datesandvenues = [
@@ -164,23 +164,23 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
                 'cycle' => 'week', 'venue' => 'Room 101',
                 'firstDate' => (object)[
                     'startDatetime' => '2012-06-20T14:48:00+01:00',
-                    'endDatetime' => '2012-06-20T15:00:00+01:00'
+                    'endDatetime' => '2012-06-20T15:00:00+01:00',
                 ],
                 'lastDate' => (object)[
                     'startDatetime' => '2012-06-30T14:48:00+01:00',
-                    'endDatetime' => '2012-06-30T15:00:00+01:00'
-                ]
-            ]
+                    'endDatetime' => '2012-06-30T15:00:00+01:00',
+                ],
+            ],
         ];
         $lecturers = [
             (object)['firstName' => 'Prof.', 'lastName' => 'Plum'],
-            (object)['firstName' => 'C.', 'lastName' => 'Mustard']
+            (object)['firstName' => 'C.', 'lastName' => 'Mustard'],
         ];
         $remotedata = (object)[
             'url' => 'http://www.synergy-learning.com', 'destinationForDisplay' => 'Test org',
             'lang' => 'en', 'hoursPerWeek' => 5, 'id' => 'ABC-123', 'number' => '5', 'term' => '1st',
             'credits' => 50, 'status' => 'open', 'courseType' => 'online', 'title' => 'Test course',
-            'firstDate' => '2012-06-20T14:48:00+01:00', 'datesAndVenues' => $datesandvenues
+            'firstDate' => '2012-06-20T14:48:00+01:00', 'datesAndVenues' => $datesandvenues,
         ];
 
         $expectedcourse = (object)[
@@ -191,7 +191,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
                 userdate(strtotime($remotedata->firstDate), get_string('strftimedatetime')),
             'startdate' => strtotime($remotedata->firstDate),
             'visible' => 1,
-            'lang' => $remotedata->lang
+            'lang' => $remotedata->lang,
         ];
 
         $meta = new metadata($this->connect[1]->get_settings(), true);
@@ -210,7 +210,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
             'datesAndVenues.cycle' => '', 'datesAndVenues.venue' => '',
             'datesAndVenues.firstDate.startDatetime' => 'startdate', 'datesAndVenues.firstDate.endDatetime' => '',
             'datesAndVenues.lastDate.startDatetime' => '', 'datesAndVenues.lastDate.endDatetime' => '',
-            'degreeProgrammes' => '', 'lecturers' => ''
+            'degreeProgrammes' => '', 'lecturers' => '',
         ];
 
         $course = (object)[
@@ -219,7 +219,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
             'summary' => "I don't expect to see this summary in the output",
             'lang' => 'en',
             'startdate' => 1340200080,
-            'visible' => 1
+            'visible' => 1,
         ];
 
         $startdatestr = userdate($course->startdate, '%Y-%m-%dT%H:%M:%S%z');
@@ -229,7 +229,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
             'title' => $course->fullname.' - '.$course->shortname.' - '.$startdatestr,
             'firstDate' => $startdatestr,
             'datesAndVenues' => [(object)['firstDate' => (object)['startDatetime' => $startdatestr]]],
-            'status' => 'online'
+            'status' => 'online',
         ];
 
         $meta = new metadata($this->connect[1]->get_settings(), true);

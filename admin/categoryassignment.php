@@ -52,7 +52,7 @@ class campusconnect_category_form extends moodleform {
         $mform->addElement('select', 'importcat', get_string('importcat', 'local_campusconnect'), $cats);
 
         $mform->addElement('select', 'attributename', get_string('attributename', 'local_campusconnect'), [
-            '1' => 'Community', '2' => 'Participant ID'
+            '1' => 'Community', '2' => 'Participant ID',
         ]);
 
         $radioarray = [];

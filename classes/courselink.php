@@ -48,7 +48,7 @@ class courselink {
 
     public static $validpersontypes = [
         self::PERSON_UNIQUECODE, self::PERSON_LOGIN, self::PERSON_UID,
-        self::PERSON_LOGINUID, self::PERSON_EMAIL, self::PERSON_EPPN, self::PERSON_CUSTOM
+        self::PERSON_LOGINUID, self::PERSON_EMAIL, self::PERSON_EPPN, self::PERSON_CUSTOM,
     ];
 
     const PERSON_ID_TYPE = 'ecs_person_id_type'; // Param that stores the type to use.

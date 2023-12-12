@@ -135,7 +135,7 @@ class local_campusconnect_enrolment_test extends advanced_testcase {
 
         // Generate a course and export a course link from 'unittest2' => 'unittest1'.
         $srccourse = $this->getDataGenerator()->create_course([
-                                                                  'fullname' => 'test full name', 'shortname' => 'test short name'
+                                                                  'fullname' => 'test full name', 'shortname' => 'test short name',
                                                               ]);
 
         $export = new export($srccourse->id);
@@ -146,7 +146,7 @@ class local_campusconnect_enrolment_test extends advanced_testcase {
 
         $courselinks = $DB->get_records('local_campusconnect_clink', [
             'ecsid' => $this->connect[1]->get_ecs_id(),
-            'mid' => $this->mid[2]
+            'mid' => $this->mid[2],
         ]);
         $this->assertCount(1, $courselinks); // Should only have imported 1 course link.
         $courselink = reset($courselinks);
@@ -169,7 +169,7 @@ class local_campusconnect_enrolment_test extends advanced_testcase {
                                                 $this->connect[2]->get_ecs_id(), $this->pid[1], // From 'unittest1'.
                                                 $part1);
         $dstuser = $this->getDataGenerator()->create_user([
-                                                              'auth' => 'campusconnect', 'username' => $username
+                                                              'auth' => 'campusconnect', 'username' => $username,
                                                           ]); // User on 'unittest2'.
 
         // -------------------------------

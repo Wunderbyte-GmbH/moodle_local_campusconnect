@@ -131,7 +131,7 @@ class fakecms_form extends moodleform {
         $mform->addElement('static', 'crsp', '', 'Parallel groups');
         $mform->setAdvanced('crsp');
         $mform->addElement('select', 'crsparallel', 'Parallel group scenario', [
-            -1 => 'none', 1 => 'One course', 2 => 'Separate groups', 3 => 'Separate courses', 4 => 'Separate lecturers'
+            -1 => 'none', 1 => 'One course', 2 => 'Separate groups', 3 => 'Separate courses', 4 => 'Separate lecturers',
         ]);
         $mform->setAdvanced("crsparallel");
         for ($i = 1; $i <= 3; $i++) {

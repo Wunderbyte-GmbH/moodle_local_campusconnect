@@ -69,12 +69,12 @@ if ($exports) {
 $table = new html_table();
 $table->head = [
     get_string('coursename', 'local_campusconnect'),
-    get_string('exportparticipants', 'local_campusconnect')
+    get_string('exportparticipants', 'local_campusconnect'),
 ];
 $table->attributes = ['style' => 'width: 90%;'];
 $table->size = [
     '40%',
-    '60%'
+    '60%',
 ];
 
 $strstatus = [
@@ -108,7 +108,7 @@ foreach ($exports as $export) {
 
     $row = [
         $courselink,
-        implode('<br/>', $part)
+        implode('<br/>', $part),
     ];
 
     $table->data[] = $row;

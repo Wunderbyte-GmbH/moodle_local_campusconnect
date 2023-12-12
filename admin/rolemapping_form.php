@@ -65,7 +65,7 @@ class campusconnect_rolemapping_form extends moodleform {
                                               $this->roles);
         $mapping = new MoodleQuickForm_group('mapping', null, [$ccrolename, $moodleroleid]);
         $repeatels = [
-            $mapping
+            $mapping,
         ];
         $this->repeat_elements($repeatels, count($this->mappings) + 3, [], 'numtexts', 'addtexts', 3);
 

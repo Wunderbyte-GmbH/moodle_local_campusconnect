@@ -187,7 +187,7 @@ class parallelgroups {
                     'courseid' => $coursegroups[$groupnum]->courseid,
                     'role' => ($grouprole >= 0) ? $grouprole : $defaultrole,
                     'groupid' => $coursegroups[$groupnum]->groupid,
-                    'groupnum' => $groupnum
+                    'groupnum' => $groupnum,
                 ];
                 if (!in_array($coursegroups[$groupnum]->courseid, $defaultcourseids)) {
                     debugging("Expected {$coursegroups[$groupnum]->courseid}, the course for parallel group".

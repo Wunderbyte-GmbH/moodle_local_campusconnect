@@ -160,7 +160,7 @@ if ($ecsid = optional_param('refresh', null, PARAM_INT)) {
         '',
         get_string('created', 'local_campusconnect'),
         get_string('updated', 'local_campusconnect'),
-        get_string('deleted', 'local_campusconnect')
+        get_string('deleted', 'local_campusconnect'),
     ];
     $table->data = [];
 
@@ -170,7 +170,7 @@ if ($ecsid = optional_param('refresh', null, PARAM_INT)) {
             $item,
             count($data->created),
             count($data->updated),
-            count($data->deleted)
+            count($data->deleted),
         ];
         $table->data[] = $row;
         if (!empty($data->errors)) {
@@ -200,7 +200,7 @@ echo $refreshmsg;
 $importopts = [
     participantsettings::IMPORT_LINK => get_string('ecscourselink', 'local_campusconnect'),
     participantsettings::IMPORT_COURSE => get_string('course', 'local_campusconnect'),
-    participantsettings::IMPORT_CMS => get_string('campusmanagement', 'local_campusconnect')
+    participantsettings::IMPORT_CMS => get_string('campusmanagement', 'local_campusconnect'),
 ];
 
 $strrefresh = get_string('refreshecs', 'local_campusconnect');
@@ -236,7 +236,7 @@ foreach ($allcommunities as $ecsname => $communities) {
     if ($firstcommunity) {
         $url = new moodle_url('/local/campusconnect/admin/participants.php', [
             'refresh' => $firstcommunity->ecsid,
-            'sesskey' => sesskey()
+            'sesskey' => sesskey(),
         ]);
         $refreshlink = $OUTPUT->single_button($url, $strrefresh, 'POST');
         $refreshlink = html_writer::tag('span', $refreshlink, ['class' => 'campusconnect_refresh']);
@@ -337,12 +337,12 @@ foreach ($allcommunities as $ecsname => $communities) {
                     'type' => 'hidden',
                     'name' => 'updateparticipants[]',
                     'value' => $partid,
-                    'class' => 'participantidentifier'
+                    'class' => 'participantidentifier',
                 ]);
                 echo html_writer::empty_tag('input', [
                     'type' => 'hidden',
                     'name' => 'sesskey',
-                    'value' => sesskey()
+                    'value' => sesskey(),
                 ]);
                 echo '</td>';
                 echo '</tr>';

@@ -50,7 +50,7 @@ $globalsettings['courseenabled'] = course::enabled();
 $attributescount = max(count($globalsettings['attributes']), 3);
 $custom = [
     'attributes' => metadata::list_remote_fields(false),
-    'attributescount' => $attributescount
+    'attributescount' => $attributescount,
 ];
 foreach ($globalsettings['attributes'] as $key => $value) {
     $attribname = "attributes[{$key}]";
@@ -139,11 +139,11 @@ $cattree = filtering::output_category_tree($baseurl, array_keys($categorysetting
 $table = new html_table();
 $table->head = [
     get_string('localcategories', 'local_campusconnect'),
-    get_string('filtersettings', 'local_campusconnect')
+    get_string('filtersettings', 'local_campusconnect'),
 ];
 $table->size = [
     '50%',
-    ''
+    '',
 ];
 $table->attributes = ['style' => 'width: 90%;', 'class' => 'generaltable coursefiltertable'];
 $table->data = [[$cattree, $catform]];

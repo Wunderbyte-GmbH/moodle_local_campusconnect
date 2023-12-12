@@ -87,7 +87,7 @@ foreach ($ecslist as $ecsid => $ecs) {
     </div></td>";
     print '<td><a href='.new moodle_url('/local/campusconnect/admin/ecs.php', ['id' => $ecsid]).'>'.
         get_string('edit').'</a> | <a href='.new moodle_url('/local/campusconnect/admin/ecs.php', [
-            'delete' => $ecsid, 'sesskey' => sesskey()
+            'delete' => $ecsid, 'sesskey' => sesskey(),
         ]).'>'.get_string('delete').'</a></td>';
     print '</tr>';
 }

@@ -64,7 +64,7 @@ class campusconnect_ecs_form extends moodleform {
         $mform->addElement('static', 'urldesc', '', get_string('urldesc', 'local_campusconnect'));
 
         $mform->addElement('select', 'protocol', get_string('protocol', 'local_campusconnect'), [
-            'http' => 'HTTP', 'https' => 'HTTPS'
+            'http' => 'HTTP', 'https' => 'HTTPS',
         ]);
         $mform->addRule('protocol', $strrequired, 'required', null, 'client');
 
@@ -74,7 +74,7 @@ class campusconnect_ecs_form extends moodleform {
         $auth = [
             ecssettings::AUTH_NONE => get_string('directconnection', 'local_campusconnect'),
             ecssettings::AUTH_CERTIFICATE => get_string('certificatebase', 'local_campusconnect'),
-            ecssettings::AUTH_HTTP => get_string('usernamepassword', 'local_campusconnect')
+            ecssettings::AUTH_HTTP => get_string('usernamepassword', 'local_campusconnect'),
         ];
         $mform->addElement('select', 'auth', get_string('authenticationtype', 'local_campusconnect'), $auth);
 

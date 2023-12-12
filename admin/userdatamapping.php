@@ -83,7 +83,7 @@ if (!$part) {
             get_string('ecs', 'local_campusconnect'),
             get_string('community', 'local_campusconnect'),
             get_string('participant', 'local_campusconnect'),
-            ''
+            '',
         ];
 
         $struserdata = get_string('edituserdatamapping', 'local_campusconnect');
@@ -93,7 +93,7 @@ if (!$part) {
                 foreach ($community->participants as $participant) {
                     $url = new moodle_url($PAGE->url, [
                         'ecsid' => $participant->get_ecs_id(),
-                        'mid' => $participant->get_mid()
+                        'mid' => $participant->get_mid(),
                     ]);
                     $row = [
                         format_string($ecsname),

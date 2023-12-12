@@ -71,7 +71,7 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
             'mappingmode' => directorytree::MODE_PENDING,
             'takeovertitle' => true,
             'takeoverposition' => true,
-            'takeoverallocation' => true
+            'takeoverallocation' => true,
         ];
 
         $dirtree = new directorytree($data);
@@ -97,7 +97,7 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
             'mappingmode' => directorytree::MODE_PENDING,
             'takeovertitle' => true,
             'takeoverposition' => true,
-            'takeoverallocation' => true
+            'takeoverallocation' => true,
         ];
 
         $dirtree = new directorytree();
@@ -317,22 +317,22 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
                     'title' => 'First directory',
                     'parent' => (object)[
                         'id' => '5',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '7',
                     'title' => 'Second directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '8',
                     'title' => 'Third directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 
@@ -381,22 +381,22 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
                     'title' => 'First directory',
                     'parent' => (object)[
                         'id' => '5',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '7',
                     'title' => 'Second directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '8',
                     'title' => 'Third directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 
@@ -460,22 +460,22 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
                     'title' => 'First directory',
                     'parent' => (object)[
                         'id' => '5',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '7',
                     'title' => 'Second directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '8',
                     'title' => 'Third directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 
@@ -503,22 +503,22 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
                     'title' => 'First directory',
                     'parent' => (object)[
                         'id' => '5',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '7',
                     'title' => 'Second directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '8',
                     'title' => 'Third directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 
@@ -570,22 +570,22 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
                     'title' => 'First directory',
                     'parent' => (object)[
                         'id' => '5',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '7',
                     'title' => 'Second directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '8',
                     'title' => 'Third directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 
@@ -653,22 +653,22 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
                     'title' => 'First directory',
                     'parent' => (object)[
                         'id' => '5',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '7',
                     'title' => 'Second directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
+                    ],
                 ],
                 (object)[
                     'id' => '8',
                     'title' => 'Third directory',
                     'parent' => (object)[
                         'id' => '6',
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 

@@ -280,7 +280,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             'receivers' => [0 => (object)['itsyou' => 1, 'mid' => $this->mid[2]]],
             'senders' => [0 => (object)['mid' => $this->mid[1]]],
             'owner' => (object)['itsyou' => 0],
-            'content_type' => event::RES_COURSE
+            'content_type' => event::RES_COURSE,
         ]);
 
         // Create some users to be enrolled in the course.
@@ -302,7 +302,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $mappings = [
             membership::ROLE_LECTURER => 'editingteacher',
             membership::ROLE_STUDENT => 'student',
-            membership::ROLE_ASSISTANT => 'teacher'
+            membership::ROLE_ASSISTANT => 'teacher',
         ];
         $roles = get_all_roles();
         foreach ($mappings as $ccrole => $moodlerole) {
@@ -311,7 +311,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
                     $DB->insert_record('local_campusconnect_rolemap',
                                        (object)[
                                            'ccrolename' => $ccrole,
-                                           'moodleroleid' => $role->id
+                                           'moodleroleid' => $role->id,
                                        ]);
                 }
             }
@@ -443,7 +443,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->assertEquals([
                                 0 => membership::ROLE_STUDENT,
                                 1 => membership::ROLE_ASSISTANT,
-                                2 => membership::ROLE_STUDENT
+                                2 => membership::ROLE_STUDENT,
                             ], $extract->invoke(null, $member3));
 
         $this->assertEquals('abc_1234', $member4->cmscourseid);
@@ -863,7 +863,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             'role' => 1,
             'groups' => [
                 (object)['num' => 1],
-            ]
+            ],
         ];
         membership::update($memberresourceid, $this->settings[2], $members, $this->transferdetails);
         membership::assign_all_roles($this->settings[2]);
@@ -1131,7 +1131,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             'role' => 2, // Assistant (Moodle: 'teacher').
             'groups' => [
                 (object)['num' => 1], // Enrol into 'Test Group2'.
-            ]
+            ],
         ];
         membership::create($memberresourceid, $this->settings[2], $members, $this->transferdetails);
         membership::assign_all_roles($this->settings[2]);

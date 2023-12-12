@@ -49,11 +49,11 @@ $trees = directorytree::list_directory_trees();
 $table = new html_table();
 $table->head = [
     get_string('treename', 'local_campusconnect'),
-    get_string('treestatus', 'local_campusconnect')
+    get_string('treestatus', 'local_campusconnect'),
 ];
 $table->size = [
     '60%',
-    ''
+    '',
 ];
 $table->attributes = ['style' => 'width: 90%;'];
 $table->data = [];
@@ -62,7 +62,7 @@ $statuses = [
     directorytree::MODE_PENDING => get_string('modepending', 'local_campusconnect'),
     directorytree::MODE_WHOLE => get_string('modewhole', 'local_campusconnect'),
     directorytree::MODE_MANUAL => get_string('modemanual', 'local_campusconnect'),
-    directorytree::MODE_DELETED => get_string('modedeleted', 'local_campusconnect')
+    directorytree::MODE_DELETED => get_string('modedeleted', 'local_campusconnect'),
 ];
 $baseediturl = new moodle_url('/local/campusconnect/admin/directorymapping.php');
 foreach ($trees as $tree) {

@@ -45,12 +45,12 @@ class local_campusconnect_filtering_test extends advanced_testcase {
             'attribute1' => (object)[
                 'allwords' => true,
                 'words' => [],
-                'createsubdirectories' => false
-            ]
+                'createsubdirectories' => false,
+            ],
         ];
         $metadata = [
             'attribute1' => 'testvalue',
-            'attribute2' => 'fish'
+            'attribute2' => 'fish',
         ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
@@ -58,12 +58,12 @@ class local_campusconnect_filtering_test extends advanced_testcase {
         $filter['attribute2'] = (object)[
             'allwords' => true,
             'words' => [],
-            'createsubdirectories' => false
+            'createsubdirectories' => false,
         ];
         $filter['attribute3'] = (object)[
             'allwords' => true,
             'words' => [],
-            'createsubdirectories' => false
+            'createsubdirectories' => false,
         ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
@@ -72,8 +72,8 @@ class local_campusconnect_filtering_test extends advanced_testcase {
             'attribute1' => (object)[
                 'allwords' => false,
                 'words' => ['cat', 'testvalue', 'dog'],
-                'createsubdirectories' => false
-            ]
+                'createsubdirectories' => false,
+            ],
         ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
@@ -81,7 +81,7 @@ class local_campusconnect_filtering_test extends advanced_testcase {
         $filter['attribute2'] = (object)[
             'allwords' => false,
             'words' => ['cow', 'horse', 'fish'],
-            'createsubdirectories' => false
+            'createsubdirectories' => false,
         ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
@@ -89,7 +89,7 @@ class local_campusconnect_filtering_test extends advanced_testcase {
         $filter['attribute3'] = (object)[
             'allwords' => false,
             'words' => ['lion', 'tiger'],
-            'createsubdirectories' => false
+            'createsubdirectories' => false,
         ];
         $this->assertFalse(filtering::check_filter_match($metadata, $filter));
 
@@ -98,13 +98,13 @@ class local_campusconnect_filtering_test extends advanced_testcase {
             'attribute1' => (object)[
                 'allwords' => false,
                 'words' => ['cat', 'testvalue', 'dog'],
-                'createsubdirectories' => false
+                'createsubdirectories' => false,
             ],
             'attribute2' => (object)[
                 'allwords' => false,
                 'words' => ['cow', 'horse', 'fishes'],
-                'createsubdirectories' => false
-            ]
+                'createsubdirectories' => false,
+            ],
         ];
         $this->assertFalse(filtering::check_filter_match($metadata, $filter));
 
@@ -113,12 +113,12 @@ class local_campusconnect_filtering_test extends advanced_testcase {
             'attribute1' => (object)[
                 'allwords' => false,
                 'words' => ['cat', 'testvalue', 'dog'],
-                'createsubdirectories' => false
-            ]
+                'createsubdirectories' => false,
+            ],
         ];
         $metadata = [
             'attribute1' => ['big', 'small', 'testvalue'],
-            'attribute2' => ['fish', 'whale', 'mermaid']
+            'attribute2' => ['fish', 'whale', 'mermaid'],
         ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
@@ -126,7 +126,7 @@ class local_campusconnect_filtering_test extends advanced_testcase {
         $filter['attribute2'] = (object)[
             'allwords' => false,
             'words' => ['lion', 'tiger', 'bear'],
-            'createsubdirectories' => false
+            'createsubdirectories' => false,
         ];
         $this->assertFalse(filtering::check_filter_match($metadata, $filter));
     }
@@ -140,12 +140,12 @@ class local_campusconnect_filtering_test extends advanced_testcase {
             'attribute1' => (object)[
                 'allwords' => true,
                 'words' => [],
-                'createsubdirectories' => false
-            ]
+                'createsubdirectories' => false,
+            ],
         ];
         $metadata = [
             'attribute1' => 'testvalue',
-            'attribute2' => 'fish'
+            'attribute2' => 'fish',
         ];
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertEquals([$basecategory->id], $categoryids);
@@ -155,13 +155,13 @@ class local_campusconnect_filtering_test extends advanced_testcase {
             'attribute1' => (object)[
                 'allwords' => true,
                 'words' => [],
-                'createsubdirectories' => false
+                'createsubdirectories' => false,
             ],
             'attribute2' => (object)[
                 'allwords' => false,
                 'words' => ['fish', 'cat', 'dog'],
-                'createsubdirectories' => false
-            ]
+                'createsubdirectories' => false,
+            ],
         ];
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertEquals([$basecategory->id], $categoryids);
@@ -171,8 +171,8 @@ class local_campusconnect_filtering_test extends advanced_testcase {
             'attribute1' => (object)[
                 'allwords' => true,
                 'words' => [],
-                'createsubdirectories' => true
-            ]
+                'createsubdirectories' => true,
+            ],
         ];
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertCount(1, $categoryids);
@@ -188,13 +188,13 @@ class local_campusconnect_filtering_test extends advanced_testcase {
             'attribute1' => (object)[
                 'allwords' => true,
                 'words' => [],
-                'createsubdirectories' => true
+                'createsubdirectories' => true,
             ],
             'attribute2' => (object)[
                 'allwords' => false,
                 'words' => ['fish', 'cat', 'dog'],
-                'createsubdirectories' => true
-            ]
+                'createsubdirectories' => true,
+            ],
         ];
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertCount(1, $categoryids);
@@ -212,13 +212,13 @@ class local_campusconnect_filtering_test extends advanced_testcase {
             'attribute1' => (object)[
                 'allwords' => true,
                 'words' => [],
-                'createsubdirectories' => false
+                'createsubdirectories' => false,
             ],
             'attribute2' => (object)[
                 'allwords' => false,
                 'words' => ['fish', 'cat', 'dog'],
-                'createsubdirectories' => true
-            ]
+                'createsubdirectories' => true,
+            ],
         ];
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertCount(1, $categoryids);
@@ -330,8 +330,8 @@ class local_campusconnect_filtering_test extends advanced_testcase {
                     'lecturers' => [
                         (object)['firstName' => 'Fred', 'lastName' => 'Bloggs'],
                         (object)['firstName' => 'Gary', 'lastName' => 'Barlow'],
-                    ]
-                ]
+                    ],
+                ],
             ],
         ];
 

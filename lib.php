@@ -94,7 +94,7 @@ function local_campusconnect_ecs_error_notification(ecssettings $ecssettings, $m
     $details = (object)[
         'ecsname' => $ecssettings->get_name(),
         'ecsid' => $ecssettings->get_id(),
-        'msg' => $msg
+        'msg' => $msg,
     ];
 
     $eventdata = new \core\message\message();

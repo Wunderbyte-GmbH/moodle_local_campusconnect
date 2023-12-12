@@ -50,7 +50,7 @@ class campusconnect_coursefiltering_form extends moodleform {
         $attributes = array_combine($attributes, $attributes);
         $attributes = [-1 => get_string('unused', 'local_campusconnect')] + $attributes;
         $repeatarray = [
-            $mform->createElement('select', 'attributes', get_string('filteringattribute', 'local_campusconnect'), $attributes)
+            $mform->createElement('select', 'attributes', get_string('filteringattribute', 'local_campusconnect'), $attributes),
         ];
         $repeatopts = ['attributes' => ['default' => -1]];
         $stradd = get_string('addattributes', 'local_campusconnect');

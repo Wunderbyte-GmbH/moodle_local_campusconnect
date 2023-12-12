@@ -521,7 +521,7 @@ class participantsettings {
                 if ($cms->get_ecs_id() != $this->get_ecs_id() || $cms->get_mid() != $this->get_mid()) {
                     $data = (object)[
                         'newcms' => $this->get_displayname(),
-                        'currcms' => $cms->get_displayname()
+                        'currcms' => $cms->get_displayname(),
                     ];
                     return get_string('alreadycms', 'local_campusconnect', $data);
                 }
