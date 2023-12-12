@@ -54,7 +54,7 @@ if ($hassiteconfig) {
     foreach ($ecslist as $ecsid => $ecsname) {
         $ADMIN->add('ecs', new admin_externalpage('ecs'.$ecsid,
                                                   $ecsname,
-                                                  new moodle_url('/local/campusconnect/admin/ecs.php', array('id' => $ecsid))));
+                                                  new moodle_url('/local/campusconnect/admin/ecs.php', ['id' => $ecsid])));
     }
 
     $ADMIN->add('campusconnect', new admin_externalpage('campusconnectparticipants',

@@ -95,7 +95,7 @@ class course_url {
 
         if ($this->crs->urlstatus == self::STATUS_CREATED) {
             // Never reached the ECS server - just delete it.
-            $DB->delete_records('local_campusconnect_crs', array('id' => $this->crs->id));
+            $DB->delete_records('local_campusconnect_crs', ['id' => $this->crs->id]);
             return;
         }
         if ($this->crs->urlresourceid == 0) {
@@ -133,7 +133,7 @@ class course_url {
                 // Delete from ECS then delete the local record.
                 try {
                     $connect->delete_resource($courseurl->urlresourceid, event::RES_COURSE_URL);
-                    $DB->delete_records('local_campusconnect_crs', array('id' => $courseurl->id));
+                    $DB->delete_records('local_campusconnect_crs', ['id' => $courseurl->id]);
                 } catch (connect_exception $e) {
                     // Ignore exceptions - resource may no longer exist.
                 }
@@ -185,7 +185,7 @@ class course_url {
     public static function refresh_ecs(connect $connect) {
         global $DB;
 
-        $ret = (object)array('created' => array(), 'updated' => array(), 'deleted' => array());
+        $ret = (object)['created' => [], 'updated' => [], 'deleted' => []];
 
         $cms = participantsettings::get_cms_participant();
         if (!$cms || $connect->get_ecs_id() != $cms->get_ecs_id()) {
@@ -196,8 +196,8 @@ class course_url {
         self::update_ecs($connect);
 
         // Get a list of MIDs that this site is known by.
-        $mymids = array();
-        $knownmids = array();
+        $mymids = [];
+        $knownmids = [];
         $memberships = $connect->get_memberships();
         foreach ($memberships as $membership) {
             foreach ($membership->participants as $participant) {
@@ -213,7 +213,7 @@ class course_url {
         $exportedcourseurls = self::get_urls_to_export($connect->get_ecs_id(), false);
 
         // Index the exported URLs by resourceid, so they can be looked up below.
-        $mapping = array();
+        $mapping = [];
         foreach ($exportedcourseurls as $courseurl) {
             if ($courseurl->urlresourceid) {
                 $mapping[$courseurl->urlresourceid] = $courseurl->id;
@@ -283,16 +283,16 @@ class course_url {
         global $DB;
 
         $select = 'ecsid = :ecsid';
-        $params = array('ecsid' => $ecsid);
+        $params = ['ecsid' => $ecsid];
         if ($onlyupdated) {
             $select .= ' AND urlstatus <> :uptodate';
             $params['uptodate'] = self::STATUS_UPTODATE;
         }
 
-        $allcourseids = array();
+        $allcourseids = [];
         $updatedresourceids = $DB->get_fieldset_select('local_campusconnect_crs', 'DISTINCT(resourceid)', $select, $params);
         if (!$updatedresourceids) {
-            return array(); // Nothing to export.
+            return []; // Nothing to export.
         }
 
         // Note, internal links are not exported, as they are not separate courses, from the point of view of the external CMS.
@@ -307,7 +307,7 @@ class course_url {
             $allcourseids[] = $courseurl->courseid;
             if ($lasturl && $lasturl->resourceid == $courseurl->resourceid) {
                 // Sorted by 'resourceid', so they can be easily grouped by that value.
-                $lasturl->courses[] = (object)array('id' => $courseurl->courseid);
+                $lasturl->courses[] = (object)['id' => $courseurl->courseid];
                 $lasturl->ids[] = $courseurl->id;
                 if (!$lasturl->urlresourceid) {
                     // Make sure we keep the existing urlresourceid record.
@@ -319,12 +319,12 @@ class course_url {
                 }
                 unset($courseurls[$key]);
             } else {
-                $courseurl->courses = array((object)array('id' => $courseurl->courseid));
-                $courseurl->ids = array($courseurl->id);
+                $courseurl->courses = [(object)['id' => $courseurl->courseid]];
+                $courseurl->ids = [$courseurl->id];
                 $lasturl = $courseurl;
             }
         }
-        $courses = array();
+        $courses = [];
         if ($allcourseids) {
             list($csql, $params) = $DB->get_in_or_equal($allcourseids);
             $courses = $DB->get_records_select_menu('course', "id {$csql}", $params, '', 'id, fullname');
@@ -352,13 +352,13 @@ class course_url {
      * @return stdClass
      */
     protected static function prepare_courseurl_data($courseurl, connect $connect) {
-        $moodleurls = array();
+        $moodleurls = [];
         foreach ($courseurl->courses as $course) {
-            $moodleurl = new moodle_url('/course/view.php', array('id' => $course->id));
-            $moodleurls[] = (object)array(
+            $moodleurl = new moodle_url('/course/view.php', ['id' => $course->id]);
+            $moodleurls[] = (object)[
                 'title' => $course->fullname,
                 'url' => $moodleurl->out(),
-            );
+            ];
         }
         $data = new stdClass();
         $data->cms_course_id = $courseurl->cmsid.''; // Convert to string if 'NULL'.
@@ -377,7 +377,7 @@ class course_url {
     protected function get_record($crsid) {
         global $DB;
 
-        $crs = $DB->get_record('local_campusconnect_crs', array('id' => $crsid), '*', MUST_EXIST);
+        $crs = $DB->get_record('local_campusconnect_crs', ['id' => $crsid], '*', MUST_EXIST);
         if ($crs->internallink != 0) {
             throw new course_exception("Should not be sending course_url resources for internal course links (crsid = $crsid)");
         }

@@ -51,17 +51,17 @@ defined('MOODLE_INTERNAL') || die();
  */
 class local_campusconnect_coursemembers_test extends advanced_testcase {
     /** @var ecssettings[] $settings */
-    protected $settings = array();
-    protected $mid = array();
+    protected $settings = [];
+    protected $mid = [];
     /** @var directory[] $directory */
-    protected $directory = array();
+    protected $directory = [];
     /** @var details $transferdetails */
     protected $transferdetails = null;
-    protected $users = array();
+    protected $users = [];
 
-    protected $usernames = array('user1', 'user2', 'user3', 'user4', 'user5');
+    protected $usernames = ['user1', 'user2', 'user3', 'user4', 'user5'];
 
-    protected $directorydata = array(1001 => 'dir1', 1002 => 'dir2', 1003 => 'dir3');
+    protected $directorydata = [1001 => 'dir1', 1002 => 'dir2', 1003 => 'dir3'];
     protected $coursedata = '
     {
         "lectureID": "abc_1234",
@@ -231,29 +231,29 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->resetAfterTest();
 
         // Create the connections for testing.
-        $names = array(1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3');
+        $names = [1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3'];
         foreach ($names as $key => $name) {
-            $category = $this->getDataGenerator()->create_category(array('name' => 'import'.$key));
+            $category = $this->getDataGenerator()->create_category(['name' => 'import'.$key]);
             $ecs = new ecssettings();
-            $ecs->save_settings(array(
+            $ecs->save_settings([
                                     'url' => 'http://localhost:3000',
                                     'auth' => ecssettings::AUTH_NONE,
                                     'ecsauth' => $name,
                                     'importcategory' => $category->id,
                                     'importrole' => 'student',
-                                ));
+                                ]);
             $this->settings[$key] = $ecs;
             $this->mid[$key] = $key * 10; // Real MID not needed, as no actual connection is created.
         }
 
         // Set participant 1 as the CMS for participant 2.
-        $part = (object)array(
+        $part = (object)[
             'ecsid' => $this->settings[2]->get_id(),
             'mid' => $this->mid[1],
             'export' => 0,
             'import' => 1,
             'importtype' => participantsettings::IMPORT_CMS,
-        );
+        ];
         $DB->insert_record('local_campusconnect_part', $part);
         participantsettings::get_cms_participant(true); // Reset the cached 'cms participant' value.
 
@@ -266,7 +266,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             $dir->create($id, 'idroot', $dirid, 'idroot', $name, 1);
             $this->directory[] = $dir;
         }
-        $category = $this->getDataGenerator()->create_category(array('name' => 'category_tree'));
+        $category = $this->getDataGenerator()->create_category(['name' => 'category_tree']);
         $dirtree->map_category($category->id);
         $dirtree->create_all_categories();
         // Reload the directory objects after creating the categories for them.
@@ -275,19 +275,19 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         }
 
         // Create some fake transfer details for the requests.
-        $this->transferdetails = new details((object)array(
+        $this->transferdetails = new details((object)[
             'url' => 'fakeurl',
-            'receivers' => array(0 => (object)array('itsyou' => 1, 'mid' => $this->mid[2])),
-            'senders' => array(0 => (object)array('mid' => $this->mid[1])),
-            'owner' => (object)array('itsyou' => 0),
+            'receivers' => [0 => (object)['itsyou' => 1, 'mid' => $this->mid[2]]],
+            'senders' => [0 => (object)['mid' => $this->mid[1]]],
+            'owner' => (object)['itsyou' => 0],
             'content_type' => event::RES_COURSE
-        ));
+        ]);
 
         // Create some users to be enrolled in the course.
         foreach ($this->usernames as $username) {
             // Statslib_test has an annoying habit of creating 'user1' + 'user2', even when not running those tests.
-            if (!$user = $DB->get_record('user', array('username' => $username))) {
-                $user = $this->getDataGenerator()->create_user(array('username' => $username, 'email' => $username.'@example.com'));
+            if (!$user = $DB->get_record('user', ['username' => $username])) {
+                $user = $this->getDataGenerator()->create_user(['username' => $username, 'email' => $username.'@example.com']);
             }
             $this->users[] = $user;
         }
@@ -299,20 +299,20 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         set_config('enrol_plugins_enabled', implode(',', $enabled));
 
         // Set up the default role mappings.
-        $mappings = array(
+        $mappings = [
             membership::ROLE_LECTURER => 'editingteacher',
             membership::ROLE_STUDENT => 'student',
             membership::ROLE_ASSISTANT => 'teacher'
-        );
+        ];
         $roles = get_all_roles();
         foreach ($mappings as $ccrole => $moodlerole) {
             foreach ($roles as $role) {
                 if ($role->shortname == $moodlerole) {
                     $DB->insert_record('local_campusconnect_rolemap',
-                                       (object)array(
+                                       (object)[
                                            'ccrolename' => $ccrole,
                                            'moodleroleid' => $role->id
-                                       ));
+                                       ]);
                 }
             }
         }
@@ -320,9 +320,9 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         member_personid::reset_default_mapping(); // Clear the static variable.
 
         // Statslib_test now has an annoying habit of creating an unwanted course as well - delete the record if it exists.
-        $unwantedcourses = $DB->get_records_select('course', 'id <> ?', array(SITEID), '', 'id');
+        $unwantedcourses = $DB->get_records_select('course', 'id <> ?', [SITEID], '', 'id');
         foreach ($unwantedcourses as $unwantedcourse) {
-            $DB->delete_records('course', array('id' => $unwantedcourse->id));
+            $DB->delete_records('course', ['id' => $unwantedcourse->id]);
         }
     }
 
@@ -333,7 +333,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         require_once($CFG->dirroot.'/user/profile/definelib.php');
         require_once($CFG->dirroot.'/user/profile/lib.php');
         require_once($CFG->dirroot.'/user/profile/field/text/define.class.php');
-        $data = (object)array(
+        $data = (object)[
             'categoryid' => 1,
             'datatype' => 'text',
             'shortname' => $fieldname,
@@ -346,26 +346,26 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             'param1' => 30,
             'param2' => 2048,
             'param3' => 0,
-        );
+        ];
         $formfield = new profile_define_text();
         $formfield->define_save($data);
     }
 
     protected function set_profile_field($user, $field, $value) {
         global $DB;
-        $fieldid = $DB->get_field('user_info_field', 'id', array('shortname' => $field));
-        if ($existing = $DB->get_record('user_info_data', array('fieldid' => $fieldid, 'userid' => $user->id))) {
-            $upd = (object)array(
+        $fieldid = $DB->get_field('user_info_field', 'id', ['shortname' => $field]);
+        if ($existing = $DB->get_record('user_info_data', ['fieldid' => $fieldid, 'userid' => $user->id])) {
+            $upd = (object)[
                 'id' => $existing->id,
                 'data' => $value,
-            );
+            ];
             $DB->update_record('user_info_data', $upd);
         } else {
-            $ins = (object)array(
+            $ins = (object)[
                 'fieldid' => $fieldid,
                 'userid' => $user->id,
                 'data' => $value,
-            );
+            ];
             $DB->insert_record('user_info_data', $ins);
         }
     }
@@ -394,7 +394,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
          WHERE g.courseid = :courseid AND gm.userid = :userid
          ORDER BY g.name ASC
         ";
-        $params = array('courseid' => $courseid, 'userid' => $userid);
+        $params = ['courseid' => $courseid, 'userid' => $userid];
 
         return $DB->get_records_sql_menu($sql, $params);
     }
@@ -416,7 +416,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->assertEmpty($DB->get_records('local_campusconnect_mbr'));
         membership::create($resourceid, $this->settings[2], $memberdata, $this->transferdetails);
 
-        $members = $DB->get_records('local_campusconnect_mbr', array(), 'id');
+        $members = $DB->get_records('local_campusconnect_mbr', [], 'id');
 
         $this->assertCount(4, $members);
         $member1 = array_shift($members);
@@ -428,29 +428,29 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->assertEquals('user1', $member1->personid);
         $this->assertEquals(membership::ROLE_ASSISTANT, $member1->role);
         $this->assertEquals(membership::STATUS_CREATED, $member1->status);
-        $this->assertEquals(array(0 => membership::ROLE_LECTURER), $extract->invoke(null, $member1));
+        $this->assertEquals([0 => membership::ROLE_LECTURER], $extract->invoke(null, $member1));
 
         $this->assertEquals('abc_1234', $member2->cmscourseid);
         $this->assertEquals('user2', $member2->personid);
         $this->assertEquals(membership::ROLE_STUDENT, $member2->role);
         $this->assertEquals(membership::STATUS_CREATED, $member2->status);
-        $this->assertEquals(array(), $extract->invoke(null, $member2));
+        $this->assertEquals([], $extract->invoke(null, $member2));
 
         $this->assertEquals('abc_1234', $member3->cmscourseid);
         $this->assertEquals('user3', $member3->personid);
         $this->assertEquals(membership::ROLE_LECTURER, $member3->role);
         $this->assertEquals(membership::STATUS_CREATED, $member3->status);
-        $this->assertEquals(array(
+        $this->assertEquals([
                                 0 => membership::ROLE_STUDENT,
                                 1 => membership::ROLE_ASSISTANT,
                                 2 => membership::ROLE_STUDENT
-                            ), $extract->invoke(null, $member3));
+                            ], $extract->invoke(null, $member3));
 
         $this->assertEquals('abc_1234', $member4->cmscourseid);
         $this->assertEquals('user4', $member4->personid);
         $this->assertEquals(membership::ROLE_UNSPECIFIED, $member4->role);
         $this->assertEquals(membership::STATUS_CREATED, $member4->status);
-        $this->assertEquals(array(1 => membership::ROLE_UNSPECIFIED), $extract->invoke(null, $member4));
+        $this->assertEquals([1 => membership::ROLE_UNSPECIFIED], $extract->invoke(null, $member4));
     }
 
     public function test_create_members_nogroups() {
@@ -465,7 +465,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         course::create($courseresourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Get the details of the two courses created.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(2, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -483,7 +483,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             }
 
             // Check the users are enroled on the 'real' course.
-            $userids = array();
+            $userids = [];
             foreach ($this->users as $user) {
                 $userids[] = $user->id;
             }
@@ -544,7 +544,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         course::create($courseresourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Get the details of the two courses created.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(2, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -562,7 +562,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             }
 
             // Check the users are enroled on the 'real' course.
-            $userids = array();
+            $userids = [];
             foreach ($this->users as $user) {
                 $userids[] = $user->id;
             }
@@ -612,9 +612,9 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             $this->assertCount(2, $groups3);
             $this->assertCount(1, $groups4);
 
-            $this->assertEmpty(array_diff(array('Test Group1'), $groups1));
-            $this->assertEmpty(array_diff(array('Test Group1', 'Test Group2'), $groups3));
-            $this->assertEmpty(array_diff(array('Test Group2'), $groups4));
+            $this->assertEmpty(array_diff(['Test Group1'], $groups1));
+            $this->assertEmpty(array_diff(['Test Group1', 'Test Group2'], $groups3));
+            $this->assertEmpty(array_diff(['Test Group2'], $groups4));
         }
     }
 
@@ -629,7 +629,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         course::create($courseresourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Get the details of the two courses created.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(4, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -649,28 +649,28 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             }
 
             // Check the users are enroled on the 'real' courses.
-            $userids = array();
+            $userids = [];
             foreach ($this->users as $user) {
                 $userids[] = $user->id;
             }
 
             $userenrolments = self::get_course_enrolments($course1->id, $userids);
             $this->assertCount(3, $userenrolments); // User 1, 2, 3.
-            $enroleduserids = array();
+            $enroleduserids = [];
             foreach ($userenrolments as $userenrolment) {
                 $this->assertEquals('campusconnect', $userenrolment->enrol);
                 $enroleduserids[] = $userenrolment->userid;
             }
-            $this->assertEmpty(array_diff(array($this->users[0]->id, $this->users[1]->id, $this->users[2]->id), $enroleduserids));
+            $this->assertEmpty(array_diff([$this->users[0]->id, $this->users[1]->id, $this->users[2]->id], $enroleduserids));
 
             $userenrolments = self::get_course_enrolments($course3->id, $userids);
             $this->assertCount(2, $userenrolments); // User 3, 4.
-            $enroleduserids = array();
+            $enroleduserids = [];
             foreach ($userenrolments as $userenrolment) {
                 $this->assertEquals('campusconnect', $userenrolment->enrol);
                 $enroleduserids[] = $userenrolment->userid;
             }
-            $this->assertEmpty(array_diff(array($this->users[2]->id, $this->users[3]->id), $enroleduserids));
+            $this->assertEmpty(array_diff([$this->users[2]->id, $this->users[3]->id], $enroleduserids));
 
             // Check no users have been enroled on the course links.
             $userenrolments = self::get_course_enrolments($course2->id, $userids);
@@ -751,7 +751,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         course::create($courseresourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Get the details of the two courses created.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(2, $courses);
         $course1 = array_shift($courses); // Group0 + group1 (Humphrey Bogart).
         $course2 = array_shift($courses); // Course link.
@@ -769,19 +769,19 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             }
 
             // Check the users are enroled on the 'real' course.
-            $userids = array();
+            $userids = [];
             foreach ($this->users as $user) {
                 $userids[] = $user->id;
             }
 
             $userenrolments = self::get_course_enrolments($course1->id, $userids);
             $this->assertCount(4, $userenrolments); // User 1, 2, 3, 4 - group0 + group1.
-            $enroleduserids = array();
+            $enroleduserids = [];
             foreach ($userenrolments as $userenrolment) {
                 $this->assertEquals('campusconnect', $userenrolment->enrol);
                 $enroleduserids[] = $userenrolment->userid;
             }
-            $this->assertEmpty(array_diff(array($this->users[0]->id, $this->users[1]->id, $this->users[2]->id, $this->users[3]->id),
+            $this->assertEmpty(array_diff([$this->users[0]->id, $this->users[1]->id, $this->users[2]->id, $this->users[3]->id],
                                           $enroleduserids));
 
             // Check no users have been enroled on the course links.
@@ -823,9 +823,9 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             $this->assertCount(2, $groups3);
             $this->assertCount(1, $groups4);
 
-            $this->assertEmpty(array_diff(array('Test Group1'), $groups1));
-            $this->assertEmpty(array_diff(array('Test Group1', 'Test Group2'), $groups3));
-            $this->assertEmpty(array_diff(array('Test Group2'), $groups4));
+            $this->assertEmpty(array_diff(['Test Group1'], $groups1));
+            $this->assertEmpty(array_diff(['Test Group1', 'Test Group2'], $groups3));
+            $this->assertEmpty(array_diff(['Test Group2'], $groups4));
         }
     }
 
@@ -840,7 +840,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         course::create($courseresourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Get the details of the two courses created.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(2, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -858,18 +858,18 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
                 $members->members[$idx]->role = 0; // Convert 'user2' to a lecturer (not student).
             }
         }
-        $members->members[] = (object)array(
+        $members->members[] = (object)[
             'personID' => 'user5', // Add 'user5' to the course (student, in 'Test Group2').
             'role' => 1,
-            'groups' => array(
-                (object)array('num' => 1),
-            )
-        );
+            'groups' => [
+                (object)['num' => 1],
+            ]
+        ];
         membership::update($memberresourceid, $this->settings[2], $members, $this->transferdetails);
         membership::assign_all_roles($this->settings[2]);
 
         // Check the users are enroled on the 'real' course.
-        $userids = array();
+        $userids = [];
         foreach ($this->users as $user) {
             $userids[] = $user->id;
         }
@@ -923,9 +923,9 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->assertCount(1, $groups4);
         $this->assertCount(1, $groups5); // New groups for 'user5'.
 
-        $this->assertEmpty(array_diff(array('Test Group1', 'Test Group2'), $groups3));
-        $this->assertEmpty(array_diff(array('Test Group2'), $groups4));
-        $this->assertEmpty(array_diff(array('Test Group2'), $groups5));
+        $this->assertEmpty(array_diff(['Test Group1', 'Test Group2'], $groups3));
+        $this->assertEmpty(array_diff(['Test Group2'], $groups4));
+        $this->assertEmpty(array_diff(['Test Group2'], $groups5));
     }
 
     public function test_delete_members_separategroups() {
@@ -939,7 +939,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         course::create($courseresourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Get the details of the two courses created.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(2, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -954,7 +954,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         membership::assign_all_roles($this->settings[2]);
 
         // Check the users are enroled on the 'real' course.
-        $userids = array();
+        $userids = [];
         foreach ($this->users as $user) {
             $userids[] = $user->id;
         }
@@ -1005,7 +1005,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         course::create($courseresourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Get the details of the two courses created.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(4, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -1013,28 +1013,28 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $course4 = array_shift($courses);
 
         // Check the users are enroled on the 'real' courses.
-        $userids = array();
+        $userids = [];
         foreach ($this->users as $user) {
             $userids[] = $user->id;
         }
 
         $userenrolments = self::get_course_enrolments($course1->id, $userids);
         $this->assertCount(3, $userenrolments); // User 1, 2, 3.
-        $enroleduserids = array();
+        $enroleduserids = [];
         foreach ($userenrolments as $userenrolment) {
             $this->assertEquals('campusconnect', $userenrolment->enrol);
             $enroleduserids[] = $userenrolment->userid;
         }
-        $this->assertEmpty(array_diff(array($this->users[0]->id, $this->users[1]->id, $this->users[2]->id), $enroleduserids));
+        $this->assertEmpty(array_diff([$this->users[0]->id, $this->users[1]->id, $this->users[2]->id], $enroleduserids));
 
         $userenrolments = self::get_course_enrolments($course3->id, $userids);
         $this->assertCount(2, $userenrolments); // User 3, 4.
-        $enroleduserids = array();
+        $enroleduserids = [];
         foreach ($userenrolments as $userenrolment) {
             $this->assertEquals('campusconnect', $userenrolment->enrol);
             $enroleduserids[] = $userenrolment->userid;
         }
-        $this->assertEmpty(array_diff(array($this->users[2]->id, $this->users[3]->id), $enroleduserids));
+        $this->assertEmpty(array_diff([$this->users[2]->id, $this->users[3]->id], $enroleduserids));
 
         // Check no users have been enroled on the course links.
         $userenrolments = self::get_course_enrolments($course2->id, $userids);
@@ -1116,7 +1116,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         course::create($courseresourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Get the details of the two courses created.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(4, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -1125,25 +1125,25 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
 
         // Create the course members.
         $members = json_decode($this->coursemembers);
-        $members->members[] = (object)array(
+        $members->members[] = (object)[
             'personID' => 'user6@example.com', // Add an extra 'user6' (who does not yet exist on the system).
             'personIDtype' => 'ecs_email',
             'role' => 2, // Assistant (Moodle: 'teacher').
-            'groups' => array(
-                (object)array('num' => 1), // Enrol into 'Test Group2'.
-            )
-        );
+            'groups' => [
+                (object)['num' => 1], // Enrol into 'Test Group2'.
+            ]
+        ];
         membership::create($memberresourceid, $this->settings[2], $members, $this->transferdetails);
         membership::assign_all_roles($this->settings[2]);
 
         // Now create 'user6'.
-        $user6 = $this->getDataGenerator()->create_user(array('username' => 'user6', 'email' => 'user6@example.com'));
+        $user6 = $this->getDataGenerator()->create_user(['username' => 'user6', 'email' => 'user6@example.com']);
 
         // Manually trigger the 'user_created' event (as the data generator does not do this).
         \core\event\user_created::create_from_userid($user6->id)->trigger();
 
         // Check the users are enroled on the 'real' courses.
-        $userids = array();
+        $userids = [];
         foreach ($this->users as $user) {
             $userids[] = $user->id;
         }
@@ -1151,21 +1151,21 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
 
         $userenrolments = self::get_course_enrolments($course1->id, $userids); // Test Group1.
         $this->assertCount(3, $userenrolments); // User 1, 2, 3.
-        $enroleduserids = array();
+        $enroleduserids = [];
         foreach ($userenrolments as $userenrolment) {
             $this->assertEquals('campusconnect', $userenrolment->enrol);
             $enroleduserids[] = $userenrolment->userid;
         }
-        $this->assertEmpty(array_diff(array($this->users[0]->id, $this->users[1]->id, $this->users[2]->id), $enroleduserids));
+        $this->assertEmpty(array_diff([$this->users[0]->id, $this->users[1]->id, $this->users[2]->id], $enroleduserids));
 
         $userenrolments = self::get_course_enrolments($course3->id, $userids); // Test Group2.
         $this->assertCount(3, $userenrolments); // User 3, 4, 6.
-        $enroleduserids = array();
+        $enroleduserids = [];
         foreach ($userenrolments as $userenrolment) {
             $this->assertEquals('campusconnect', $userenrolment->enrol);
             $enroleduserids[] = $userenrolment->userid;
         }
-        $this->assertEmpty(array_diff(array($this->users[2]->id, $this->users[3]->id, $user6->id), $enroleduserids));
+        $this->assertEmpty(array_diff([$this->users[2]->id, $this->users[3]->id, $user6->id], $enroleduserids));
 
         // Check no users have been enroled on the course links.
         $userenrolments = self::get_course_enrolments($course2->id, $userids);
@@ -1250,26 +1250,26 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         participantsettings::reset_custom_fields();
 
         // Set the new mapping.
-        $newmapping = array(
+        $newmapping = [
             courselink::PERSON_UNIQUECODE => 'flowerpot', // Non-existent user field.
             courselink::PERSON_EPPN => 'custom_eppn', // Map onto user custom field.
             courselink::PERSON_LOGIN => 'username',
-            //\local_campusconnect\courselink::PERSON_LOGINUID, // Mapping not specified => expect to be mapped to 'null'.
+            // \local_campusconnect\courselink::PERSON_LOGINUID, // Mapping not specified => expect to be mapped to 'null'.
             courselink::PERSON_UID => null,  // Remove default mapping onto 'id'.
             courselink::PERSON_EMAIL => 'department', // Change from 'email' to 'department'.
             'doesnotexist' => 'firstname', // Invalid ECS field - should be ignored.
-        );
+        ];
         member_personid::set_mapping($newmapping);
         $mapping = member_personid::get_mapping();
 
-        $expectedmapping = array(
+        $expectedmapping = [
             courselink::PERSON_UNIQUECODE => null,
             courselink::PERSON_EPPN => 'custom_eppn',
             courselink::PERSON_LOGIN => 'username',
             courselink::PERSON_LOGINUID => null,
             courselink::PERSON_UID => null,
             courselink::PERSON_EMAIL => 'department',
-        );
+        ];
         $this->assertEquals($expectedmapping, $mapping);
 
         $userfield = member_personid::get_userfield_from_type(courselink::PERSON_UNIQUECODE);
@@ -1290,12 +1290,12 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         participantsettings::reset_custom_fields();
 
         // Set up the personidtype mappings.
-        $newmapping = array(
+        $newmapping = [
             courselink::PERSON_EPPN => 'custom_eppn', // Mapped on to custom field.
             courselink::PERSON_LOGIN => 'username', // Default mapping if no type specified.
             courselink::PERSON_EMAIL => 'email',
             // All other types will be unmapped.
-        );
+        ];
         member_personid::set_mapping($newmapping);
 
         // Course create request from participant 1 to participant 2.
@@ -1306,7 +1306,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         course::create($courseresourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Get the details of the two courses created.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(2, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -1327,33 +1327,33 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $members->members[3]->personID = 'user4';
         $members->members[3]->personIDtype = courselink::PERSON_LOGIN;
         // User5 - match by 'ecs_loginuid' - not mapped, so no user should be found.
-        $members->members[4] = (object)array(
+        $members->members[4] = (object)[
             'personID' => 'user5',
             'personIDtype' => courselink::PERSON_LOGINUID,
-            'groups' => array(
-                (object)array('num' => 1),
-            ),
-        ); // Not in the sample data defined at the top of this file, so the whole object needs inserting.
+            'groups' => [
+                (object)['num' => 1],
+            ],
+        ]; // Not in the sample data defined at the top of this file, so the whole object needs inserting.
         // User6 - match by 'ecs_login', but with a username that will not be found.
-        $user6 = $this->getDataGenerator()->create_user(array('username' => 'user6', 'email' => 'user6@example.com'));
-        $members->members[5] = (object)array(
+        $user6 = $this->getDataGenerator()->create_user(['username' => 'user6', 'email' => 'user6@example.com']);
+        $members->members[5] = (object)[
             'personID' => 'user6doesnotexist',
             'personIDtype' => courselink::PERSON_LOGIN,
-            'groups' => array(
-                (object)array('num' => 1),
-            ),
-        ); // Not in the sample data defined at the top of this file, so the whole object needs inserting.
+            'groups' => [
+                (object)['num' => 1],
+            ],
+        ]; // Not in the sample data defined at the top of this file, so the whole object needs inserting.
 
         // Check the personid mappings.
-        $personids = array();
+        $personids = [];
         foreach ($members->members as $member) {
             $type = member_personid::get_type_from_member($member);
             $personids[] = new member_personid($member->personID, $type);
         }
         // Expect: [
-        //  courselink::PERSON_EMAIL => [ 'user2@example.com' => user2->id ]
-        //  courselink::PERSON_EPPN => [ 'user3eppn' => user3->id ]
-        //  courselink::PERSON_LOGIN => [ 'user1' => user1->id, 'user4' => user4->id ]
+        // courselink::PERSON_EMAIL => [ 'user2@example.com' => user2->id ]
+        // courselink::PERSON_EPPN => [ 'user3eppn' => user3->id ]
+        // courselink::PERSON_LOGIN => [ 'user1' => user1->id, 'user4' => user4->id ]
         // ]
         // user5 / user6 should not be mapped at all.
         $useridmap = membership::get_userids_from_personids($personids);
@@ -1391,7 +1391,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             }
 
             // Check the users are enroled on the 'real' course.
-            $useridmap = array();
+            $useridmap = [];
             foreach ($this->users as $user) {
                 $useridmap[] = $user->id;
             }
@@ -1450,9 +1450,9 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             $this->assertCount(0, $groups5); // User5 + user6 should not be found by mapping, so no groups expected.
             $this->assertCount(0, $groups6);
 
-            $this->assertEmpty(array_diff(array('Test Group1'), $groups1));
-            $this->assertEmpty(array_diff(array('Test Group1', 'Test Group2'), $groups3));
-            $this->assertEmpty(array_diff(array('Test Group2'), $groups4));
+            $this->assertEmpty(array_diff(['Test Group1'], $groups1));
+            $this->assertEmpty(array_diff(['Test Group1', 'Test Group2'], $groups3));
+            $this->assertEmpty(array_diff(['Test Group2'], $groups4));
         }
     }
 }

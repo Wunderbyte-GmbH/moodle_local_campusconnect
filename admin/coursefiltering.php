@@ -35,7 +35,7 @@ require_once($CFG->dirroot.'/local/campusconnect/admin/coursefiltering_form.php'
 
 $categoryid = optional_param('categoryid', null, PARAM_INT);
 
-$url = new moodle_url('/local/campusconnect/admin/coursefiltering.php', array());
+$url = new moodle_url('/local/campusconnect/admin/coursefiltering.php', []);
 if (!is_null($categoryid)) {
     $url->param('categoryid', $categoryid);
 }
@@ -48,10 +48,10 @@ $PAGE->set_url($url);
 $globalsettings = filtering::load_global_settings();
 $globalsettings['courseenabled'] = course::enabled();
 $attributescount = max(count($globalsettings['attributes']), 3);
-$custom = array(
+$custom = [
     'attributes' => metadata::list_remote_fields(false),
     'attributescount' => $attributescount
-);
+];
 foreach ($globalsettings['attributes'] as $key => $value) {
     $attribname = "attributes[{$key}]";
     $globalsettings[$attribname] = $value;
@@ -85,7 +85,7 @@ if (is_null($categoryid)) {
 if (!is_null($categoryid)) {
     if (isset($categorysettings[$categoryid])) {
         $catdata = $categorysettings[$categoryid];
-        $formdata = array();
+        $formdata = [];
         foreach ($catdata as $attribname => $attribsettings) {
             foreach ($attribsettings as $name => $val) {
                 if ($name == 'words') {
@@ -96,11 +96,11 @@ if (!is_null($categoryid)) {
             $formdata["active[$attribname]"] = 1;
         }
     } else {
-        $formdata = array();
+        $formdata = [];
     }
     $formdata['categoryid'] = $categoryid;
 
-    $custom = array('attributes' => $globalsettings['attributes'], 'allsettings' => $categorysettings);
+    $custom = ['attributes' => $globalsettings['attributes'], 'allsettings' => $categorysettings];
     $catform = new campusconnect_coursefilteringcategory_form(null, $custom);
     $catform->set_data($formdata);
 
@@ -109,14 +109,14 @@ if (!is_null($categoryid)) {
     }
     if ($data = $catform->get_data()) {
         // Save the category form data.
-        $savedata = array();
+        $savedata = [];
         foreach ($globalsettings['attributes'] as $attribute) {
             if (empty($data->active[$attribute])) {
                 continue; // Lave out unused attributes.
             }
             $settings = new stdClass();
             $settings->allwords = !empty($data->allwords[$attribute]);
-            $settings->words = isset($data->words[$attribute]) ? explode(',', $data->words[$attribute]) : array();
+            $settings->words = isset($data->words[$attribute]) ? explode(',', $data->words[$attribute]) : [];
             $settings->createsubdirectories = !empty($data->createsubdirectories[$attribute]);
 
             $savedata[$attribute] = $settings;
@@ -137,23 +137,23 @@ $baseurl->set_anchor('coursefiltering');
 $cattree = filtering::output_category_tree($baseurl, array_keys($categorysettings), $categoryid);
 
 $table = new html_table();
-$table->head = array(
+$table->head = [
     get_string('localcategories', 'local_campusconnect'),
     get_string('filtersettings', 'local_campusconnect')
-);
-$table->size = array(
+];
+$table->size = [
     '50%',
     ''
-);
-$table->attributes = array('style' => 'width: 90%;', 'class' => 'generaltable coursefiltertable');
-$table->data = array(array($cattree, $catform));
+];
+$table->attributes = ['style' => 'width: 90%;', 'class' => 'generaltable coursefiltertable'];
+$table->data = [[$cattree, $catform]];
 
 // Output everything.
 echo $OUTPUT->header();
 
 $form->display();
 
-echo html_writer::tag('a', '', array('name' => 'coursefiltering'));
+echo html_writer::tag('a', '', ['name' => 'coursefiltering']);
 echo $OUTPUT->heading(get_string('coursefiltering', 'local_campusconnect'));
 
 echo html_writer::table($table);

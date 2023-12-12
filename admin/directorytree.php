@@ -47,30 +47,30 @@ if ($data = $form->get_data()) {
 
 $trees = directorytree::list_directory_trees();
 $table = new html_table();
-$table->head = array(
+$table->head = [
     get_string('treename', 'local_campusconnect'),
     get_string('treestatus', 'local_campusconnect')
-);
-$table->size = array(
+];
+$table->size = [
     '60%',
     ''
-);
-$table->attributes = array('style' => 'width: 90%;');
-$table->data = array();
+];
+$table->attributes = ['style' => 'width: 90%;'];
+$table->data = [];
 
-$statuses = array(
+$statuses = [
     directorytree::MODE_PENDING => get_string('modepending', 'local_campusconnect'),
     directorytree::MODE_WHOLE => get_string('modewhole', 'local_campusconnect'),
     directorytree::MODE_MANUAL => get_string('modemanual', 'local_campusconnect'),
     directorytree::MODE_DELETED => get_string('modedeleted', 'local_campusconnect')
-);
+];
 $baseediturl = new moodle_url('/local/campusconnect/admin/directorymapping.php');
 foreach ($trees as $tree) {
-    $editurl = new moodle_url($baseediturl, array('id' => $tree->get_root_id()));
+    $editurl = new moodle_url($baseediturl, ['id' => $tree->get_root_id()]);
     $editlink = html_writer::link($editurl, s($tree->get_title()));
     $status = $statuses[$tree->get_mode()];
 
-    $row = array($editlink, $status);
+    $row = [$editlink, $status];
     $table->data[] = $row;
 }
 

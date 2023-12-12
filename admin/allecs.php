@@ -40,7 +40,7 @@ if (isset($_GET['fn'])) {
 }
 
 if (isset($_POST['addnewecs'])) {
-    $toadd = array();
+    $toadd = [];
     $toadd['name'] = $_POST['name'];
     $toadd['url'] = $_POST['url'];
     $toadd['auth'] = 2;
@@ -82,13 +82,13 @@ foreach ($ecslist as $ecsid => $ecs) {
         $certexpiry = '<strong>'.get_string('certificateexpiry', 'local_campusconnect').':</strong> '.$certexpiry;
     }
     print "<td><div class='info'>
-        <strong><a href='".new moodle_url('/local/campusconnect/admin/ecs.php', array('id' => $ecsid))."'>$ecs</a></strong><br />
+        <strong><a href='".new moodle_url('/local/campusconnect/admin/ecs.php', ['id' => $ecsid])."'>$ecs</a></strong><br />
         <strong>".get_string('serveraddress', 'local_campusconnect').":</strong> $url $certexpiry
     </div></td>";
-    print '<td><a href='.new moodle_url('/local/campusconnect/admin/ecs.php', array('id' => $ecsid)).'>'.
-        get_string('edit').'</a> | <a href='.new moodle_url('/local/campusconnect/admin/ecs.php', array(
+    print '<td><a href='.new moodle_url('/local/campusconnect/admin/ecs.php', ['id' => $ecsid]).'>'.
+        get_string('edit').'</a> | <a href='.new moodle_url('/local/campusconnect/admin/ecs.php', [
             'delete' => $ecsid, 'sesskey' => sesskey()
-        )).'>'.get_string('delete').'</a></td>';
+        ]).'>'.get_string('delete').'</a></td>';
     print '</tr>';
 }
 print '</tbody></table>';

@@ -74,22 +74,22 @@ class participantsettings {
     // Flagged as being exported in the current course.
     protected $exported = null;
 
-    protected static $validsettings = array(
+    protected static $validsettings = [
         'export', 'exportenrolment', 'exporttoken',
         'import', 'importenrolment', 'importtoken', 'importtype',
         'uselegacy', 'personuidtype', 'exportfields', 'exportfieldmapping',
         'importfieldmapping'
-    );
-    protected static $ecssettings = array('name', 'description', 'dns', 'email', 'org', 'orgabbr', 'communityname', 'itsyou');
+    ];
+    protected static $ecssettings = ['name', 'description', 'dns', 'email', 'org', 'orgabbr', 'communityname', 'itsyou'];
 
     protected static $pidtomid = null;
 
-    protected static $defaultexportfields = array(
+    protected static $defaultexportfields = [
         courselink::PERSON_UID,
         courselink::PERSON_LOGIN,
         courselink::PERSON_EMAIL,
-    );
-    protected static $defaultexportmapping = array(
+    ];
+    protected static $defaultexportmapping = [
         courselink::PERSON_EPPN => null,
         courselink::PERSON_LOGINUID => null,
         courselink::PERSON_LOGIN => 'username',
@@ -99,8 +99,8 @@ class participantsettings {
         courselink::PERSON_CUSTOM => null,
         courselink::USERFIELD_LEARNINGPROGRESS => null,
         courselink::USERFIELD_GRADE => null,
-    );
-    protected static $defaultimportmapping = array(
+    ];
+    protected static $defaultimportmapping = [
         courselink::PERSON_EPPN => null,
         courselink::PERSON_LOGINUID => null,
         courselink::PERSON_LOGIN => null,
@@ -110,18 +110,18 @@ class participantsettings {
         courselink::PERSON_CUSTOM => null,
         courselink::USERFIELD_LEARNINGPROGRESS => null,
         courselink::USERFIELD_GRADE => null,
-    );
+    ];
 
-    protected static $possibleexportfields = array(
+    protected static $possibleexportfields = [
         'id', 'username', 'idnumber', 'firstname', 'lastname', 'email', 'icq', 'skype', 'yahoo', 'aim', 'msn', 'phone1', 'phone2',
         'institution', 'department', 'address', 'city', 'country'
-    );
+    ];
 
     // Not 'id', 'username', 'firstname', 'lastname', as these mappings are hard-coded.
-    protected static $possibleimportfields = array(
+    protected static $possibleimportfields = [
         'idnumber', 'email', 'icq', 'skype', 'yahoo', 'aim', 'msn', 'phone1', 'phone2',
         'institution', 'department', 'address', 'city', 'country'
-    );
+    ];
 
     /**
      * @param mixed $ecsidordata either the ID of the ECS or an object containing
@@ -159,7 +159,7 @@ class participantsettings {
             // Save the PID, if not already recorded.
             if (!empty($extradetails->pid) && $extradetails->pid != $this->pid) {
                 $this->pid = $extradetails->pid;
-                $DB->set_field('local_campusconnect_part', 'pid', $this->pid, array('id' => $this->recordid));
+                $DB->set_field('local_campusconnect_part', 'pid', $this->pid, ['id' => $this->recordid]);
             }
             // Save the orgabbr, if not already recorded.
             if ($orgabbr && $orgabbr != $this->orgabbr) {
@@ -325,10 +325,10 @@ class participantsettings {
     protected function load_settings($ecsid, $mid, $strictness = IGNORE_MISSING) {
         global $DB;
 
-        $settings = $DB->get_record('local_campusconnect_part', array(
+        $settings = $DB->get_record('local_campusconnect_part', [
             'mid' => $mid,
             'ecsid' => $ecsid
-        ), '*', $strictness);
+        ], '*', $strictness);
         if ($settings) {
             $this->set_settings($settings);
         } else {
@@ -373,7 +373,7 @@ class participantsettings {
         $settings = (object)$settings;
 
         // Check to see if anything has changed and all settings are valid.
-        $checksettings = array('export', 'exportenrolment', 'exporttoken', 'import', 'importenrolment', 'importtoken', 'uselegacy');
+        $checksettings = ['export', 'exportenrolment', 'exporttoken', 'import', 'importenrolment', 'importtoken', 'uselegacy'];
         foreach ($checksettings as $setting) {
             if ($this->$setting) {
                 if (isset($settings->$setting) && !$settings->$setting) {
@@ -391,7 +391,7 @@ class participantsettings {
         }
 
         if (isset($settings->importtype)) {
-            $validimporttypes = array(self::IMPORT_LINK, self::IMPORT_COURSE, self::IMPORT_CMS);
+            $validimporttypes = [self::IMPORT_LINK, self::IMPORT_COURSE, self::IMPORT_CMS];
             if (!in_array($settings->importtype, $validimporttypes)) {
                 throw new coding_exception("Invalid importtype: $settings->importtype");
             }
@@ -520,10 +520,10 @@ class participantsettings {
             /** @var $cms participantsettings */
             if ($cms = self::get_cms_participant(true)) {
                 if ($cms->get_ecs_id() != $this->get_ecs_id() || $cms->get_mid() != $this->get_mid()) {
-                    $data = (object)array(
+                    $data = (object)[
                         'newcms' => $this->get_displayname(),
                         'currcms' => $cms->get_displayname()
-                    );
+                    ];
                     return get_string('alreadycms', 'local_campusconnect', $data);
                 }
             }
@@ -540,16 +540,16 @@ class participantsettings {
      */
     public function get_confirm_message($settings) {
         global $DB;
-        $ret = array();
+        $ret = [];
         if (isset($settings->export) && !$settings->export && $this->export) {
             // Disabling export - check to see if there are any exports that would be deleted.
             $exports = export::list_all_exports($this->ecsid, $this->mid);
             if (!empty($exports)) {
                 $msg = html_writer::tag('p', get_string('warningexports', 'local_campusconnect', $this->displayname));
                 foreach ($exports as $export) {
-                    $course = $DB->get_record('course', array('id' => $export->get_courseid()), 'id, fullname');
+                    $course = $DB->get_record('course', ['id' => $export->get_courseid()], 'id, fullname');
                     if ($course) {
-                        $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
+                        $courseurl = new moodle_url('/course/view.php', ['id' => $course->id]);
                         $msg .= html_writer::link($courseurl, format_string($course->fullname));
                         $msg .= html_writer::empty_tag('br');
                     }
@@ -595,7 +595,7 @@ class participantsettings {
         if (isset($settings->id)) {
             // The settings came from the database.
             $this->recordid = $settings->id;
-            $dbsettings = array('mid', 'ecsid', 'pid', 'displayname', 'active', 'orgabbr');
+            $dbsettings = ['mid', 'ecsid', 'pid', 'displayname', 'active', 'orgabbr'];
             foreach ($dbsettings as $fieldname) {
                 if (isset($settings->$fieldname)) {
                     $this->$fieldname = $settings->$fieldname;
@@ -607,21 +607,21 @@ class participantsettings {
                 $this->exportfields = explode(',', $this->exportfields);
             }
         } else if ($this->exportfields !== null) {
-            $this->exportfields = array();
+            $this->exportfields = [];
         }
         if ($this->exportfieldmapping) {
             if (!is_array($this->exportfieldmapping)) {
                 $this->exportfieldmapping = unserialize($this->exportfieldmapping);
             }
         } else if ($this->exportfieldmapping !== null) {
-            $this->exportfieldmapping = array();
+            $this->exportfieldmapping = [];
         }
         if ($this->importfieldmapping) {
             if (!is_array($this->importfieldmapping)) {
                 $this->importfieldmapping = unserialize($this->importfieldmapping);
             }
         } else if ($this->importfieldmapping !== null) {
-            $this->importfieldmapping = array();
+            $this->importfieldmapping = [];
         }
     }
 
@@ -659,7 +659,7 @@ class participantsettings {
     public function delete_settings() {
         global $DB;
 
-        $DB->delete_records('local_campusconnect_part', array('id' => $this->recordid));
+        $DB->delete_records('local_campusconnect_part', ['id' => $this->recordid]);
         courselink::delete_mid_courselinks($this->mid);
     }
 
@@ -679,7 +679,7 @@ class participantsettings {
         if (!$this->active) {
             $this->active = 1;
             if ($this->recordid) {
-                $DB->set_field('local_campusconnect_part', 'active', 1, array('id' => $this->recordid));
+                $DB->set_field('local_campusconnect_part', 'active', 1, ['id' => $this->recordid]);
             }
         }
     }
@@ -692,7 +692,7 @@ class participantsettings {
         if ($this->active) {
             $this->active = 0;
             if ($this->recordid) {
-                $DB->set_field('local_campusconnect_part', 'active', 0, array('id' => $this->recordid));
+                $DB->set_field('local_campusconnect_part', 'active', 0, ['id' => $this->recordid]);
             }
         }
     }
@@ -709,11 +709,11 @@ class participantsettings {
         global $SITE;
 
         // Some mappings are hard-coded.
-        $ret = array(
+        $ret = [
             'ecs_firstname' => $user->firstname,
             'ecs_lastname' => $user->lastname,
             'ecs_institution' => $SITE->shortname,
-        );
+        ];
 
         if ($this->is_legacy_export()) {
             // Support sending of legacy, hard-coded mappings.
@@ -771,10 +771,10 @@ class participantsettings {
     public function map_import_data($ecsdata) {
 
         // Some mappings are hard-coded.
-        $ret = (object)array(
+        $ret = (object)[
             'firstname' => $ecsdata['ecs_firstname'],
             'lastname' => $ecsdata['ecs_lastname'],
-        );
+        ];
 
         if (self::is_legacy($ecsdata)) {
             // Email is the only other value mapped by the legacy params.
@@ -807,8 +807,8 @@ class participantsettings {
      */
     public static function list_potential_export_participants() {
         global $DB;
-        $parts = $DB->get_records('local_campusconnect_part', array('export' => 1), 'displayname');
-        $ret = array();
+        $parts = $DB->get_records('local_campusconnect_part', ['export' => 1], 'displayname');
+        $ret = [];
         foreach ($parts as $part) {
             $participant = new participantsettings($part);
             if ($participant->is_active()) {
@@ -831,8 +831,8 @@ class participantsettings {
         $communities = $connect->get_memberships();
         $ecsid = $ecssettings->get_id();
 
-        $missingmids = $DB->get_records_menu('local_campusconnect_part', array('active' => 1, 'ecsid' => $ecsid), '', 'mid, id');
-        $resp = array();
+        $missingmids = $DB->get_records_menu('local_campusconnect_part', ['active' => 1, 'ecsid' => $ecsid], '', 'mid, id');
+        $resp = [];
         foreach ($communities as $community) {
             $comm = new community($ecsid, $community->community->name, $community->community->description);
             foreach ($community->participants as $participant) {
@@ -864,11 +864,11 @@ class participantsettings {
     public static function delete_ecs_participant_settings($ecsid) {
         global $DB;
 
-        $parts = $DB->get_records('local_campusconnect_part', array('ecsid' => $ecsid));
+        $parts = $DB->get_records('local_campusconnect_part', ['ecsid' => $ecsid]);
         foreach ($parts as $participant) {
             courselink::delete_mid_courselinks($participant->mid);
         }
-        $DB->delete_records('local_campusconnect_part', array('ecsid' => $ecsid));
+        $DB->delete_records('local_campusconnect_part', ['ecsid' => $ecsid]);
     }
 
     /**
@@ -888,7 +888,7 @@ class participantsettings {
                       FROM {local_campusconnect_part} p
                       JOIN {local_campusconnect_ecs} e ON p.ecsid = e.id
                      WHERE e.enabled = 1 AND p.active = 1 AND p.import = 1 AND p.importtype = :importtype";
-            $participant = $DB->get_records_sql($sql, array('importtype' => self::IMPORT_CMS));
+            $participant = $DB->get_records_sql($sql, ['importtype' => self::IMPORT_CMS]);
             if (count($participant) > 1) {
                 throw new coding_exception('There should only ever be one participant set to IMPORT_CMS');
             }
@@ -904,16 +904,16 @@ class participantsettings {
 
     protected static function update_pidtomid() {
         global $DB;
-        self::$pidtomid = array();
+        self::$pidtomid = [];
         foreach ($DB->get_records('local_campusconnect_part', null, '', 'id, ecsid, mid, pid') as $part) {
             if (!$part->pid) {
                 continue;
             }
             if (!isset(self::$pidtomid[$part->ecsid])) {
-                self::$pidtomid[$part->ecsid] = array();
+                self::$pidtomid[$part->ecsid] = [];
             }
             if (!isset(self::$pidtomid[$part->ecsid][$part->pid])) {
-                self::$pidtomid[$part->ecsid][$part->pid] = array();
+                self::$pidtomid[$part->ecsid][$part->pid] = [];
             }
             self::$pidtomid[$part->ecsid][$part->pid][] = $part->mid;
         }
@@ -933,14 +933,14 @@ class participantsettings {
         if (isset(self::$pidtomid[$ecsid][$pid])) {
             return self::$pidtomid[$ecsid][$pid];
         }
-        return array();
+        return [];
     }
 
     public static function get_mids_from_pids($ecsid, $pids) {
         if (self::$pidtomid === null) {
             self::update_pidtomid();
         }
-        $mids = array();
+        $mids = [];
         $pids = explode(',', $pids);
         foreach ($pids as $pid) {
             $pid = explode('_', $pid);

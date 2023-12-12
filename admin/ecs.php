@@ -61,7 +61,7 @@ if (isset($deleteid)) {
     echo $OUTPUT->heading(get_string('deleteecsareyousure', 'local_campusconnect'));
     echo $OUTPUT->confirm(
         get_string('deleteecsareyousuremessage', 'local_campusconnect'),
-        new moodle_url($PAGE->url, array('delete' => $deleteid, 'confirm' => 1)),
+        new moodle_url($PAGE->url, ['delete' => $deleteid, 'confirm' => 1]),
         new moodle_url('/local/campusconnect/admin/allecs.php'));
     echo $OUTPUT->footer();
     exit;
@@ -110,7 +110,7 @@ if ($data = $form->get_data()) {
         }
     }
     $data->url = $data->protocol.'://'.$url;
-    foreach (array('notifyusers', 'notifycontent', 'notifycourses') as $fieldname) {
+    foreach (['notifyusers', 'notifycontent', 'notifycourses'] as $fieldname) {
         if (!empty($data->{$fieldname})) {
             $users = explode(',', $data->{$fieldname});
             $users = clean_param_array($users, PARAM_USERNAME);

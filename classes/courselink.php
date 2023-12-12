@@ -45,25 +45,25 @@ class courselink {
     const PERSON_EPPN = 'ecs_eppn';
     const PERSON_CUSTOM = 'ecs_custom';
 
-    public static $validpersontypes = array(
+    public static $validpersontypes = [
         self::PERSON_UNIQUECODE, self::PERSON_LOGIN, self::PERSON_UID,
         self::PERSON_LOGINUID, self::PERSON_EMAIL, self::PERSON_EPPN, self::PERSON_CUSTOM
-    );
+    ];
 
     const PERSON_ID_TYPE = 'ecs_person_id_type'; // Param that stores the type to use.
 
     const USERFIELD_LEARNINGPROGRESS = 'learningProgress';
     const USERFIELD_GRADE = 'grade';
 
-    public static $validexportmappingfields = array(
+    public static $validexportmappingfields = [
         self::PERSON_EPPN, self::PERSON_LOGINUID, self::PERSON_LOGIN, self::PERSON_UID,
         self::PERSON_EMAIL, self::PERSON_UNIQUECODE, self::PERSON_CUSTOM,
         self::USERFIELD_LEARNINGPROGRESS, self::USERFIELD_GRADE
-    );
-    public static $validimportmappingfields = array(
+    ];
+    public static $validimportmappingfields = [
         self::PERSON_EPPN, self::PERSON_LOGINUID, self::PERSON_LOGIN, self::PERSON_UID,
         self::PERSON_EMAIL, self::PERSON_UNIQUECODE, self::PERSON_CUSTOM
-    );
+    ];
 
     const INCLUDE_LEGACY_PARAMS = false; // Include the legacy 'ecs_hash' and 'ecs_uid_hash' params in the courselink url.
 
@@ -163,7 +163,7 @@ class courselink {
 
             $baseshortname = $coursedata->shortname;
             $num = 1;
-            while ($DB->record_exists('course', array('shortname' => $coursedata->shortname))) {
+            while ($DB->record_exists('course', ['shortname' => $coursedata->shortname])) {
                 $num++;
                 $coursedata->shortname = "{$baseshortname}_{$num}";
             }
@@ -231,7 +231,7 @@ class courselink {
         if ($partsettings && $partsettings->get_import_type() == participantsettings::IMPORT_LINK) {
             if (!$currlink = self::get_by_resourceid($resourceid, $settings->get_id())) {
                 return self::create($resourceid, $settings, $courselink, $transferdetails);
-                //throw new \local_campusconnect\courselink_exception("Cannot update courselink to resource $resourceid - it doesn't exist");
+                // throw new \local_campusconnect\courselink_exception("Cannot update courselink to resource $resourceid - it doesn't exist");
             }
 
             if ($currlink->mid != $mid) {
@@ -243,12 +243,12 @@ class courselink {
                 return true;
             }
 
-            if (!$DB->record_exists('course', array('id' => $currlink->courseid))) {
+            if (!$DB->record_exists('course', ['id' => $currlink->courseid])) {
                 // The course has been deleted - recreate it.
                 $coursedata->category = $settings->get_import_category();
                 $baseshortname = $coursedata->shortname;
                 $num = 1;
-                while ($DB->record_exists('course', array('shortname' => $coursedata->shortname))) {
+                while ($DB->record_exists('course', ['shortname' => $coursedata->shortname])) {
                     $num++;
                     $coursedata->shortname = "{$baseshortname}_{$num}";
                 }
@@ -298,7 +298,7 @@ class courselink {
 
         if ($currlink = self::get_by_resourceid($resourceid, $settings->get_id())) {
             $msg = "{$currlink->courseid} ($resourceid)";
-            if ($coursename = $DB->get_field('course', 'fullname', array('id' => $currlink->courseid))) {
+            if ($coursename = $DB->get_field('course', 'fullname', ['id' => $currlink->courseid])) {
                 $msg .= ' - '.format_string($coursename);
             }
             notification::queue_message($settings->get_id(),
@@ -306,7 +306,7 @@ class courselink {
                                         notification::TYPE_DELETE,
                                         0, $msg);
             delete_course($currlink->courseid, false);
-            $DB->delete_records('local_campusconnect_clink', array('id' => $currlink->id));
+            $DB->delete_records('local_campusconnect_clink', ['id' => $currlink->id]);
         }
 
         return true;
@@ -323,15 +323,15 @@ class courselink {
     public static function refresh_from_ecs(ecssettings $ecssettings, $singlemid = null) {
         global $DB;
 
-        $ret = (object)array('created' => array(), 'updated' => array(), 'deleted' => array());
+        $ret = (object)['created' => [], 'updated' => [], 'deleted' => []];
 
         // Get full list of courselinks from this ECS.
-        $courselinks = $DB->get_records('local_campusconnect_clink', array('ecsid' => $ecssettings->get_id()),
+        $courselinks = $DB->get_records('local_campusconnect_clink', ['ecsid' => $ecssettings->get_id()],
                                         '', 'resourceid, ecsid, mid');
 
         // Get list of participants we are importing from.
         $communities = participantsettings::load_communities($ecssettings);
-        $importparticipants = array();
+        $importparticipants = [];
         foreach ($communities as $community) {
             /** @var participantsettings $part */
             foreach ($community->participants as $part) {
@@ -416,11 +416,11 @@ class courselink {
     public static function delete_mid_courselinks($mid) {
         global $DB;
 
-        $courselinks = $DB->get_records('local_campusconnect_clink', array('mid' => $mid));
+        $courselinks = $DB->get_records('local_campusconnect_clink', ['mid' => $mid]);
         foreach ($courselinks as $courselink) {
             delete_course($courselink->courseid);
         }
-        $DB->delete_records('local_campusconnect_clink', array('mid' => $mid));
+        $DB->delete_records('local_campusconnect_clink', ['mid' => $mid]);
     }
 
     /**
@@ -507,7 +507,7 @@ class courselink {
         } else {
             $realm = connect::generate_realm($url);
         }
-        $post = (object)array('realm' => $realm);
+        $post = (object)['realm' => $realm];
         if (self::INCLUDE_LEGACY_PARAMS) {
             $post->url = $courselink->url;
         }
@@ -562,10 +562,10 @@ class courselink {
                               JOIN {user_info_data} ud ON ud.userid = u.id
                               JOIN {user_info_field} uf ON uf.id = ud.fieldid
                              WHERE uf.shortname = :fieldname AND ud.data = :personid';
-                    $users = $DB->get_records_sql($sql, array('fieldname' => $fieldname, 'personid' => $personid));
+                    $users = $DB->get_records_sql($sql, ['fieldname' => $fieldname, 'personid' => $personid]);
                 } else {
                     // Look for the personid in the 'user' table.
-                    $users = $DB->get_records('user', array($moodlefield => $personid), '', 'id, username');
+                    $users = $DB->get_records('user', [$moodlefield => $personid], '', 'id, username');
                 }
                 if (count($users) == 1) {
                     // All OK, we've matched up to an existing user.
@@ -587,7 +587,7 @@ class courselink {
      */
     public static function get_by_courseid($courseid) {
         global $DB;
-        return $DB->get_record('local_campusconnect_clink', array('courseid' => $courseid));
+        return $DB->get_record('local_campusconnect_clink', ['courseid' => $courseid]);
     }
 
     /**
@@ -598,7 +598,7 @@ class courselink {
      */
     public static function get_by_resourceid($resourceid, $ecsid) {
         global $DB;
-        $params = array('resourceid' => $resourceid, 'ecsid' => $ecsid);
+        $params = ['resourceid' => $resourceid, 'ecsid' => $ecsid];
         return $DB->get_record('local_campusconnect_clink', $params);
     }
 
@@ -611,10 +611,10 @@ class courselink {
      */
     protected static function check_required_fields($ismapped, $courselink, $resourceid) {
         if ($ismapped) {
-            $requiredfields = array('shortname', 'fullname');
+            $requiredfields = ['shortname', 'fullname'];
             $aftermapping = ' (after mapping the metadata)';
         } else {
-            $requiredfields = array('id', 'title');
+            $requiredfields = ['id', 'title'];
             $aftermapping = '';
         }
         foreach ($requiredfields as $requiredfield) {
@@ -659,7 +659,7 @@ class courselink {
                   FROM {local_campusconnect_clink} cl
                   JOIN {course} c ON cl.courseid = c.id
                   JOIN {local_campusconnect_part} p ON cl.ecsid = p.ecsid AND cl.mid = p.mid";
-        $params = array();
+        $params = [];
         if (!is_null($ecsid)) {
             $params['ecsid'] = $ecsid;
             $sql .= " WHERE cl.ecsid = :ecsid ";
@@ -669,7 +669,7 @@ class courselink {
             }
         }
         $links = $DB->get_records_sql($sql, $params);
-        $ret = array();
+        $ret = [];
         foreach ($links as $link) {
             $ret[] = new courselink($link);
         }

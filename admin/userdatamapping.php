@@ -36,7 +36,7 @@ $ecsid = optional_param('ecsid', null, PARAM_INT);
 $mid = optional_param('mid', null, PARAM_INT);
 
 $part = null;
-$params = array();
+$params = [];
 if ($ecsid && $mid) {
     $params['ecsid'] = $ecsid;
     $params['mid'] = $mid;
@@ -48,7 +48,7 @@ if ($ecsid && $mid) {
 admin_externalpage_setup('campusconnectuserdatamapping', '', $params);
 
 if (!$part) {
-    $allcommunities = array();
+    $allcommunities = [];
     $ecslist = ecssettings::list_ecs();
     foreach ($ecslist as $ecsid => $ecsname) {
         $settings = new ecssettings($ecsid);
@@ -79,28 +79,28 @@ if (!$part) {
         echo html_writer::tag('p', get_string('notokenparticipants', 'local_campusconnect', $link));
     } else {
         $table = new html_table();
-        $table->head = array(
+        $table->head = [
             get_string('ecs', 'local_campusconnect'),
             get_string('community', 'local_campusconnect'),
             get_string('participant', 'local_campusconnect'),
             ''
-        );
+        ];
 
         $struserdata = get_string('edituserdatamapping', 'local_campusconnect');
         foreach ($allcommunities as $ecsname => $communities) {
             foreach ($communities as $community) {
                 /** @var community $community */
                 foreach ($community->participants as $participant) {
-                    $url = new moodle_url($PAGE->url, array(
+                    $url = new moodle_url($PAGE->url, [
                         'ecsid' => $participant->get_ecs_id(),
                         'mid' => $participant->get_mid()
-                    ));
-                    $row = array(
+                    ]);
+                    $row = [
                         format_string($ecsname),
                         format_string($community->name),
                         format_string($participant->get_name()),
                         html_writer::link($url, $struserdata),
-                    );
+                    ];
                     $table->data[] = $row;
                 }
             }
@@ -113,25 +113,25 @@ if (!$part) {
 
 $PAGE->navbar->add($part->get_displayname());
 
-$custom = array(
+$custom = [
     'showexport' => $part->is_import_token_enabled(), // The user data that is 'exported' when a user has imported a course link.
     'showimport' => $part->is_export_token_enabled(), // The user data that is 'imported' when a course link has been followed.
-);
-$form = new campusconnect_userdata_mapping_form(null, $custom, 'post', '', array('class' => 'userdatamappingform'));
+];
+$form = new campusconnect_userdata_mapping_form(null, $custom, 'post', '', ['class' => 'userdatamappingform']);
 
 $exportfields = $part->get_export_fields();
-$current = array(
+$current = [
     'ecsid' => $part->get_ecs_id(),
     'mid' => $part->get_mid(),
     'exportfields' => array_combine($exportfields, $exportfields),
     'exportfieldmapping' => $part->get_export_mappings(),
     'personuidtype' => $part->get_personuidtype(),
     'importfieldmapping' => $part->get_import_mappings(),
-);
+];
 $form->set_data($current);
 
 if ($data = $form->get_data()) {
-    $data->exportfields = isset($data->exportfields) ? array_keys($data->exportfields) : array();
+    $data->exportfields = isset($data->exportfields) ? array_keys($data->exportfields) : [];
     $part->save_settings($data);
     redirect($PAGE->url);
 }

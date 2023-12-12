@@ -41,8 +41,8 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('status', XMLDB_TYPE_CHAR, '20', null, null, null, null);
 
         // Adding keys to table local_campusconnect_eventin.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('serverid', XMLDB_KEY_FOREIGN, array('serverid'), 'local_campusconnect_ecs', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('serverid', XMLDB_KEY_FOREIGN, ['serverid'], 'local_campusconnect_ecs', ['id']);
 
         // Conditionally launch create table for local_campusconnect_eventin.
         if (!$dbman->table_exists($table)) {
@@ -65,9 +65,9 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('mid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         // Adding keys to table local_campusconnect_clink.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
-        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, array('ecsid'), 'local_campusconnect_ecs', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, ['ecsid'], 'local_campusconnect_ecs', ['id']);
 
         // Conditionally launch create table for local_campusconnect_clink.
         if (!$dbman->table_exists($table)) {
@@ -139,11 +139,11 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('importtype', XMLDB_TYPE_INTEGER, '4', null, null, null, '1');
 
         // Adding keys to table local_campusconnect_part.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, array('ecsid'), 'local_campusconnect_ecs', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, ['ecsid'], 'local_campusconnect_ecs', ['id']);
 
         // Adding indexes to table local_campusconnect_part.
-        $table->add_index('ecsid_mid', XMLDB_INDEX_UNIQUE, array('ecsid', 'mid'));
+        $table->add_index('ecsid_mid', XMLDB_INDEX_UNIQUE, ['ecsid', 'mid']);
 
         // Conditionally launch create table for local_campusconnect_part.
         if (!$dbman->table_exists($table)) {
@@ -167,8 +167,8 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('type', XMLDB_TYPE_INTEGER, '4', null, null, null, null);
 
         // Adding keys to table local_campusconnect_mappings.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, array('ecsid'), 'local_campusconnect_ecs', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, ['ecsid'], 'local_campusconnect_ecs', ['id']);
 
         // Conditionally launch create table for local_campusconnect_mappings.
         if (!$dbman->table_exists($table)) {
@@ -208,9 +208,9 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('resourceid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         // Adding keys to table local_campusconnect_export.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
-        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, array('ecsid'), 'local_campusconnect_ecs', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, ['ecsid'], 'local_campusconnect_ecs', ['id']);
 
         // Conditionally launch create table for local_campusconnect_export.
         if (!$dbman->table_exists($table)) {
@@ -240,8 +240,8 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('takeoverallocation', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1');
 
         // Adding keys to table local_campusconnect_dirroot.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, array('ecsid'), 'local_campusconnect_ecs', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, ['ecsid'], 'local_campusconnect_ecs', ['id']);
 
         // Conditionally launch create table for local_campusconnect_dirroot.
         if (!$dbman->table_exists($table)) {
@@ -269,7 +269,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('mapping', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0');
 
         // Adding keys to table local_campusconnect_dir.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for local_campusconnect_dir.
         if (!$dbman->table_exists($table)) {
@@ -296,7 +296,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     if ($oldversion < 2012072000) {
         // Define index rootid (unique) to be added to local_campusconnect_dirroot.
         $table = new xmldb_table('local_campusconnect_dirroot');
-        $index = new xmldb_index('rootid', XMLDB_INDEX_UNIQUE, array('rootid'));
+        $index = new xmldb_index('rootid', XMLDB_INDEX_UNIQUE, ['rootid']);
 
         // Conditionally launch add index rootid.
         if (!$dbman->index_exists($table, $index)) {
@@ -305,7 +305,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
 
         // Define index rootid (not unique) to be added to local_campusconnect_dir.
         $table = new xmldb_table('local_campusconnect_dir');
-        $index = new xmldb_index('rootid', XMLDB_INDEX_NOTUNIQUE, array('rootid'));
+        $index = new xmldb_index('rootid', XMLDB_INDEX_NOTUNIQUE, ['rootid']);
 
         // Conditionally launch add index rootid.
         if (!$dbman->index_exists($table, $index)) {
@@ -344,8 +344,8 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('mid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table local_campusconnect_crs.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('courseid', XMLDB_KEY_FOREIGN_UNIQUE, array('courseid'), 'course', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN_UNIQUE, ['courseid'], 'course', ['id']);
 
         // Conditionally launch create table for local_campusconnect_crs.
         if (!$dbman->table_exists($table)) {
@@ -414,7 +414,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $dbman->change_field_type($table, $field);
 
         // Add an index to the CMSid field.
-        $index = new xmldb_index('cmsid', XMLDB_INDEX_NOTUNIQUE, array('cmsid'));
+        $index = new xmldb_index('cmsid', XMLDB_INDEX_NOTUNIQUE, ['cmsid']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
@@ -434,8 +434,8 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('role', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_field('status', XMLDB_TYPE_INTEGER, '4', null, null, null, null);
 
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_index('personid', XMLDB_INDEX_NOTUNIQUE, array('personid'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_index('personid', XMLDB_INDEX_NOTUNIQUE, ['personid']);
 
         // Conditionally launch create table for local_campusconnect_mbr.
         if (!$dbman->table_exists($table)) {
@@ -457,7 +457,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('moodleroleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null);
 
         // Adding keys to table local_campusconnect_rolemap.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for local_campusconnect_rolemap.
         if (!$dbman->table_exists($table)) {
@@ -479,10 +479,10 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('data', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table local_campusconnect_notify.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Adding indexes to table local_campusconnect_notify.
-        $table->add_index('ecsid_type', XMLDB_INDEX_NOTUNIQUE, array('ecsid', 'type'));
+        $table->add_index('ecsid_type', XMLDB_INDEX_NOTUNIQUE, ['ecsid', 'type']);
 
         // Conditionally launch create table for local_campusconnect_notify.
         if (!$dbman->table_exists($table)) {
@@ -506,8 +506,8 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('createsubdirectories', XMLDB_TYPE_INTEGER, '4', null, null, null, '0');
 
         // Adding keys to table local_campusconnect_filter.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('categoryid', XMLDB_KEY_FOREIGN, array('categoryid'), 'category', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('categoryid', XMLDB_KEY_FOREIGN, ['categoryid'], 'category', ['id']);
 
         // Conditionally launch create table for local_campusconnect_filter.
         if (!$dbman->table_exists($table)) {
@@ -552,14 +552,14 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table local_campusconnect_pgroup.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, array('ecsid'), 'local_campusconnect_ecs', array('id'));
-        $table->add_key('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
-        $table->add_key('groupid', XMLDB_KEY_FOREIGN, array('groupid'), 'group', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, ['ecsid'], 'local_campusconnect_ecs', ['id']);
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+        $table->add_key('groupid', XMLDB_KEY_FOREIGN, ['groupid'], 'group', ['id']);
 
         // Adding indexes to table local_campusconnect_pgroup.
-        $table->add_index('cmsgroupid', XMLDB_INDEX_UNIQUE, array('cmsgroupid'));
-        $table->add_index('resourceid', XMLDB_INDEX_NOTUNIQUE, array('resourceid', 'ecsid'));
+        $table->add_index('cmsgroupid', XMLDB_INDEX_UNIQUE, ['cmsgroupid']);
+        $table->add_index('resourceid', XMLDB_INDEX_NOTUNIQUE, ['resourceid', 'ecsid']);
 
         // Conditionally launch create table for local_campusconnect_pgroup.
         if (!$dbman->table_exists($table)) {
@@ -636,7 +636,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     if ($oldversion < 2012121000) {
         // Local_campusconnect_dirroot.rootid.
         $table = new xmldb_table('local_campusconnect_dirroot');
-        $index = new xmldb_index('rootid', XMLDB_INDEX_UNIQUE, array('rootid'));
+        $index = new xmldb_index('rootid', XMLDB_INDEX_UNIQUE, ['rootid']);
         $field = new xmldb_field('rootid', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'resourceid');
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index); // Remove the index (temporarially).
@@ -653,7 +653,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     if ($oldversion < 2012121001) {
         // Local_campusconnect_dir.rootid.
         $table = new xmldb_table('local_campusconnect_dir');
-        $index = new xmldb_index('rootid', XMLDB_INDEX_NOTUNIQUE, array('rootid'));
+        $index = new xmldb_index('rootid', XMLDB_INDEX_NOTUNIQUE, ['rootid']);
         $field = new xmldb_field('rootid', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'resourceid');
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index); // Remove the index (temporarially).
@@ -706,7 +706,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         // Changing type of field directoryid on table local_campusconnect_crs to char.
         $table = new xmldb_table('local_campusconnect_pgroup');
         $field = new xmldb_field('cmsgroupid', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'resourceid');
-        $index = new xmldb_index('cmsgroupid', XMLDB_INDEX_UNIQUE, array('cmsgroupid'));
+        $index = new xmldb_index('cmsgroupid', XMLDB_INDEX_UNIQUE, ['cmsgroupid']);
 
         // Launch change of type for field directoryid.
         if ($dbman->index_exists($table, $index)) {
@@ -726,7 +726,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table = new xmldb_table('local_campusconnect_pgroup');
 
         // Remove the cmsgroupid.
-        $index = new xmldb_index('cmsgroupid', XMLDB_INDEX_UNIQUE, array('cmsgroupid'));
+        $index = new xmldb_index('cmsgroupid', XMLDB_INDEX_UNIQUE, ['cmsgroupid']);
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index);
         }
@@ -744,7 +744,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        $index = new xmldb_index('cmscourseid', XMLDB_INDEX_NOTUNIQUE, array('cmscourseid'));
+        $index = new xmldb_index('cmscourseid', XMLDB_INDEX_NOTUNIQUE, ['cmscourseid']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
@@ -780,9 +780,9 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         $table->add_field('status', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null);
 
         // Adding keys to table local_campusconnect_enrex.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_key('courseid', XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
-        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
 
         // Conditionally launch create table for local_campusconnect_enrex.
         if (!$dbman->table_exists($table)) {
@@ -913,7 +913,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
 
         // Define index personid (not unique) to be dropped form local_campusconnect_mbr.
         $table = new xmldb_table('local_campusconnect_mbr');
-        $index = new xmldb_index('personid', XMLDB_INDEX_NOTUNIQUE, array('personid'));
+        $index = new xmldb_index('personid', XMLDB_INDEX_NOTUNIQUE, ['personid']);
 
         // Conditionally launch drop index personid.
         if ($dbman->index_exists($table, $index)) {
@@ -928,7 +928,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
 
         // Define index personid (not unique) to be added to local_campusconnect_mbr.
         $table = new xmldb_table('local_campusconnect_mbr');
-        $index = new xmldb_index('personid', XMLDB_INDEX_NOTUNIQUE, array('personid', 'personidtype'));
+        $index = new xmldb_index('personid', XMLDB_INDEX_NOTUNIQUE, ['personid', 'personidtype']);
 
         // Conditionally launch add index personid.
         if (!$dbman->index_exists($table, $index)) {

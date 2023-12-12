@@ -44,7 +44,7 @@ class campusconnect_userdata_mapping_form extends moodleform {
             $mform->addElement('html', html_writer::tag('p', get_string('exportuserdatainfo', 'local_campusconnect')));
 
             $exportopts = participantsettings::get_possible_export_fields();
-            $exportopts = array_merge(array('' => '-'), array_combine($exportopts, $exportopts));
+            $exportopts = array_merge(['' => '-'], array_combine($exportopts, $exportopts));
             $mform->addElement('html', '<table class="userdatamappingtable">');
             $mform->addElement('html', '<thead><th>'.get_string('ecs', 'local_campusconnect').
                                      '</th><th>'.get_string('moodle', 'local_campusconnect').
@@ -52,7 +52,7 @@ class campusconnect_userdata_mapping_form extends moodleform {
             foreach (courselink::$validexportmappingfields as $fieldname) {
                 $mform->addElement('html', '<tr><td>');
                 $mform->addElement('checkbox', "exportfields[{$fieldname}]", '', $fieldname,
-                                   array('value' => $fieldname));
+                                   ['value' => $fieldname]);
                 $mform->addElement('html', '</td><td>');
                 $mform->addElement('select', "exportfieldmapping[{$fieldname}]", '', $exportopts);
                 $mform->addElement('html', '</td><td>');
@@ -69,7 +69,7 @@ class campusconnect_userdata_mapping_form extends moodleform {
             $mform->addElement('html', html_writer::tag('p', get_string('importuserdatainfo', 'local_campusconnect')));
 
             $importopts = participantsettings::get_possible_import_fields();
-            $importopts = array_merge(array('' => '-'), array_combine($importopts, $importopts));
+            $importopts = array_merge(['' => '-'], array_combine($importopts, $importopts));
             $mform->addElement('html', '<table class="userdatamappingtable">');
             $mform->addElement('html', '<thead><th>'.get_string('ecs', 'local_campusconnect').
                                      '</th><th>'.get_string('moodle', 'local_campusconnect').'</th></thead>');

@@ -34,7 +34,7 @@ $PAGE->set_context(context_system::instance());
 admin_externalpage_setup('campusconnectrolemapping');
 
 // Load existing data.
-$mappings = $DB->get_records_menu('local_campusconnect_rolemap', array(), 'ccrolename', 'ccrolename, moodleroleid');
+$mappings = $DB->get_records_menu('local_campusconnect_rolemap', [], 'ccrolename', 'ccrolename, moodleroleid');
 
 // In case roles have been deleted.
 $DB->execute("DELETE FROM {local_campusconnect_rolemap} WHERE moodleroleid NOT IN (SELECT id FROM {role})");
@@ -45,7 +45,7 @@ if ($data = $form->get_data()) {
     if ($form->is_cancelled()) {
         redirect($CFG->wwwroot);
     }
-    $newmappings = array();
+    $newmappings = [];
     if (isset($data->mapping)) {
         foreach ($data->mapping as $newmapping) {
             if (!isset($newmapping['ccrolename']) || !isset($newmapping['moodleroleid'])) {
@@ -66,15 +66,15 @@ if ($data = $form->get_data()) {
             if ($newmappings[$ccrolename] == $moodleroleid) {
                 continue;
             }
-            $params = array(
+            $params = [
                 'moodleroleid' => $newmappings[$ccrolename],
                 'ccrolename' => $ccrolename,
-            );
+            ];
             $DB->execute("UPDATE {local_campusconnect_rolemap} SET moodleroleid = :moodleroleid WHERE ccrolename = :ccrolename",
                          $params);
             $mappings[$ccrolename] = $newmappings[$ccrolename];
         } else {
-            $DB->delete_records('local_campusconnect_rolemap', array('ccrolename' => $ccrolename));
+            $DB->delete_records('local_campusconnect_rolemap', ['ccrolename' => $ccrolename]);
             unset($mappings[$ccrolename]);
         }
     }
@@ -82,10 +82,10 @@ if ($data = $form->get_data()) {
     // New.
     foreach ($newmappings as $ccrolename => $moodleroleid) {
         if (!isset($mappings[$ccrolename])) {
-            $toinsert = (object)array(
+            $toinsert = (object)[
                 'ccrolename' => $ccrolename,
                 'moodleroleid' => $moodleroleid,
-            );
+            ];
             $DB->insert_record('local_campusconnect_rolemap', $toinsert);
             $mappings[$ccrolename] = $moodleroleid;
         }

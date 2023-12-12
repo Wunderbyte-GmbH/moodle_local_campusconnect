@@ -41,139 +41,139 @@ class local_campusconnect_filtering_test extends advanced_testcase {
     public function test_check_filter_match() {
 
         // Test a single 'allwords' filter match.
-        $filter = array(
-            'attribute1' => (object)array(
+        $filter = [
+            'attribute1' => (object)[
                 'allwords' => true,
-                'words' => array(),
+                'words' => [],
                 'createsubdirectories' => false
-            )
-        );
-        $metadata = array(
+            ]
+        ];
+        $metadata = [
             'attribute1' => 'testvalue',
             'attribute2' => 'fish'
-        );
+        ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
         // Test matching multiple 'allwords' filters.
-        $filter['attribute2'] = (object)array(
+        $filter['attribute2'] = (object)[
             'allwords' => true,
-            'words' => array(),
+            'words' => [],
             'createsubdirectories' => false
-        );
-        $filter['attribute3'] = (object)array(
+        ];
+        $filter['attribute3'] = (object)[
             'allwords' => true,
-            'words' => array(),
+            'words' => [],
             'createsubdirectories' => false
-        );
+        ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
         // Test matching a single 'specific words' filter.
-        $filter = array(
-            'attribute1' => (object)array(
+        $filter = [
+            'attribute1' => (object)[
                 'allwords' => false,
-                'words' => array('cat', 'testvalue', 'dog'),
+                'words' => ['cat', 'testvalue', 'dog'],
                 'createsubdirectories' => false
-            )
-        );
+            ]
+        ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
         // Test matching multiple 'specific words' filters.
-        $filter['attribute2'] = (object)array(
+        $filter['attribute2'] = (object)[
             'allwords' => false,
-            'words' => array('cow', 'horse', 'fish'),
+            'words' => ['cow', 'horse', 'fish'],
             'createsubdirectories' => false
-        );
+        ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
         // Test failing due to missing attribute in metadata.
-        $filter['attribute3'] = (object)array(
+        $filter['attribute3'] = (object)[
             'allwords' => false,
-            'words' => array('lion', 'tiger'),
+            'words' => ['lion', 'tiger'],
             'createsubdirectories' => false
-        );
+        ];
         $this->assertFalse(filtering::check_filter_match($metadata, $filter));
 
         // Test failing due to non-matching of attribute.
-        $filter = array(
-            'attribute1' => (object)array(
+        $filter = [
+            'attribute1' => (object)[
                 'allwords' => false,
-                'words' => array('cat', 'testvalue', 'dog'),
+                'words' => ['cat', 'testvalue', 'dog'],
                 'createsubdirectories' => false
-            ),
-            'attribute2' => (object)array(
+            ],
+            'attribute2' => (object)[
                 'allwords' => false,
-                'words' => array('cow', 'horse', 'fishes'),
+                'words' => ['cow', 'horse', 'fishes'],
                 'createsubdirectories' => false
-            )
-        );
+            ]
+        ];
         $this->assertFalse(filtering::check_filter_match($metadata, $filter));
 
         // Test matching array attribute.
-        $filter = array(
-            'attribute1' => (object)array(
+        $filter = [
+            'attribute1' => (object)[
                 'allwords' => false,
-                'words' => array('cat', 'testvalue', 'dog'),
+                'words' => ['cat', 'testvalue', 'dog'],
                 'createsubdirectories' => false
-            )
-        );
-        $metadata = array(
-            'attribute1' => array('big', 'small', 'testvalue'),
-            'attribute2' => array('fish', 'whale', 'mermaid')
-        );
+            ]
+        ];
+        $metadata = [
+            'attribute1' => ['big', 'small', 'testvalue'],
+            'attribute2' => ['fish', 'whale', 'mermaid']
+        ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
         // Test failing to match array attribute.
-        $filter['attribute2'] = (object)array(
+        $filter['attribute2'] = (object)[
             'allwords' => false,
-            'words' => array('lion', 'tiger', 'bear'),
+            'words' => ['lion', 'tiger', 'bear'],
             'createsubdirectories' => false
-        );
+        ];
         $this->assertFalse(filtering::check_filter_match($metadata, $filter));
     }
 
     public function test_find_or_create_category() {
 
-        $basecategory = $this->getDataGenerator()->create_category(array('name' => 'Base category'));
+        $basecategory = $this->getDataGenerator()->create_category(['name' => 'Base category']);
 
         // Test creating the course directly in the parent category.
-        $filter = array(
-            'attribute1' => (object)array(
+        $filter = [
+            'attribute1' => (object)[
                 'allwords' => true,
-                'words' => array(),
+                'words' => [],
                 'createsubdirectories' => false
-            )
-        );
-        $metadata = array(
+            ]
+        ];
+        $metadata = [
             'attribute1' => 'testvalue',
             'attribute2' => 'fish'
-        );
+        ];
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
-        $this->assertEquals(array($basecategory->id), $categoryids);
+        $this->assertEquals([$basecategory->id], $categoryids);
 
         // Test creating the course directly in the parent category (with multiple attributes).
-        $filter = array(
-            'attribute1' => (object)array(
+        $filter = [
+            'attribute1' => (object)[
                 'allwords' => true,
-                'words' => array(),
+                'words' => [],
                 'createsubdirectories' => false
-            ),
-            'attribute2' => (object)array(
+            ],
+            'attribute2' => (object)[
                 'allwords' => false,
-                'words' => array('fish', 'cat', 'dog'),
+                'words' => ['fish', 'cat', 'dog'],
                 'createsubdirectories' => false
-            )
-        );
+            ]
+        ];
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
-        $this->assertEquals(array($basecategory->id), $categoryids);
+        $this->assertEquals([$basecategory->id], $categoryids);
 
         // Test creating course in subcategory of parent category.
-        $filter = array(
-            'attribute1' => (object)array(
+        $filter = [
+            'attribute1' => (object)[
                 'allwords' => true,
-                'words' => array(),
+                'words' => [],
                 'createsubdirectories' => true
-            )
-        );
+            ]
+        ];
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertCount(1, $categoryids);
         $categoryid = reset($categoryids);
@@ -184,18 +184,18 @@ class local_campusconnect_filtering_test extends advanced_testcase {
         $this->assertEquals($basecategory->id, $parent->id);
 
         // Test creating course in two levels of subcategories.
-        $filter = array(
-            'attribute1' => (object)array(
+        $filter = [
+            'attribute1' => (object)[
                 'allwords' => true,
-                'words' => array(),
+                'words' => [],
                 'createsubdirectories' => true
-            ),
-            'attribute2' => (object)array(
+            ],
+            'attribute2' => (object)[
                 'allwords' => false,
-                'words' => array('fish', 'cat', 'dog'),
+                'words' => ['fish', 'cat', 'dog'],
                 'createsubdirectories' => true
-            )
-        );
+            ]
+        ];
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertCount(1, $categoryids);
         $categoryid = reset($categoryids);
@@ -208,18 +208,18 @@ class local_campusconnect_filtering_test extends advanced_testcase {
         $this->assertEquals($basecategory->id, $parent->id);
 
         // Test creating course in subcategory from 2nd filter only.
-        $filter = array(
-            'attribute1' => (object)array(
+        $filter = [
+            'attribute1' => (object)[
                 'allwords' => true,
-                'words' => array(),
+                'words' => [],
                 'createsubdirectories' => false
-            ),
-            'attribute2' => (object)array(
+            ],
+            'attribute2' => (object)[
                 'allwords' => false,
-                'words' => array('fish', 'cat', 'dog'),
+                'words' => ['fish', 'cat', 'dog'],
                 'createsubdirectories' => true
-            )
-        );
+            ]
+        ];
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertCount(1, $categoryids);
         $categoryid = reset($categoryids);
@@ -249,7 +249,7 @@ class local_campusconnect_filtering_test extends advanced_testcase {
                 $DB->expectAt($getf++, 'get_field', array('course_categories', 'id', '*'));
                 $categoryid = \local_campusconnect\filtering::find_or_create_categories($metadata, $filter, -5);
                 $this->assertEqual($categoryid, array(-6, -7));
-        
+
                 // Test creating course in single level subcategories with multiple attribute values (but limited words)
                 $filter = array(
                     'attribute1' => (object)array(
@@ -267,7 +267,7 @@ class local_campusconnect_filtering_test extends advanced_testcase {
                 $DB->expectAt($getf++, 'get_field', array('course_categories', 'id', '*'));
                 $categoryid = \local_campusconnect\filtering::find_or_create_categories($metadata, $filter, -5);
                 $this->assertEqual($categoryid, array(-6));
-        
+
                 // Test creating course in two  levels of subcategories with multiple attribute values
                 $filter = array(
                     'attribute1' => (object)array(
@@ -311,99 +311,99 @@ class local_campusconnect_filtering_test extends advanced_testcase {
                 $DB->expectAt($getf++, 'get_field', array('course_categories', 'id', '*'));
                 $categoryid = \local_campusconnect\filtering::find_or_create_categories($metadata, $filter, -5);
                 $this->assertEqual($categoryid, array(-7, -8, -9, -11, -12, -13));
-        
+
                 $DB->expectCallCount('insert_record', $ins);
                 $DB->expectCallCount('get_field', $getf);*/
     }
 
     public function test_complex_metadata() {
-        $metadata = (object)array(
+        $metadata = (object)[
             'title' => 'Test title',
-            'organisationalUnits' => array(
-                (object)array('id' => 5, 'title' => 'test1'),
-                (object)array('id' => 6, 'title' => 'test2'),
-            ),
-            'groups' => array(
-                (object)array(
+            'organisationalUnits' => [
+                (object)['id' => 5, 'title' => 'test1'],
+                (object)['id' => 6, 'title' => 'test2'],
+            ],
+            'groups' => [
+                (object)[
                     'id' => 'group1',
                     'title' => 'group1title',
-                    'lecturers' => array(
-                        (object)array('firstName' => 'Fred', 'lastName' => 'Bloggs'),
-                        (object)array('firstName' => 'Gary', 'lastName' => 'Barlow'),
-                    )
-                )
-            ),
-        );
+                    'lecturers' => [
+                        (object)['firstName' => 'Fred', 'lastName' => 'Bloggs'],
+                        (object)['firstName' => 'Gary', 'lastName' => 'Barlow'],
+                    ]
+                ]
+            ],
+        ];
 
         $ecs = new ecssettings();
-        $ecs->save_settings(array(
+        $ecs->save_settings([
                                 'url' => 'http://localhost:3000',
                                 'auth' => ecssettings::AUTH_NONE,
                                 'ecsauth' => 'unittest1',
                                 'importcategory' => 0,
                                 'importrole' => 'student',
-                            ));
+                            ]);
         $meta = new metadata($ecs, false);
         $metadata = $meta->flatten_remote_data($metadata, false);
 
         // Check for matching organisationalUnits field.
-        $filter = array(
-            'organisationalUnits' => (object)array(
+        $filter = [
+            'organisationalUnits' => (object)[
                 'allwords' => false,
-                'words' => array('test1', 'test2'),
+                'words' => ['test1', 'test2'],
                 'createsubdirectories' => false,
-            ),
-        );
+            ],
+        ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
         // Check for non-matching organisationalUnits field.
-        $filter = array(
-            'organisationalUnits' => (object)array(
+        $filter = [
+            'organisationalUnits' => (object)[
                 'allwords' => false,
-                'words' => array('test3', 'test4'),
+                'words' => ['test3', 'test4'],
                 'createsubdirectories' => false,
-            ),
-        );
+            ],
+        ];
         $this->assertFalse(filtering::check_filter_match($metadata, $filter));
 
         // Check for matching groups field.
-        $filter = array(
-            'groups' => (object)array(
+        $filter = [
+            'groups' => (object)[
                 'allwords' => false,
-                'words' => array('group1title', 'group2title'),
+                'words' => ['group1title', 'group2title'],
                 'createsubdirectories' => false,
-            ),
-        );
+            ],
+        ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
         // Check for non-matching groups field.
-        $filter = array(
-            'groups' => (object)array(
+        $filter = [
+            'groups' => (object)[
                 'allwords' => false,
-                'words' => array('group2title'),
+                'words' => ['group2title'],
                 'createsubdirectories' => false,
-            ),
-        );
+            ],
+        ];
         $this->assertFalse(filtering::check_filter_match($metadata, $filter));
 
         // Check for matching groups_lecturers field.
-        $filter = array(
-            'groups_lecturers' => (object)array(
+        $filter = [
+            'groups_lecturers' => (object)[
                 'allwords' => false,
-                'words' => array('Fred Bloggs', 'Robbie Williams'),
+                'words' => ['Fred Bloggs', 'Robbie Williams'],
                 'createsubdirectories' => false,
-            ),
-        );
+            ],
+        ];
         $this->assertTrue(filtering::check_filter_match($metadata, $filter));
 
         // Check for non-matching groups_lecturers field.
-        $filter = array(
-            'groups_lecturers' => (object)array(
+        $filter = [
+            'groups_lecturers' => (object)[
                 'allwords' => false,
-                'words' => array('Robbie Williams'),
+                'words' => ['Robbie Williams'],
                 'createsubdirectories' => false,
-            ),
-        );
+            ],
+        ];
         $this->assertFalse(filtering::check_filter_match($metadata, $filter));
     }
 }

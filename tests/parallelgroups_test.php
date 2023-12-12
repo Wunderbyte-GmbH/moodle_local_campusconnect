@@ -48,14 +48,14 @@ defined('MOODLE_INTERNAL') || die();
  */
 class local_campusconnect_parallelgroups_test extends advanced_testcase {
     /** @var ecssettings[] $settings */
-    protected $settings = array();
-    protected $mid = array();
+    protected $settings = [];
+    protected $mid = [];
     /** @var directory[] $directory */
-    protected $directory = array();
+    protected $directory = [];
     /** @var details $transferdetails */
     protected $transferdetails = null;
 
-    protected $directorydata = array(1001 => 'dir1', 1002 => 'dir2', 1003 => 'dir3');
+    protected $directorydata = [1001 => 'dir1', 1002 => 'dir2', 1003 => 'dir3'];
     protected $coursedata = '
     {
         "lectureID": "abc_1234",
@@ -217,29 +217,29 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->resetAfterTest();
 
         // Create the connections for testing.
-        $names = array(1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3');
+        $names = [1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3'];
         foreach ($names as $key => $name) {
-            $category = $this->getDataGenerator()->create_category(array('name' => 'import'.$key));
+            $category = $this->getDataGenerator()->create_category(['name' => 'import'.$key]);
             $ecs = new ecssettings();
-            $ecs->save_settings(array(
+            $ecs->save_settings([
                                     'url' => 'http://localhost:3000',
                                     'auth' => ecssettings::AUTH_NONE,
                                     'ecsauth' => $name,
                                     'importcategory' => $category->id,
                                     'importrole' => 'student',
-                                ));
+                                ]);
             $this->settings[$key] = $ecs;
             $this->mid[$key] = $key * 10; // Real MID not needed, as no actual connection is created.
         }
 
         // Set participant 1 as the CMS for participant 2.
-        $part = (object)array(
+        $part = (object)[
             'ecsid' => $this->settings[2]->get_id(),
             'mid' => $this->mid[1],
             'export' => 0,
             'import' => 1,
             'importtype' => participantsettings::IMPORT_CMS,
-        );
+        ];
         $DB->insert_record('local_campusconnect_part', $part);
         participantsettings::get_cms_participant(true); // Reset the cached 'cms participant' value.
 
@@ -252,7 +252,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
             $dir->create($id, 'idroot', $dirid, 'idroot', $name, 1);
             $this->directory[] = $dir;
         }
-        $category = $this->getDataGenerator()->create_category(array('name' => 'category_tree'));
+        $category = $this->getDataGenerator()->create_category(['name' => 'category_tree']);
         $dirtree->map_category($category->id);
         $dirtree->create_all_categories();
         // Reload the directory objects after creating the categories for them.
@@ -261,13 +261,13 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         }
 
         // Create some fake transfer details for the requests.
-        $this->transferdetails = new details((object)array(
+        $this->transferdetails = new details((object)[
             'url' => 'fakeurl',
-            'receivers' => array(0 => (object)array('itsyou' => 1, 'mid' => $this->mid[2])),
-            'senders' => array(0 => (object)array('mid' => $this->mid[1])),
-            'owner' => (object)array('itsyou' => 0),
+            'receivers' => [0 => (object)['itsyou' => 1, 'mid' => $this->mid[2]]],
+            'senders' => [0 => (object)['mid' => $this->mid[1]]],
+            'owner' => (object)['itsyou' => 0],
             'content_type' => event::RES_COURSE
-        ));
+        ]);
 
         // Moodle seems to want to create a dummy course - get rid of it.
         $DB->delete_records_select('course', 'id > 1');
@@ -282,13 +282,13 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $course->groupScenario = parallelgroups::PGROUP_NONE;
 
         // Should be no courses before we process the request.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), '', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], '', 'id, fullname, shortname, category, summary');
         $this->assertEmpty($courses);
 
         course::create($resourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Should now be 2 courses - check they are as expected.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(2, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -304,7 +304,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->assertContains('Synergy Learning', $course2->summary);
 
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course1->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
         $actualredirect = course::check_redirect($course2->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
@@ -344,7 +344,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Should still be 2 courses - check they are as expected.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(2, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -360,7 +360,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->assertContains('Synergy Learning', $course2->summary);
 
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course1->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
         $actualredirect = course::check_redirect($course2->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
@@ -410,13 +410,13 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $course->groupScenario = parallelgroups::PGROUP_SEPARATE_GROUPS;
 
         // Should be no courses before we process the request.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), '', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], '', 'id, fullname, shortname, category, summary');
         $this->assertEmpty($courses);
 
         course::create($resourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Should now be 2 courses - check they are as expected.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(2, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -432,7 +432,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->assertContains('Synergy Learning', $course2->summary);
 
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course1->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
         $actualredirect = course::check_redirect($course2->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
@@ -481,7 +481,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Should still be 2 courses - check they are as expected.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(2, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -497,7 +497,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->assertContains('Synergy Learning', $course2->summary);
 
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course1->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
         $actualredirect = course::check_redirect($course2->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
@@ -517,7 +517,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->assertEquals('Newly added group 4', $group4->name);
 
         // Check parallel groups records have been updated.
-        $pgroups = $DB->get_records('local_campusconnect_pgroup', array(), 'id');
+        $pgroups = $DB->get_records('local_campusconnect_pgroup', [], 'id');
         $this->assertCount(4, $pgroups);
         $pgroup1 = array_shift($pgroups);
         $pgroup2 = array_shift($pgroups);
@@ -558,13 +558,13 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $course->groupScenario = parallelgroups::PGROUP_SEPARATE_COURSES;
 
         // Should be no courses before we process the request.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), '', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], '', 'id, fullname, shortname, category, summary');
         $this->assertEmpty($courses);
 
         course::create($resourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Should now be 6 courses - check they are as expected.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(6, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -597,19 +597,19 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
 
         // PGroup 1.
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course1->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
         $actualredirect = course::check_redirect($course2->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
         // PGroup 2.
         $this->assertFalse(course::check_redirect($course3->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course3->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course3->id]);
         $actualredirect = course::check_redirect($course4->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
         // PGroup 3.
         $this->assertFalse(course::check_redirect($course5->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course5->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course5->id]);
         $actualredirect = course::check_redirect($course6->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
@@ -653,7 +653,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Should now be 8 courses - check they are as expected.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(8, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -695,25 +695,25 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
 
         // PGroup 1.
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course1->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
         $actualredirect = course::check_redirect($course2->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
         // PGroup 2.
         $this->assertFalse(course::check_redirect($course3->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course3->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course3->id]);
         $actualredirect = course::check_redirect($course4->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
         // PGroup 3.
         $this->assertFalse(course::check_redirect($course5->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course5->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course5->id]);
         $actualredirect = course::check_redirect($course6->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
         // PGroup 4.
         $this->assertFalse(course::check_redirect($course7->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course7->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course7->id]);
         $actualredirect = course::check_redirect($course8->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
@@ -769,13 +769,13 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $course->groupScenario = parallelgroups::PGROUP_SEPARATE_LECTURERS;
 
         // Should be no courses before we process the request.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), '', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], '', 'id, fullname, shortname, category, summary');
         $this->assertEmpty($courses);
 
         course::create($resourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Should now be 4 courses - check they are as expected.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(4, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -799,13 +799,13 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
 
         // PGroup 1 + 2.
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course1->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
         $actualredirect = course::check_redirect($course2->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
         // PGroup 2.
         $this->assertFalse(course::check_redirect($course3->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course3->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course3->id]);
         $actualredirect = course::check_redirect($course4->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
@@ -854,7 +854,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Should now be 6 courses - check they are as expected.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(6, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -887,19 +887,19 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
 
         // PGroup 1 + 2.
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course1->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
         $actualredirect = course::check_redirect($course2->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
         // PGroup 3.
         $this->assertFalse(course::check_redirect($course3->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course3->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course3->id]);
         $actualredirect = course::check_redirect($course4->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
         // PGroup 4.
         $this->assertFalse(course::check_redirect($course5->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course5->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course5->id]);
         $actualredirect = course::check_redirect($course6->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
@@ -960,7 +960,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $course->groupScenario = parallelgroups::PGROUP_SEPARATE_COURSES;
 
         // Should be no courses before we process the request.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), '', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], '', 'id, fullname, shortname, category, summary');
         $this->assertEmpty($courses);
 
         course::create($resourceid, $this->settings[2], $course, $this->transferdetails);
@@ -968,7 +968,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Should now be 2 courses - check they are as expected.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(6, $courses); // Existing courses are not deleted during change.
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -984,7 +984,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->assertContains('Synergy Learning', $course2->summary);
 
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course1->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
         $actualredirect = course::check_redirect($course2->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
@@ -1036,7 +1036,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $course->groupScenario = parallelgroups::PGROUP_SEPARATE_GROUPS;
 
         // Should be no courses before we process the request.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), '', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], '', 'id, fullname, shortname, category, summary');
         $this->assertEmpty($courses);
 
         course::create($resourceid, $this->settings[2], $course, $this->transferdetails);
@@ -1044,7 +1044,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
 
         // Should now be 6 courses - check they are as expected.
-        $courses = $DB->get_records_select('course', 'id > 1', array(), 'id', 'id, fullname, shortname, category, summary');
+        $courses = $DB->get_records_select('course', 'id > 1', [], 'id', 'id, fullname, shortname, category, summary');
         $this->assertCount(6, $courses);
         $course1 = array_shift($courses);
         $course2 = array_shift($courses);
@@ -1077,19 +1077,19 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
 
         // PGroup 1.
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course1->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
         $actualredirect = course::check_redirect($course2->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
         // PGroup 2.
         $this->assertFalse(course::check_redirect($course3->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course3->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course3->id]);
         $actualredirect = course::check_redirect($course4->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 
         // PGroup 3.
         $this->assertFalse(course::check_redirect($course5->id)); // No redirect for the real course.
-        $expectedredirect = new moodle_url('/course/view.php', array('id' => $course5->id));
+        $expectedredirect = new moodle_url('/course/view.php', ['id' => $course5->id]);
         $actualredirect = course::check_redirect($course6->id);
         $this->assertEquals($expectedredirect->out(), $actualredirect->out()); // Link redirects to the real course.
 

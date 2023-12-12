@@ -27,7 +27,7 @@ namespace local_campusconnect;
 defined('MOODLE_INTERNAL') || die();
 
 class uri_list {
-    protected $uris = array();
+    protected $uris = [];
 
     public function add($uri, $id) {
         $this->uris[$id] = $uri;

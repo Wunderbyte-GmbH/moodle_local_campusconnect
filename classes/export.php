@@ -51,8 +51,8 @@ class export {
         }
 
         $this->courseid = $courseid;
-        $this->exportsettings = $DB->get_records('local_campusconnect_export', array('courseid' => $this->courseid));
-        $mids = array();
+        $this->exportsettings = $DB->get_records('local_campusconnect_export', ['courseid' => $this->courseid]);
+        $mids = [];
         foreach ($this->exportsettings as $setting) {
             if ($setting->status != self::STATUS_DELETED) {
                 $mids[$setting->ecsid] = explode(',', $setting->mids);
@@ -119,7 +119,7 @@ class export {
      */
     public function is_exported_to($ecsid, $mid) {
         if (!is_array($mid)) {
-            $mid = array($mid);
+            $mid = [$mid];
         }
         foreach ($this->exportparticipants as $part) {
             if ($part->get_ecs_id() == $ecsid && in_array($part->get_mid(), $mid)) {
@@ -155,7 +155,7 @@ class export {
      * @return participantsettings[] ecsid_mid => \local_campusconnect\participantsettings
      */
     public function list_current_exports() {
-        $ret = array();
+        $ret = [];
         foreach ($this->exportparticipants as $identifier => $part) {
             if ($part->is_exported()) {
                 $ret[$identifier] = $part;
@@ -223,7 +223,7 @@ class export {
                 } else {
                     if (empty($mids)) {
                         // ECS server never received the 'create' message => just delete the local export record.
-                        $DB->delete_records('local_campusconnect_export', array('id' => $upd->id));
+                        $DB->delete_records('local_campusconnect_export', ['id' => $upd->id]);
                         unset($this->exportsettings[$upd->id]);
                         return;
                     }
@@ -278,7 +278,7 @@ class export {
         foreach ($this->exportsettings as $setting) {
             if ($setting->status == self::STATUS_CREATED) {
                 // ECS never knew about this course - just delete the record.
-                $DB->delete_records('local_campusconnect_export', array('id' => $setting->id));
+                $DB->delete_records('local_campusconnect_export', ['id' => $setting->id]);
                 unset($this->exportsettings[$setting->id]);
             } else {
                 // Need to inform ECS server about this deletion.
@@ -299,7 +299,7 @@ class export {
 
         foreach ($this->exportsettings as $setting) {
             if ($setting->status == self::STATUS_CREATED) {
-                $DB->delete_records('local_campusconnect_export', array('id' => $setting->id));
+                $DB->delete_records('local_campusconnect_export', ['id' => $setting->id]);
                 unset($this->exportsettings[$setting->id]);
 
             } else if ($setting->status != self::STATUS_DELETED) {
@@ -335,7 +335,7 @@ class export {
     public static function update_ecs(connect $connect, $unittestdata = null) {
         global $DB;
 
-        $activemids = array();
+        $activemids = [];
         foreach (participantsettings::list_potential_export_participants() as $part) {
             if ($part->get_ecs_id() == $connect->get_ecs_id()) {
                 $activemids[] = $part->get_mid();
@@ -344,12 +344,12 @@ class export {
 
         // Get a list of all the courses that need updating on the ECS server.
         $updated = $DB->get_records_select('local_campusconnect_export', 'ecsid = :ecsid AND status <> :uptodate',
-                                           array('ecsid' => $connect->get_ecs_id(), 'uptodate' => self::STATUS_UPTODATE));
+                                           ['ecsid' => $connect->get_ecs_id(), 'uptodate' => self::STATUS_UPTODATE]);
         foreach ($updated as $export) {
             if ($export->status == self::STATUS_DELETED) {
                 // Delete from ECS server, then delete local record.
                 $connect->delete_resource($export->resourceid, event::RES_COURSELINK);
-                $DB->delete_records('local_campusconnect_export', array('id' => $export->id));
+                $DB->delete_records('local_campusconnect_export', ['id' => $export->id]);
                 notification::queue_message($connect->get_ecs_id(),
                                             notification::MESSAGE_EXPORT_COURSELINK,
                                             notification::TYPE_DELETE,
@@ -368,7 +368,7 @@ class export {
 
             // Get the course data & adjust using meta-data mapping rules.
             if (is_null($unittestdata)) {
-                $course = $DB->get_record('course', array('id' => $export->courseid), '*', MUST_EXIST);
+                $course = $DB->get_record('course', ['id' => $export->courseid], '*', MUST_EXIST);
             } else {
                 $course = $unittestdata[$export->courseid];
             }
@@ -423,7 +423,7 @@ class export {
         global $DB;
 
         // Find all the exports to this participant.
-        $exportrecords = $DB->get_records('local_campusconnect_export', array('ecsid' => $participant->get_ecs_id()));
+        $exportrecords = $DB->get_records('local_campusconnect_export', ['ecsid' => $participant->get_ecs_id()]);
         foreach ($exportrecords as $id => $exportrecord) {
             $mids = explode(',', $exportrecord->mids);
             if (!in_array($participant->get_mid(), $mids)) {
@@ -445,7 +445,7 @@ class export {
      * Resync the exported courses with the ECS
      */
     public static function refresh_all_ecs() {
-        $errors = array();
+        $errors = [];
         $ecslist = ecssettings::list_ecs();
         foreach ($ecslist as $ecsid => $ecs) {
             $settings = new ecssettings($ecsid);
@@ -471,14 +471,14 @@ class export {
     public static function refresh_ecs(connect $connect, $preview = false) {
         global $DB;
 
-        $ret = (object)array('created' => array(), 'updated' => array(), 'deleted' => array());
+        $ret = (object)['created' => [], 'updated' => [], 'deleted' => []];
 
         // Start by updating ECS with any recent changes.
         self::update_ecs($connect);
 
         // Get a list of MIDs that this site is known by.
-        $mymids = array();
-        $knownmids = array();
+        $mymids = [];
+        $knownmids = [];
         $memberships = $connect->get_memberships();
         foreach ($memberships as $membership) {
             foreach ($membership->participants as $participant) {
@@ -491,7 +491,7 @@ class export {
         }
 
         // Get a list of the courses we have exported.
-        $exportedcourses = $DB->get_records('local_campusconnect_export', array('ecsid' => $connect->get_ecs_id()), '',
+        $exportedcourses = $DB->get_records('local_campusconnect_export', ['ecsid' => $connect->get_ecs_id()], '',
                                             'resourceid, id, courseid, mids');
         $exportedresourceids = array_keys($exportedcourses);
         $metadata = new metadata($connect->get_settings());
@@ -526,12 +526,12 @@ class export {
                     // => delete the resource from ECS and local export list.
                     if (!$preview) {
                         $connect->delete_resource($resourceid, event::RES_COURSELINK);
-                        $DB->delete_records('local_campusconnect_export', array('id' => $exportedcourses[$resourceid]->id));
+                        $DB->delete_records('local_campusconnect_export', ['id' => $exportedcourses[$resourceid]->id]);
                     }
                     unset($exportedcourses[$resourceid]);
                     $ret->deleted[] = $resourceid;
                 } else {
-                    $course = $DB->get_record('course', array('id' => $courseid));
+                    $course = $DB->get_record('course', ['id' => $courseid]);
                     $data = $metadata->map_course_to_remote($course);
                     $data->url = self::get_course_url($course);
 
@@ -563,7 +563,7 @@ class export {
                 continue;
             }
 
-            $course = $DB->get_record('course', array('id' => $courseid));
+            $course = $DB->get_record('course', ['id' => $courseid]);
             $data = $metadata->map_course_to_remote($course);
             $data->url = self::get_course_url($course);
 
@@ -590,7 +590,7 @@ class export {
     public static function delete_ecs_exports($ecsid, $force = false) {
         global $DB;
 
-        $exports = $DB->get_records('local_campusconnect_export', array('ecsid' => $ecsid));
+        $exports = $DB->get_records('local_campusconnect_export', ['ecsid' => $ecsid]);
         if ($exports) {
             $ecssettings = new ecssettings($ecsid);
             $connect = new connect($ecssettings);
@@ -598,7 +598,7 @@ class export {
                 if ($export->status != self::STATUS_CREATED) {
                     try {
                         $connect->delete_resource($export->resourceid, event::RES_COURSELINK);
-                        $DB->delete_records('local_campusconnect_export', array('id' => $export->id));
+                        $DB->delete_records('local_campusconnect_export', ['id' => $export->id]);
                     } catch (Exception $e) {
                         if (!$force) {
                             throw $e;
@@ -607,7 +607,7 @@ class export {
                 }
             }
             // Final clean-up.
-            $DB->delete_records('local_campusconnect_export', array('ecsid' => $ecsid));
+            $DB->delete_records('local_campusconnect_export', ['ecsid' => $ecsid]);
         }
     }
 
@@ -621,7 +621,7 @@ class export {
         global $DB;
 
         $select = '';
-        $params = array();
+        $params = [];
         if (!is_null($ecsid)) {
             $select = 'ecsid = :ecsid';
             $params['ecsid'] = $ecsid;
@@ -634,7 +634,7 @@ class export {
                 throw new coding_exception("campusconnect_export::list_all_exports - must specify ecsid when specifying mid");
             }
             // Get the exported courses for a particular participant.
-            $courseids = array();
+            $courseids = [];
             $exports = $DB->get_records_select('local_campusconnect_export', $select, $params);
             foreach ($exports as $export) {
                 $mids = explode(',', $export->mids);
@@ -643,7 +643,7 @@ class export {
                 }
             }
         }
-        $exports = array();
+        $exports = [];
         foreach ($courseids as $courseid) {
             $exports[] = new export($courseid);
         }
@@ -656,7 +656,7 @@ class export {
      * @return \moodle_url
      */
     public static function get_course_url($course) {
-        $url = new moodle_url('/local/campusconnect/viewcourse.php', array('id' => $course->id));
+        $url = new moodle_url('/local/campusconnect/viewcourse.php', ['id' => $course->id]);
         return $url->out();
     }
 

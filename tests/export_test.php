@@ -31,13 +31,13 @@ global $CFG;
 require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
 
 class local_campusconnect_export_test extends campusconnect_base_testcase {
-    protected $resources = array();
+    protected $resources = [];
 
     public function setUp() {
         parent::setUp();
 
         // Data for test resources to create
-        $this->resources[1] = (object)array('url' => 'http://www.example.com/test123',
+        $this->resources[1] = (object)['url' => 'http://www.example.com/test123',
                                             'title' => 'Course from ECS',
                                             'organization' => 'Synergy Learning',
                                             'lang' => 'en',
@@ -46,22 +46,22 @@ class local_campusconnect_export_test extends campusconnect_base_testcase {
                                             'term' => 'WS 06/07',
                                             'credits' => '10',
                                             'status' => 'online',
-                                            'courseType' => 'Vorlesung');
+                                            'courseType' => 'Vorlesung'];
 
-        $this->resources[2] = (object)array('url' => 'http://www.example.com/test456');
+        $this->resources[2] = (object)['url' => 'http://www.example.com/test456'];
 
         // Enable export from ecs1 to each of the participants.
         foreach ($this->mid as $key => $mid) {
             $part = new participantsettings($this->connect[1]->get_settings()->get_id(), $mid);
-            $part->save_settings(array('export' => true));
+            $part->save_settings(['export' => true]);
         }
     }
 
     protected function tearDown() {
         $this->clear_ecs_resources(event::RES_COURSELINK);
 
-        $this->connect = array();
-        $this->mid = array();
+        $this->connect = [];
+        $this->mid = [];
     }
 
     public function test_list_participants() {
@@ -70,7 +70,7 @@ class local_campusconnect_export_test extends campusconnect_base_testcase {
         $participants = $export->list_participants();
 
         $this->assertTrue(count($participants) >= 3, 'Should be at least 3 participants to export to');
-        $found = array(1 => false, 2 => false, 3 => false);
+        $found = [1 => false, 2 => false, 3 => false];
         foreach ($participants as $part) {
             if ($part->get_ecs_id() == $this->connect[1]->get_settings()->get_id()) {
                 $idx = array_search($part->get_mid(), $this->mid);
@@ -93,7 +93,7 @@ class local_campusconnect_export_test extends campusconnect_base_testcase {
         /** @var $potentialexports participantsettings[] */
         $potentialexports = $export->list_participants();
         /** @var $potential participantsettings[] */
-        $potential = array();
+        $potential = [];
         foreach ($potentialexports as $part) {
             // Ignore any potential exports that are not part of the unit-testing environment.
             if ($part->get_ecs_id() == $this->connect[1]->get_settings()->get_id()) {
@@ -163,7 +163,7 @@ class local_campusconnect_export_test extends campusconnect_base_testcase {
         /** @var $potentialexports participantsettings[] */
         $potentialexports = $export->list_participants();
         /** @var $potential participantsettings[] */
-        $potential = array();
+        $potential = [];
         foreach ($potentialexports as $part) {
             // Ignore any potential exports that are not part of the unit-testing environment.
             if ($part->get_ecs_id() == $this->connect[1]->get_settings()->get_id()) {
@@ -205,17 +205,17 @@ class local_campusconnect_export_test extends campusconnect_base_testcase {
 
         $export = new export(-10);
 
-        $exportcourse = (object)array('id' => -10,
+        $exportcourse = (object)['id' => -10,
                                       'fullname' => 'testexport',
                                       'shortname' => 'testexport',
                                       'startdate' => mktime(12, 0, 0, 4, 1, 2012),
-                                      'visible' => 1);
-        $coursedata = array(-10 => $exportcourse);
+                                      'visible' => 1];
+        $coursedata = [-10 => $exportcourse];
 
         /** @var $potentialexports participantsettings[] */
         $potentialexports = $export->list_participants();
         /** @var $potential participantsettings[] */
-        $potential = array();
+        $potential = [];
         foreach ($potentialexports as $part) {
             // Ignore any potential exports that are not part of the unit-testing environment.
             if ($part->get_ecs_id() == $this->connect[1]->get_settings()->get_id()) {

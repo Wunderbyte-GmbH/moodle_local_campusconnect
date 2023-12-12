@@ -35,11 +35,11 @@ class member_personid {
 
     const CUSTOM_FIELD_PREFIX = 'custom_';
 
-    public static $valididtypes = array(
+    public static $valididtypes = [
         courselink::PERSON_UNIQUECODE, courselink::PERSON_EPPN,
         courselink::PERSON_LOGIN, courselink::PERSON_LOGINUID,
         courselink::PERSON_UID, courselink::PERSON_EMAIL
-    );
+    ];
 
     protected static $mapping = null;
 
@@ -76,14 +76,14 @@ class member_personid {
             if ($mapping = get_config('local_campusconnect', 'member_personid_mapping')) {
                 self::$mapping = unserialize($mapping);
             } else {
-                self::$mapping = array(
+                self::$mapping = [
                     courselink::PERSON_UNIQUECODE => null,
                     courselink::PERSON_EPPN => null,
                     courselink::PERSON_LOGIN => 'username',
                     courselink::PERSON_LOGINUID => null,
                     courselink::PERSON_UID => 'id',
                     courselink::PERSON_EMAIL => 'email',
-                );
+                ];
             }
         }
         return self::$mapping;

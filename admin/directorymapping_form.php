@@ -35,12 +35,12 @@ class campusconnect_directorymapping_form extends moodleform {
         /** @var $dirtree directorytree */
         $dirtree = $this->_customdata['dirtree'];
 
-        $statuses = array(
+        $statuses = [
             directorytree::MODE_PENDING => get_string('modepending', 'local_campusconnect'),
             directorytree::MODE_WHOLE => get_string('modewhole', 'local_campusconnect'),
             directorytree::MODE_MANUAL => get_string('modemanual', 'local_campusconnect'),
             directorytree::MODE_DELETED => get_string('modedeleted', 'local_campusconnect')
-        );
+        ];
         $mode = $dirtree->get_mode();
 
         $mform->addElement('header', 'general', get_string('directorytreesettings', 'local_campusconnect'));

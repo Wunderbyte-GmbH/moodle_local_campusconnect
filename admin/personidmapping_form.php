@@ -37,7 +37,7 @@ class campusconnect_personidmapping_form extends moodleform {
         $mform->addElement('html', html_writer::tag('p', get_string('personidmappingintro', 'local_campusconnect')));
 
         $fieldopts = member_personid::get_possible_user_fields();
-        $fieldopts = array_merge(array('' => '-'), array_combine($fieldopts, $fieldopts));
+        $fieldopts = array_merge(['' => '-'], array_combine($fieldopts, $fieldopts));
         $mform->addElement('html', '<table class="userdatamappingtable">');
         $mform->addElement('html', '<thead><th>'.get_string('ecs', 'local_campusconnect').
                                  '</th><th>'.get_string('moodle', 'local_campusconnect').'</th></thead>');

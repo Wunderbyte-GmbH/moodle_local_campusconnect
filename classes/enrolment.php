@@ -40,10 +40,10 @@ class enrolment {
     const STATUS_DENIED = 'denied';
     const STATUS_INACTIVE = 'inactive_account';
 
-    public static $validstatuses = array(
+    public static $validstatuses = [
         self::STATUS_ACTIVE, self::STATUS_PENDING, self::STATUS_REJECTED,
         self::STATUS_UNSUBSCRIBED, self::STATUS_DENIED, self::STATUS_INACTIVE
-    );
+    ];
 
     /**
      * Queue a status change to send back to the participant the user came from.
@@ -63,13 +63,13 @@ class enrolment {
             throw new coding_exception("Invalid status: {$status}");
         }
 
-        $params = array('courseid' => $courseid, 'userid' => $user->id);
+        $params = ['courseid' => $courseid, 'userid' => $user->id];
         if ($existing = $DB->get_record('local_campusconnect_enrex', $params)) {
             // Already an unsent message about this user's enrolment status - update the status.
-            $upd = (object)array(
+            $upd = (object)[
                 'id' => $existing->id,
                 'status' => $status,
-            );
+            ];
             $DB->update_record('local_campusconnect_enrex', $upd);
 
         } else {
@@ -95,8 +95,8 @@ class enrolment {
         $ecsid = $connect->get_ecs_id();
 
         foreach ($enrolments as $enrol) {
-            $notifiedecsids = array();
-            $ecsids = array();
+            $notifiedecsids = [];
+            $ecsids = [];
             if ($enrol->notifiedecsids) {
                 $notifiedecsids = explode(',', $enrol->notifiedecsids);
                 if (in_array($ecsid, $notifiedecsids)) {
@@ -108,7 +108,7 @@ class enrolment {
                       FROM {user} u
                       JOIN {auth_campusconnect} ac ON ac.username = u.username
                      WHERE u.id = :id";
-            if ($user = $DB->get_record_sql($sql, array('id' => $enrol->userid))) {
+            if ($user = $DB->get_record_sql($sql, ['id' => $enrol->userid])) {
                 $ecsids = self::get_ecsids_from_pids($user->pids);
                 if (!in_array($ecsid, $ecsids)) {
                     continue; // User came from a different ECS - wait until we are processing that ECS.
@@ -119,14 +119,14 @@ class enrolment {
                 $mids = participantsettings::get_mids_from_pids($ecsid, $user->pids);
                 $export = new export($enrol->courseid);
                 if ($export->is_exported_to($ecsid, $mids)) {
-                    $course = $DB->get_record('course', array('id' => $enrol->courseid));
-                    $data = (object)array(
+                    $course = $DB->get_record('course', ['id' => $enrol->courseid]);
+                    $data = (object)[
                         'url' => export::get_course_url($course),
                         'id' => export::get_course_id($course, $connect),
                         'personID' => $user->personid,
                         'personIDtype' => $user->personidtype,
                         'status' => $enrol->status,
-                    );
+                    ];
                     foreach ($mids as $mid) {
                         if ($export->should_send_enrolment_status($connect->get_ecs_id(), $mid)) {
                             $connect->add_resource(event::RES_ENROLMENT, $data, null, $mid);
@@ -145,16 +145,16 @@ class enrolment {
             if (array_diff($ecsids, $notifiedecsids)) {
                 // Still ECS to send notifications to.
                 $DB->set_field('local_campusconnect_enrex', 'notifiedecsids', implode(',', $notifiedecsids),
-                               array('id' => $enrol->id));
+                               ['id' => $enrol->id]);
             } else {
                 // All relevant ECS have been updated => delete the record.
-                $DB->delete_records('local_campusconnect_enrex', array('id' => $enrol->id));
+                $DB->delete_records('local_campusconnect_enrex', ['id' => $enrol->id]);
             }
         }
     }
 
     protected static function get_ecsids_from_pids($pids) {
-        $ecsids = array();
+        $ecsids = [];
         $pids = explode(',', $pids);
         foreach ($pids as $pid) {
             $pid = explode('_', $pid);
@@ -187,13 +187,13 @@ class enrolment {
             return true; // Ignoring enrolment status updates from this participant.
         }
 
-        $courselink = $DB->get_record('local_campusconnect_clink', array('ecsid' => $ecsid, 'mid' => $mid, 'url' => $url));
+        $courselink = $DB->get_record('local_campusconnect_clink', ['ecsid' => $ecsid, 'mid' => $mid, 'url' => $url]);
         if (!$courselink) {
             log::add("Cannot find an imported course link matching ecsid: $ecsid, mid: $mid, url: $url");
             return true;
         }
 
-        if (!$course = $DB->get_record('course', array('id' => $courselink->courseid))) {
+        if (!$course = $DB->get_record('course', ['id' => $courselink->courseid])) {
             log::add("Cannot find course $courselink->courseid, referred to be courselink $courselink->id");
             return true;
         }
@@ -219,7 +219,7 @@ class enrolment {
             case self::STATUS_REJECTED:
                 // Unenrol user from the course link course.
                 $enrol = enrol_get_plugin('manual');
-                $instance = $DB->get_records('enrol', array('enrol' => 'manual', 'courseid' => $course->id));
+                $instance = $DB->get_records('enrol', ['enrol' => 'manual', 'courseid' => $course->id]);
                 if ($instance) {
                     $instance = reset($instance);
                     $enrol->unenrol_user($instance, $user->id);

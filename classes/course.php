@@ -110,10 +110,10 @@ class course {
 
         list($pgroups, $pgroupmode) = parallelgroups::get_parallel_groups($course);
         if (count($pgroups) < 1) {
-            $pgroups[] = array(); // Make sure there is at least one course to be created.
+            $pgroups[] = []; // Make sure there is at least one course to be created.
         }
 
-        $courseids = array();
+        $courseids = [];
         $pgclass = new parallelgroups($ecssettings, $resourceid);
         foreach ($pgroups as $pgcourse) {
             $courseids[] = self::create_new_course($ecssettings, $resourceid, $course, $mid, $coursedata, $pgclass, $pgroupmode,
@@ -155,7 +155,7 @@ class course {
         foreach ($categories as $category) {
             $coursedata->category = $category->get_categoryid();
             $num = 1;
-            while ($DB->record_exists('course', array('shortname' => $coursedata->shortname))) {
+            while ($DB->record_exists('course', ['shortname' => $coursedata->shortname])) {
                 $num++;
                 $coursedata->shortname = "{$baseshortname}_{$num}";
             }
@@ -231,7 +231,7 @@ class course {
         $currcourses = self::get_by_resourceid($resourceid, $ecsid);
         if (empty($currcourses)) {
             return self::create($resourceid, $ecssettings, $course, $transferdetails);
-            //throw new course_exception("Cannot update course resource $resourceid - it doesn't exist");
+            // throw new course_exception("Cannot update course resource $resourceid - it doesn't exist");
         }
 
         $currcourse = reset($currcourses);
@@ -247,7 +247,7 @@ class course {
 
         list($pgroups, $pgroupmode) = parallelgroups::get_parallel_groups($course);
         if (count($pgroups) < 1) {
-            $pgroups[] = array(); // Make sure there is at least one course to be created.
+            $pgroups[] = []; // Make sure there is at least one course to be created.
         }
         $pgclass = new parallelgroups($ecssettings, $resourceid);
         list ($pgmatched, $pgnotmatched) = $pgclass->match_parallel_groups_to_courses($course->lectureID, $pgroups,
@@ -260,9 +260,9 @@ class course {
                                                             JOIN {course} c ON ccc.courseid = c.id
                                                            WHERE ccc.id $csql
                                                            ORDER BY c.category", $params);
-        $unchangedcategories = array();
+        $unchangedcategories = [];
         /** @var $newcategories course_category[] */
-        $newcategories = array();
+        $newcategories = [];
         foreach ($categories as $category) {
             $crsid = array_search($category->get_categoryid(), $existingcategoryids);
             if ($crsid !== false) {
@@ -284,7 +284,7 @@ class course {
             if (!isset($unchangedcategories[$currcourse->id])) {
                 if ($currcourse->internallink != 0) {
                     // Internal link course has been deleted - can safely delete the crs record.
-                    $DB->delete_records('local_campusconnect_crs', array('id' => $currcourse->id));
+                    $DB->delete_records('local_campusconnect_crs', ['id' => $currcourse->id]);
                     unset($currcourses[$key]);
                 } else {
                     // The 'real' course has been deleted, need to recreate it.
@@ -295,7 +295,7 @@ class course {
                     $coursedetails->category = $category->get_categoryid();
                     $baseshortname = $coursedetails->shortname;
                     $num = 1;
-                    while ($DB->record_exists('course', array('shortname' => $coursedetails->shortname))) {
+                    while ($DB->record_exists('course', ['shortname' => $coursedetails->shortname])) {
                         $num++;
                         $coursedetails->shortname = "{$baseshortname}_{$num}";
                     }
@@ -308,13 +308,13 @@ class course {
 
                     // Update the main crs record for this entry.
                     $currcourse->courseid = $newcourse->id;
-                    $DB->set_field('local_campusconnect_crs', 'courseid', $newcourse->id, array('id' => $currcourse->id));
+                    $DB->set_field('local_campusconnect_crs', 'courseid', $newcourse->id, ['id' => $currcourse->id]);
 
                     // Update any courselinks to point at this course.
                     foreach ($currcourses as $crs) {
                         if ($crs->internallink == $oldcourseid) {
                             $crs->internallink = $newcourse->id;
-                            $DB->set_field('local_campusconnect_crs', 'internallink', $newcourse->id, array('id' => $crs->id));
+                            $DB->set_field('local_campusconnect_crs', 'internallink', $newcourse->id, ['id' => $crs->id]);
                         }
                     }
 
@@ -328,7 +328,7 @@ class course {
 
         // Update all the existing crs records.
         foreach ($currcourses as $currcourse) {
-            if (!$oldcourserecord = $DB->get_record('course', array('id' => $currcourse->courseid), 'id, shortname')) {
+            if (!$oldcourserecord = $DB->get_record('course', ['id' => $currcourse->courseid], 'id, shortname')) {
                 throw new coding_exception("crs record {$currcourse->id} references non-existent course {$currcourse->courseid}");
             } else {
                 // Course still exists - update it.
@@ -346,7 +346,7 @@ class course {
                         // Old shortname does not match the current shortname OR the current shortname + '_NN'.
                         $baseshortname = $coursedetails->shortname;
                         $num = 1;
-                        while ($DB->record_exists('course', array('shortname' => $coursedetails->shortname))) {
+                        while ($DB->record_exists('course', ['shortname' => $coursedetails->shortname])) {
                             $num++;
                             $coursedetails->shortname = "{$baseshortname}_{$num}";
                         }
@@ -392,7 +392,7 @@ class course {
                 $coursedata->category = $newcategory->get_categoryid();
                 $baseshortname = $coursedata->shortname;
                 $num = 1;
-                while ($DB->record_exists('course', array('shortname' => $coursedata->shortname))) {
+                while ($DB->record_exists('course', ['shortname' => $coursedata->shortname])) {
                     $num++;
                     $coursedata->shortname = "{$baseshortname}_{$num}";
                 }
@@ -416,7 +416,7 @@ class course {
         // Check the 'real' course is in the first category in the list, if not, swap the course with one of the links.
         $firstcategory = reset($categories);
         $firstcategoryid = $firstcategory->get_categoryid();
-        $realcourseids = array();
+        $realcourseids = [];
         foreach ($currcourses as $currcourse) {
             $realid = ($currcourse->internallink == 0) ? $currcourse->courseid : $currcourse->internallink;
             $realcourseids[$realid] = $realid;
@@ -425,22 +425,22 @@ class course {
         foreach ($realcategories as $realcategory) {
             if ($realcategory->category != $firstcategoryid) {
                 // The 'real' course is not in the first category - find the course that is in that category and swap them.
-                $params = array('resourceid' => $resourceid, 'ecsid' => $ecsid, 'firstcategoryid' => $firstcategoryid);
+                $params = ['resourceid' => $resourceid, 'ecsid' => $ecsid, 'firstcategoryid' => $firstcategoryid];
                 $swapcourseid = $DB->get_field_sql('SELECT c.id
                                                   FROM {course} c
                                                   JOIN {local_campusconnect_crs} ccc ON c.id = ccc.courseid
                                                  WHERE ccc.resourceid = :resourceid AND ccc.ecsid = :ecsid
                                                    AND c.category = :firstcategoryid', $params, MUST_EXIST);
 
-                $realcourse = (object)array('id' => $realcategory->id, 'category' => $firstcategoryid);
-                $swapcourse = (object)array('id' => $swapcourseid, 'category' => $realcategory->category);
+                $realcourse = (object)['id' => $realcategory->id, 'category' => $firstcategoryid];
+                $swapcourse = (object)['id' => $swapcourseid, 'category' => $realcategory->category];
                 $DB->update_record('course', $realcourse);
                 $DB->update_record('course', $swapcourse);
 
                 // Swap the directoryids & sortorder for these courses.
-                $crs1 = $DB->get_record('local_campusconnect_crs', array('courseid' => $realcourse->id),
+                $crs1 = $DB->get_record('local_campusconnect_crs', ['courseid' => $realcourse->id],
                                         'id, sortorder, directoryid', MUST_EXIST);
-                $crs2 = $DB->get_record('local_campusconnect_crs', array('courseid' => $swapcourseid),
+                $crs2 = $DB->get_record('local_campusconnect_crs', ['courseid' => $swapcourseid],
                                         'id, sortorder, directoryid', MUST_EXIST);
                 $tempid = $crs1->id;
                 $crs1->id = $crs2->id;
@@ -452,7 +452,7 @@ class course {
 
         // Create new courses for parallel groups that didn't exist before.
         if ($pgnotmatched) {
-            $courseids = array();
+            $courseids = [];
             foreach ($pgnotmatched as $pgcourse) {
                 $courseids[] = self::create_new_course($ecssettings, $resourceid, $course, $mid, $coursedata, $pgclass,
                                                        $pgroupmode, $pgcourse, $categories);
@@ -489,7 +489,7 @@ class course {
                 $courseurl->delete();
             } else {
                 // Delete the internal links.
-                $DB->delete_records('local_campusconnect_crs', array('id' => $currcourse->id));
+                $DB->delete_records('local_campusconnect_crs', ['id' => $currcourse->id]);
                 delete_course($currcourse->courseid, false);
             }
         }
@@ -507,7 +507,7 @@ class course {
     public static function refresh_from_ecs(ecssettings $ecssettings) {
         global $DB;
 
-        $ret = (object)array('created' => array(), 'updated' => array(), 'deleted' => array());
+        $ret = (object)['created' => [], 'updated' => [], 'deleted' => []];
 
         if (!self::enabled()) {
             return $ret; // Course creation disabled.
@@ -524,7 +524,7 @@ class course {
         }
 
         // Get full list of courselinks from this ECS.
-        $courses = $DB->get_records('local_campusconnect_crs', array('ecsid' => $cms->get_ecs_id(), 'mid' => $cms->get_mid()),
+        $courses = $DB->get_records('local_campusconnect_crs', ['ecsid' => $cms->get_ecs_id(), 'mid' => $cms->get_mid()],
                                     '', 'DISTINCT resourceid');
 
         // Get full list of courselink resources shared with us.
@@ -579,7 +579,7 @@ class course {
                   JOIN {course} c ON crs.courseid = c.id
                  WHERE crs.sortorder <> 0 AND dir.rootid = ?
               ORDER BY crs.directoryid, crs.sortorder, c.sortorder"; // Use course sortorder, if CMS sort order is the same.
-        $crs = $DB->get_records_sql($sql, array($rootdir));
+        $crs = $DB->get_records_sql($sql, [$rootdir]);
 
         // Check that the course sortorder increases as we go through the sorted list within each subdirectory.
         $changes = false;
@@ -593,7 +593,7 @@ class course {
             } else {
                 if ($cr->coursesortorder <= $lastorder) {
                     // Found a course with an out-of-sequence sortorder => fix it.
-                    $DB->set_field('course', 'sortorder', $lastorder + 1, array('id' => $cr->courseid));
+                    $DB->set_field('course', 'sortorder', $lastorder + 1, ['id' => $cr->courseid]);
                     $changes = true;
                     $lastorder = $lastorder + 1;
                 } else {
@@ -613,7 +613,7 @@ class course {
      */
     public static function get_by_resourceid($resourceid, $ecsid) {
         global $DB;
-        $params = array('resourceid' => $resourceid, 'ecsid' => $ecsid);
+        $params = ['resourceid' => $resourceid, 'ecsid' => $ecsid];
         return $DB->get_records('local_campusconnect_crs', $params);
     }
 
@@ -624,13 +624,13 @@ class course {
      */
     public static function check_redirect($courseid) {
         global $DB;
-        if (!$course = $DB->get_record('local_campusconnect_crs', array('courseid' => $courseid))) {
+        if (!$course = $DB->get_record('local_campusconnect_crs', ['courseid' => $courseid])) {
             return false;
         }
         if ($course->internallink == 0) {
             return false; // This is the 'real' course - no redirect needed.
         }
-        return new moodle_url('/course/view.php', array('id' => $course->internallink));
+        return new moodle_url('/course/view.php', ['id' => $course->internallink]);
     }
 
     /**
@@ -642,24 +642,24 @@ class course {
         global $DB;
 
         if (empty($cmscourseids)) {
-            return array();
+            return [];
         }
 
         list($csql, $params) = $DB->get_in_or_equal($cmscourseids);
 
         $recs = $DB->get_records_select('local_campusconnect_crs', "cmsid  $csql AND internallink = 0", $params,
                                         'id', 'id, cmsid, courseid');
-        $mapping = array();
-        $courseids = array();
+        $mapping = [];
+        $courseids = [];
         foreach ($recs as $rec) {
             if (!isset($mapping[$rec->cmsid])) {
-                $mapping[$rec->cmsid] = array();
+                $mapping[$rec->cmsid] = [];
             }
             $mapping[$rec->cmsid][] = $rec->courseid;
             $courseids[] = $rec->courseid;
         }
 
-        return array($mapping, $courseids);
+        return [$mapping, $courseids];
     }
 
     /**
@@ -671,7 +671,7 @@ class course {
         global $DB;
 
         if (empty($courseids)) {
-            return array();
+            return [];
         }
 
         list($csql, $params) = $DB->get_in_or_equal($courseids);
@@ -700,10 +700,10 @@ class course {
     protected static function set_course_defaults(&$course) {
         $config = get_config('moodlecourse');
 
-        $params = array(
+        $params = [
             'format', 'numsections', 'hiddensections', 'newsitems', 'showgrades', 'showreports', 'maxbytes',
             'groupmode', 'groupmodeforce', 'visible', 'lang', 'enablecompletion', 'completionstartonenrol'
-        );
+        ];
 
         foreach ($params as $param) {
             if (!isset($course->$param) && isset($config->$param)) {
@@ -731,7 +731,7 @@ class course {
             if (empty($catids)) {
                 throw new course_exception(get_string('filternocategories', 'local_campusconnect'));
             }
-            $ret = array();
+            $ret = [];
             foreach ($catids as $catid) {
                 $ret[] = new course_category($catid);
             }
@@ -744,7 +744,7 @@ class course {
             return $ecssettings->get_import_category();
         }
 
-        $ret = array();
+        $ret = [];
         foreach ($course->allocations as $allocation) {
             if ($catid = directorytree::get_category_for_course($allocation->parentID)) {
                 $order = isset($allocation->order) ? $allocation->order : 0;
@@ -790,7 +790,7 @@ class course {
                         // Only one 'real course' per parallel course, so map all onto the first 'new category'.
                         $firstnewcategory = array_shift($newcategories);
                     }
-                    $DB->set_field('course', 'category', $firstnewcategory->get_categoryid(), array('id' => $currcourse->courseid));
+                    $DB->set_field('course', 'category', $firstnewcategory->get_categoryid(), ['id' => $currcourse->courseid]);
                     // Update the directoryid / sortorder for this course.
                     $upd = new stdClass();
                     $upd->id = $currcourse->id;
@@ -812,7 +812,7 @@ class course {
                         throw new coding_exception("Attempting to replace one 'real course' with another - this should not happen");
                     }
 
-                    $DB->set_field('course', 'category', $updatecategory->get_categoryid(), array('id' => $currcourse->courseid));
+                    $DB->set_field('course', 'category', $updatecategory->get_categoryid(), ['id' => $currcourse->courseid]);
                     // Update the directoryid / sortorder for this course.
                     $upd = new stdClass();
                     $upd->id = $currcourse->id;
@@ -825,7 +825,7 @@ class course {
                     // The existing course (which was an internal link) is no longer needed - delete it and the crs record.
                     $removecourseid = $currcourses[$removecrsid]->courseid;
                     delete_course($removecourseid, false);
-                    $DB->delete_records('local_campusconnect_crs', array('id' => $removecrsid));
+                    $DB->delete_records('local_campusconnect_crs', ['id' => $removecrsid]);
                     unset($currcourses[$removecrsid]);
                 }
                 unset($removecategoryids[$rcrsid]);
@@ -841,16 +841,16 @@ class course {
             $currcourse = $currcourses[$rcrsid];
             if ($currentcatid == $rcatid) {
                 // A parallel course in the same category - move to the new category as well.
-                $DB->set_field('course', 'category', $currentnewcat->get_categoryid(), array('id' => $currcourse->courseid));
+                $DB->set_field('course', 'category', $currentnewcat->get_categoryid(), ['id' => $currcourse->courseid]);
             } else if (!empty($newcategories)) {
                 // There is a newly-mapped category to move this internal link into.
                 $currentnewcat = array_shift($newcategories);
                 $currentcatid = $rcatid;
-                $DB->set_field('course', 'category', $currentnewcat->get_categoryid(), array('id' => $currcourse->courseid));
+                $DB->set_field('course', 'category', $currentnewcat->get_categoryid(), ['id' => $currcourse->courseid]);
             } else {
                 // No newly-mapped category => just remove the course completely.
                 delete_course($currcourse->courseid, false);
-                $DB->delete_records('local_campusconnect_crs', array('id' => $rcrsid));
+                $DB->delete_records('local_campusconnect_crs', ['id' => $rcrsid]);
                 unset($currcourses[$rcrsid]);
             }
         }

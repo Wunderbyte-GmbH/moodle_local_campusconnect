@@ -37,14 +37,14 @@ class metadata {
     const TYPE_EXPORT_COURSE = 3;
     const TYPE_EXPORT_EXTERNAL_COURSE = 4;
 
-    protected static $coursefields = array(
+    protected static $coursefields = [
         'fullname' => 'string', 'shortname' => 'string',
         'idnumber' => 'string', 'summary' => 'string',
         'startdate' => 'date', 'lang' => 'lang',
         'timecreated' => 'date', 'timemodified' => 'date'
-    );
+    ];
 
-    protected static $remotefieldcourselink = array(
+    protected static $remotefieldcourselink = [
         'destinationForDisplay' => 'string',
         'lang' => 'lang',
         'hoursPerWeek' => 'string',
@@ -71,9 +71,9 @@ class metadata {
         'lecturers_lastName' => 'personlist',
         'lecturers_firstName' => 'personlist',
         'lecturers' => 'personlist'
-    );
+    ];
 
-    protected static $remotefields = array(
+    protected static $remotefields = [
         'lectureID' => 'string',
         'title' => 'string',
         'organisation' => 'string',
@@ -101,12 +101,12 @@ class metadata {
         'groups_lecturers' => 'grouplist',
         'groups' => 'grouplist',
         'modules' => 'moduleslist'
-    );
+    ];
     // Note - leaving out fields 'allocations', 'organisationalUnit', 'groups', as there is no obvious place
     // to map these to in Moodle.
 
     // Default import mappings.
-    protected $importmappings = array(
+    protected $importmappings = [
         'fullname' => '{title}',
         'shortname' => '{lectureID}',
         'idnumber' => '',
@@ -115,10 +115,10 @@ class metadata {
         'lang' => '',
         'timecreated' => '',
         'timemodified' => ''
-    );
+    ];
 
     // Default import mappings.
-    protected $importmappingscourselink = array(
+    protected $importmappingscourselink = [
         'fullname' => '{title}',
         'shortname' => '{id}',
         'idnumber' => '',
@@ -127,10 +127,10 @@ class metadata {
         'lang' => 'lang',
         'timecreated' => '',
         'timemodified' => ''
-    );
+    ];
 
     // Default export mappings.
-    protected $exportmappings = array(
+    protected $exportmappings = [
         'organisation' => '',
         'id' => '{shortname}',
         'term' => '',
@@ -154,10 +154,10 @@ class metadata {
         'links' => '',
         'linkToCourse' => '',
         'modules' => ''
-    );
+    ];
 
     // Default external export mappings.
-    protected $exportmappingscourselink = array(
+    protected $exportmappingscourselink = [
         'destinationForDisplay' => '',
         'lang' => 'lang',
         'hoursPerWeek' => '',
@@ -180,7 +180,7 @@ class metadata {
         'datesAndVenues.lastDate.endDatetime' => '',
         'degreeProgrammes' => '',
         'lecturers' => ''
-    );
+    ];
 
     protected $lasterrormsg = null;
     protected $lasterrorfield = null;
@@ -249,7 +249,7 @@ class metadata {
         }
         $type = self::$coursefields[$localfieldname];
         $remotefields = $courselink ? self::$remotefieldcourselink : self::$remotefields;
-        $ret = array();
+        $ret = [];
         foreach ($remotefields as $rname => $rtype) {
             if ($rtype == $type) {
                 $ret[] = $rname;
@@ -274,7 +274,7 @@ class metadata {
             }
         }
         $type = $remotefields[$remotefieldname];
-        $ret = array();
+        $ret = [];
         foreach (self::$coursefields as $cname => $ctype) {
             if ($ctype == $type) {
                 $ret[] = $cname;
@@ -290,20 +290,20 @@ class metadata {
      */
     public static function generate_default_summary($courselink = true) {
         if ($courselink) {
-            $mapping = array(
+            $mapping = [
                 'destinationForDisplay' => get_string('field_organisation', 'local_campusconnect'),
                 'lang' => get_string('field_language', 'local_campusconnect'),
                 'term' => get_string('field_term', 'local_campusconnect'),
                 'credits' => get_string('field_credits', 'local_campusconnect'),
                 'status' => get_string('field_status', 'local_campusconnect'),
                 'courseType' => get_string('field_coursetype', 'local_campusconnect')
-            );
+            ];
         } else {
-            $mapping = array(
+            $mapping = [
                 'organisation' => get_string('field_organisation', 'local_campusconnect'),
                 'term' => get_string('field_term', 'local_campusconnect'),
                 'courseType' => get_string('field_coursetype', 'local_campusconnect')
-            );
+            ];
         }
         $summary = '';
         foreach ($mapping as $field => $text) {
@@ -320,7 +320,7 @@ class metadata {
     public static function delete_ecs_metadata_mappings($ecsid) {
         global $DB;
 
-        $DB->delete_records('local_campusconnect_mappings', array('ecsid' => $ecsid));
+        $DB->delete_records('local_campusconnect_mappings', ['ecsid' => $ecsid]);
     }
 
     /**
@@ -339,7 +339,7 @@ class metadata {
         }
 
         $remotefields = $this->courselink ? self::$remotefieldcourselink : self::$remotefields;
-        $mappings = $DB->get_records('local_campusconnect_mappings', array('ecsid' => $this->ecsid));
+        $mappings = $DB->get_records('local_campusconnect_mappings', ['ecsid' => $this->ecsid]);
         foreach ($mappings as $mapping) {
             if ($courselink) {
                 if ($mapping->type == self::TYPE_IMPORT_COURSE ||
@@ -404,7 +404,7 @@ class metadata {
      * @return array (error message, error field name)
      */
     public function get_last_error() {
-        return array($this->lasterrormsg, $this->lasterrorfield);
+        return [$this->lasterrormsg, $this->lasterrorfield];
     }
 
     /**
@@ -435,7 +435,7 @@ class metadata {
             }
         }
 
-        $required = array('fullname', 'shortname');
+        $required = ['fullname', 'shortname'];
         if (in_array($localfield, $required) && empty($remotefield)) {
             $this->lasterrorfield = $localfield;
             $this->lasterrormsg = get_string('cannotbeempty', 'local_campusconnect', $remotefield);
@@ -477,7 +477,7 @@ class metadata {
             }
         }
 
-        $required = array('id', 'title');
+        $required = ['id', 'title'];
         if (in_array($remotefield, $required) && empty($localfield)) {
             $this->lasterrorfield = $remotefield;
             $this->lasterrormsg = get_string('cannotbeempty', 'local_campusconnect', $localfield);
@@ -532,11 +532,11 @@ class metadata {
     protected function save_mapping($field, $setto, $type) {
         global $DB;
 
-        $existing = $DB->get_record('local_campusconnect_mappings', array(
+        $existing = $DB->get_record('local_campusconnect_mappings', [
             'ecsid' => $this->ecsid,
             'field' => $field,
             'type' => $type
-        ));
+        ]);
         if ($existing) {
             $upd = new stdClass();
             $upd->id = $existing->id;
@@ -559,7 +559,7 @@ class metadata {
      * @return array
      */
     public function flatten_remote_data($remotedetails, $flattenarrays = false) {
-        $details = array();
+        $details = [];
         foreach ($remotedetails as $name => $value) {
             if ($name == 'datesAndVenues') {
                 if (!empty($value)) {
@@ -619,14 +619,14 @@ class metadata {
                         break;
                     case 'grouplist':
                         if ($subname == 'lecturers') {
-                            $lecturers = array();
+                            $lecturers = [];
                             foreach ($details[$basename] as $group) {
                                 if (isset($group->lecturers)) {
                                     foreach ($group->lecturers as $lecturer) {
-                                        $fakeuser = (object)array(
+                                        $fakeuser = (object)[
                                             'firstname' => $lecturer->firstName,
                                             'lastname' => $lecturer->lastName,
-                                        );
+                                        ];
                                         $lecturers[] = self::fullname($fakeuser);
                                     }
                                 }
@@ -802,7 +802,7 @@ class metadata {
         }
 
         // Copy all details from the course into a flat array (as specified by $this->exportmappings).
-        $details = array();
+        $details = [];
         foreach ($this->exportmappings as $remotefield => $localfield) {
             if (empty($localfield)) {
                 continue;
@@ -834,7 +834,7 @@ class metadata {
                 $fieldparts = explode('.', $field);
                 if ($fieldparts[0] == 'datesAndVenues') {
                     if (!isset($remotedetails->datesAndVenues)) {
-                        $remotedetails->datesAndVenues = array(new stdClass());
+                        $remotedetails->datesAndVenues = [new stdClass()];
                     }
                     if (count($fieldparts) > 2) {
                         $subfieldname1 = $fieldparts[1];

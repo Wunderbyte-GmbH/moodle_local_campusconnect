@@ -64,7 +64,7 @@ class ecssettings {
     protected $name = '';
 
     // Used to validate incoming settings.
-    protected $validsettings = array(
+    protected $validsettings = [
         'recordid' => 'id',
         'enabled' => 'enabled',
         'name' => 'name',
@@ -84,7 +84,7 @@ class ecssettings {
         'notifyusers' => 'notifyusers',
         'notifycontent' => 'notifycontent',
         'notifycourses' => 'notifycourses'
-    );
+    ];
 
     protected static $activeecs = null;
 
@@ -101,7 +101,7 @@ class ecssettings {
 
     public static function list_ecs($onlyenabled = true) {
         global $DB;
-        $params = array();
+        $params = [];
         if ($onlyenabled) {
             $params['enabled'] = 1;
         }
@@ -227,7 +227,7 @@ class ecssettings {
     protected function load_settings($ecsid) {
         global $DB;
 
-        $settings = $DB->get_record('local_campusconnect_ecs', array('id' => $ecsid), '*', MUST_EXIST);
+        $settings = $DB->get_record('local_campusconnect_ecs', ['id' => $ecsid], '*', MUST_EXIST);
         $this->set_settings($settings);
     }
 
@@ -283,7 +283,7 @@ class ecssettings {
                 }
                 break;
             case self::AUTH_HTTP:
-                $requiredfields = array('httpuser', 'httppass');
+                $requiredfields = ['httpuser', 'httppass'];
                 foreach ($requiredfields as $required) {
                     if (empty($settings->$required) && empty($this->$required)) {
                         throw new coding_exception("campusconnect_ecssettings - auth method 'AUTH_HTTP' requires ".
@@ -292,7 +292,7 @@ class ecssettings {
                 }
                 break;
             case self::AUTH_CERTIFICATE:
-                $requiredfields = array('cacertpath', 'certpath', 'keypath', 'keypass');
+                $requiredfields = ['cacertpath', 'certpath', 'keypath', 'keypass'];
                 foreach ($requiredfields as $required) {
                     if (empty($settings->$required) && empty($this->$required)) {
                         throw new coding_exception("campusconnect_ecssettings - auth method 'AUTH_CERTIFICATE' requires ".
@@ -310,7 +310,7 @@ class ecssettings {
 
         if (isset($settings->importcategory)) {
             if ($settings->importcategory != $this->importcategory) {
-                if (!$DB->record_exists('course_categories', array('id' => $settings->importcategory))) {
+                if (!$DB->record_exists('course_categories', ['id' => $settings->importcategory])) {
                     throw new coding_exception("campusconnect_ecssettings - non-existent category ID: $settings->importcategory");
                 }
             }
@@ -319,8 +319,8 @@ class ecssettings {
         }
 
         if (isset($settings->importrole)) {
-            if ($settings->importrole != $this->importrole && $settings->importrole!=-1) {
-                if (!$DB->record_exists('role', array('shortname' => $settings->importrole))) {
+            if ($settings->importrole != $this->importrole && $settings->importrole != -1) {
+                if (!$DB->record_exists('role', ['shortname' => $settings->importrole])) {
                     throw new coding_exception("campusconnect_ecssettings - non-existent role shortname: $settings->importrole");
                 }
             }
@@ -375,7 +375,7 @@ class ecssettings {
             metadata::delete_ecs_metadata_mappings($this->recordid);
             participantsettings::delete_ecs_participant_settings($this->recordid);
             export::delete_ecs_exports($this->recordid, $force);
-            $DB->delete_records('local_campusconnect_ecs', array('id' => $this->recordid));
+            $DB->delete_records('local_campusconnect_ecs', ['id' => $this->recordid]);
             $this->recordid = null;
             $this->auth = -1;
         }
@@ -400,7 +400,7 @@ class ecssettings {
 
         $lastcron = time();
         if (!is_null($this->recordid)) {
-            $DB->set_field('local_campusconnect_ecs', 'lastcron', $lastcron, array('id' => $this->recordid));
+            $DB->set_field('local_campusconnect_ecs', 'lastcron', $lastcron, ['id' => $this->recordid]);
         }
         $this->lastcron = $lastcron;
     }

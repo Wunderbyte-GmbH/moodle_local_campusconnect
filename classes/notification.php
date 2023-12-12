@@ -45,12 +45,12 @@ class notification {
     const TYPE_DELETE = 2;
     const TYPE_ERROR = 3;
 
-    public static $messagetypes = array(
+    public static $messagetypes = [
         self::MESSAGE_IMPORT_COURSELINK, self::MESSAGE_EXPORT_COURSELINK,
         self::MESSAGE_USER, self::MESSAGE_COURSE, self::MESSAGE_DIRTREE
-    );
+    ];
 
-    public static $messagesubtypes = array(self::TYPE_CREATE, self::TYPE_UPDATE, self::TYPE_DELETE, self::TYPE_ERROR);
+    public static $messagesubtypes = [self::TYPE_CREATE, self::TYPE_UPDATE, self::TYPE_DELETE, self::TYPE_ERROR];
 
     /**
      * Queue a new notification to be sent out via email
@@ -71,13 +71,13 @@ class notification {
         if (!in_array($subtype, self::$messagesubtypes)) {
             throw new coding_exception("Unknown message subtype '$subtype'");
         }
-        $ins = (object)array(
+        $ins = (object)[
             'ecsid' => $ecsid,
             'type' => $type,
             'subtype' => $subtype,
             'data' => $dataid,
             'extra' => $extra
-        );
+        ];
         $DB->insert_record('local_campusconnect_notify', $ins);
     }
 
@@ -88,63 +88,63 @@ class notification {
     public static function send_notifications(ecssettings $ecssettings) {
         global $DB;
 
-        $types = array(
-            self::MESSAGE_IMPORT_COURSELINK => (object)array(
+        $types = [
+            self::MESSAGE_IMPORT_COURSELINK => (object)[
                 'string' => 'import',
                 'table' => 'course',
                 'name' => 'fullname',
                 'url' => '/course/view.php',
                 'users' => $ecssettings->get_notify_content(),
-            ),
-            self::MESSAGE_EXPORT_COURSELINK => (object)array(
+            ],
+            self::MESSAGE_EXPORT_COURSELINK => (object)[
                 'string' => 'export',
                 'table' => 'course',
                 'name' => 'fullname',
                 'url' => '/course/view.php',
                 'users' => $ecssettings->get_notify_courses(),
-            ),
-            self::MESSAGE_USER => (object)array(
+            ],
+            self::MESSAGE_USER => (object)[
                 'string' => 'newuser',
                 'table' => 'user',
                 'name' => 'firstname,lastname',
                 'url' => '/user/view.php',
                 'users' => $ecssettings->get_notify_users(),
-            ),
-            self::MESSAGE_COURSE => (object)array(
+            ],
+            self::MESSAGE_COURSE => (object)[
                 'string' => 'course',
                 'table' => 'course',
                 'name' => 'fullname',
                 'url' => '/course/view.php',
                 'users' => $ecssettings->get_notify_content(),
-            ),
-            self::MESSAGE_DIRTREE => (object)array(
+            ],
+            self::MESSAGE_DIRTREE => (object)[
                 'string' => 'directorytree',
                 'table' => 'local_campusconnect_dirroot',
                 'id' => 'rootid',
                 'name' => 'title',
                 'url' => '/local/campusconnect/admin/directorymapping.php',
                 'users' => $ecssettings->get_notify_content(),
-            ),
-        );
+            ],
+        ];
 
-        $subtypesprefix = array(
+        $subtypesprefix = [
             self::TYPE_CREATE => '',
             self::TYPE_UPDATE => '_update',
             self::TYPE_DELETE => '_delete',
             self::TYPE_ERROR => '_error'
-        );
+        ];
 
-        $sitename = format_string($DB->get_field('course', 'fullname', array('id' => SITEID), MUST_EXIST));
+        $sitename = format_string($DB->get_field('course', 'fullname', ['id' => SITEID], MUST_EXIST));
         $unknown = get_string('unknown', 'local_campusconnect');
 
         foreach ($types as $typeid => $type) {
-            $params = array('ecsid' => $ecssettings->get_id(), 'type' => $typeid);
+            $params = ['ecsid' => $ecssettings->get_id(), 'type' => $typeid];
             $notifications = $DB->get_records('local_campusconnect_notify', $params, 'subtype');
             if ($notifications) {
-                $subtypes = array();
+                $subtypes = [];
                 foreach ($notifications as $notification) {
                     if (!isset($subtypes[$notification->subtype])) {
-                        $subtypes[$notification->subtype] = array();
+                        $subtypes[$notification->subtype] = [];
                     }
                     $subtypes[$notification->subtype][] = $notification;
                 }
@@ -163,7 +163,7 @@ class notification {
                             if (isset($type->id)) {
                                 $id = $type->id;
                             }
-                            $object = $DB->get_record($type->table, array($id => $notification->data), "id, {$type->name}");
+                            $object = $DB->get_record($type->table, [$id => $notification->data], "id, {$type->name}");
                         }
                         if (!$object) {
                             $msg = '';
@@ -177,7 +177,7 @@ class notification {
                             $bodytext .= $msg."\n";
                             $body .= html_writer::tag('li', $msg)."\n";
                         } else {
-                            $link = new moodle_url($type->url, array('id' => $object->id));
+                            $link = new moodle_url($type->url, ['id' => $object->id]);
                             if ($type->name == 'firstname,lastname') {
                                 $name = fullname($object);
                             } else {

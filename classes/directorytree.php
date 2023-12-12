@@ -52,10 +52,10 @@ class directorytree {
 
     protected $stillexists = false;
 
-    protected static $dbfields = array(
+    protected static $dbfields = [
         'resourceid', 'rootid', 'title', 'ecsid', 'mid', 'categoryid', 'mappingmode',
         'takeovertitle', 'takeoverposition', 'takeoverallocation'
-    );
+    ];
     protected static $createemptycategories = null;
     protected static $enabled = null;
 
@@ -107,7 +107,7 @@ class directorytree {
         if (isset($newsettings->takeovertitle) && $newsettings->takeovertitle != $this->takeovertitle) {
             $this->update_field('takeovertitle', $newsettings->takeovertitle);
             if ($this->takeovertitle && $this->categoryid) {
-                $DB->set_field('course_categories', 'name', $this->title, array('id' => $this->categoryid));
+                $DB->set_field('course_categories', 'name', $this->title, ['id' => $this->categoryid]);
             }
         }
 
@@ -149,7 +149,7 @@ class directorytree {
      */
     protected function update_field($field, $value) {
         global $DB;
-        $DB->set_field('local_campusconnect_dirroot', $field, $value, array('id' => $this->recordid));
+        $DB->set_field('local_campusconnect_dirroot', $field, $value, ['id' => $this->recordid]);
         $this->$field = $value;
     }
 
@@ -203,7 +203,7 @@ class directorytree {
         $this->update_field('title', $title);
 
         if ($this->categoryid && $this->takeovertitle) {
-            $DB->set_field('course_categories', 'name', $title, array('id' => $this->categoryid));
+            $DB->set_field('course_categories', 'name', $title, ['id' => $this->categoryid]);
         }
     }
 
@@ -223,7 +223,7 @@ class directorytree {
             return; // No change.
         }
 
-        if (!$newcategory = $DB->get_record('course_categories', array('id' => $categoryid))) {
+        if (!$newcategory = $DB->get_record('course_categories', ['id' => $categoryid])) {
             throw new coding_exception("Directory tree - attempting to map onto non-existent category $categoryid");
         }
 
@@ -231,7 +231,7 @@ class directorytree {
         $this->update_field('categoryid', $categoryid);
 
         if ($this->title && $this->takeovertitle) {
-            $DB->set_field('course_categories', 'name', $this->title, array('id' => $this->categoryid));
+            $DB->set_field('course_categories', 'name', $this->title, ['id' => $this->categoryid]);
         }
 
         if ($this->mappingmode == self::MODE_PENDING) {
@@ -275,7 +275,7 @@ class directorytree {
             return; // No change.
         }
 
-        if (!in_array($mode, array(self::MODE_PENDING, self::MODE_WHOLE, self::MODE_MANUAL))) {
+        if (!in_array($mode, [self::MODE_PENDING, self::MODE_WHOLE, self::MODE_MANUAL])) {
             throw new coding_exception("Invalid directory tree mode $mode");
         }
         if ($mode == self::MODE_PENDING) {
@@ -304,7 +304,7 @@ class directorytree {
     public function set_still_exists() {
         $this->stillexists = true;
         if ($this->mappingmode == self::MODE_DELETED) {
-            //throw new coding_exception("ECS updating directory tree that is marked as deleted");
+            // throw new coding_exception("ECS updating directory tree that is marked as deleted");
             // Not sure how it ended up being marked as deleted, but try to resurrect it now.
             $this->update_field('mappingmode', self::MODE_PENDING);
         }
@@ -348,7 +348,7 @@ class directorytree {
         $rootmapping->category = intval($this->categoryid);
         $rootmapping->canunmap = true;
         $rootmapping->canmap = true;
-        $ret = array($this->rootid => $rootmapping);
+        $ret = [$this->rootid => $rootmapping];
         $dirs = directory::get_directories($this->rootid);
         foreach ($dirs as $dir) {
             $mapping = new stdClass();
@@ -412,7 +412,7 @@ class directorytree {
         if ($includedeleted) {
             $trees = $DB->get_records('local_campusconnect_dirroot', null, $sort);
         } else {
-            $trees = $DB->get_records_select('local_campusconnect_dirroot', 'mappingmode <> ?', array(self::MODE_DELETED), $sort);
+            $trees = $DB->get_records_select('local_campusconnect_dirroot', 'mappingmode <> ?', [self::MODE_DELETED], $sort);
         }
         return array_map(function ($data) {
             return new directorytree($data);
@@ -427,7 +427,7 @@ class directorytree {
     public static function get_by_root_id($rootid) {
         global $DB;
 
-        $tree = $DB->get_record('local_campusconnect_dirroot', array('rootid' => $rootid), '*', MUST_EXIST);
+        $tree = $DB->get_record('local_campusconnect_dirroot', ['rootid' => $rootid], '*', MUST_EXIST);
         return new directorytree($tree);
     }
 
@@ -444,24 +444,24 @@ class directorytree {
             }
 
             // New schema - push a root node into the list of nodes for easier processing.
-            $node = (object)array(
+            $node = (object)[
                 'id' => $directories->rootID,
                 'title' => $directories->directoryTreeTitle,
                 'term' => isset($directories->term) ? $directories->term : null,
-                'parent' => (object)array(
+                'parent' => (object)[
                     'id' => 0,
-                )
-            );
+                ]
+            ];
             array_unshift($directories->nodes, $node);
         } else {
             // Old schema - create 'nodes' array from the single directory structure.
-            $node = (object)array(
+            $node = (object)[
                 'id' => $directories->id,
                 'title' => $directories->title,
-                'parent' => (object)array(
+                'parent' => (object)[
                     'id' => $directories->parent->id
-                )
-            );
+                ]
+            ];
             if (isset($directories->order)) {
                 $node->order = $directories->order;
             }
@@ -471,7 +471,7 @@ class directorytree {
             if (isset($directories->parent->title)) {
                 $node->parent->title = $directories->parent->title;
             }
-            $directories->nodes = array($node);
+            $directories->nodes = [$node];
         }
     }
 
@@ -483,7 +483,7 @@ class directorytree {
      *                            ->deleted = array of resourceids deleted
      */
     public static function refresh_from_ecs(ecssettings $ecssettings) {
-        $ret = (object)array('created' => array(), 'updated' => array(), 'deleted' => array(), 'errors' => array());
+        $ret = (object)['created' => [], 'updated' => [], 'deleted' => [], 'errors' => []];
 
         if (!self::enabled()) {
             return $ret; // Mapping disabled.
@@ -505,7 +505,7 @@ class directorytree {
 
         $trees = self::list_directory_trees(true);
         /** @var $currenttrees directorytree[] */
-        $currenttrees = array();
+        $currenttrees = [];
         foreach ($trees as $tree) {
             $currenttrees[$tree->get_root_id()] = $tree;
         }
@@ -613,7 +613,7 @@ class directorytree {
         foreach ($directories->nodes as $directory) {
             $isdirectorytree = $directory->parent->id ? false : true;
             if ($isdirectorytree) {
-                if ($currdirtree = $DB->get_record('local_campusconnect_dirroot', array('rootid' => $directories->rootID))) {
+                if ($currdirtree = $DB->get_record('local_campusconnect_dirroot', ['rootid' => $directories->rootID])) {
                     $tree = new directorytree($currdirtree);
                     $tree->set_title($directory->title);
                 } else {
@@ -643,13 +643,13 @@ class directorytree {
             return true;
         }
 
-        $dirtrees = $DB->get_records('local_campusconnect_dirroot', array('resourceid' => $resourceid));
+        $dirtrees = $DB->get_records('local_campusconnect_dirroot', ['resourceid' => $resourceid]);
         foreach ($dirtrees as $dirtree) {
             $dirtree = new directorytree($dirtree);
             $dirtree->delete();
         }
 
-        $dirs = $DB->get_records('local_campusconnect_dir', array('resourceid' => $resourceid));
+        $dirs = $DB->get_records('local_campusconnect_dir', ['resourceid' => $resourceid]);
         foreach ($dirs as $dir) {
             $dir = new directory($dir);
             $dir->delete();
@@ -678,15 +678,15 @@ class directorytree {
         }
 
         // Get the details of the existing directories / trees in Moodle.
-        $existingtreesdb = $DB->get_records('local_campusconnect_dirroot', array(
+        $existingtreesdb = $DB->get_records('local_campusconnect_dirroot', [
             'resourceid' => $resourceid,
             'ecsid' => $ecsid, 'mid' => $mid
-        ));
-        $existingdirsdb = $DB->get_records('local_campusconnect_dir', array('resourceid' => $resourceid));
+        ]);
+        $existingdirsdb = $DB->get_records('local_campusconnect_dir', ['resourceid' => $resourceid]);
         /** @var directorytree[] $existingtrees */
-        $existingtrees = array();
+        $existingtrees = [];
         /** @var directory[] $existingdirs */
-        $existingdirs = array();
+        $existingdirs = [];
         foreach ($existingtreesdb as $existingtreedb) {
             $existingtrees[$existingtreedb->rootid] = new directorytree($existingtreedb);
         }
@@ -736,10 +736,10 @@ class directorytree {
         global $DB;
 
         // Check all (non-deleted) directory tree mappings.
-        $categoryids = array();
-        $trees = $DB->get_records_select('local_campusconnect_dirroot', 'mappingmode <> ?', array(self::MODE_DELETED));
+        $categoryids = [];
+        $trees = $DB->get_records_select('local_campusconnect_dirroot', 'mappingmode <> ?', [self::MODE_DELETED]);
         /** @var $dirtrees directorytree[] */
-        $dirtrees = array();
+        $dirtrees = [];
         foreach ($trees as $tree) {
             $dirtree = new directorytree($tree);
             if ($catid = $dirtree->get_category_id()) {
@@ -760,8 +760,8 @@ class directorytree {
         // Check all directory mappings.
         $dbdirs = $DB->get_records('local_campusconnect_dir');
         /** @var $dirs directory[] */
-        $dirs = array();
-        $categoryids = array();
+        $dirs = [];
+        $categoryids = [];
         foreach ($dbdirs as $dbdir) {
             $dir = new directory($dbdir);
             if ($catid = $dir->get_category_id()) {
@@ -771,7 +771,7 @@ class directorytree {
         }
         $categories = $DB->get_records_list('course_categories', 'id', $categoryids, 'id', 'id, sortorder');
         /** @var $recreate directory[] */
-        $recreate = array();
+        $recreate = [];
         foreach ($dirs as $dir) {
             if ($dir->get_category_id()) {
                 if (!array_key_exists($dir->get_category_id(), $categories)) {
@@ -823,7 +823,7 @@ class directorytree {
                   FROM {local_campusconnect_dirroot} dr
                   JOIN {local_campusconnect_dir} d ON d.rootid = dr.rootid
                  WHERE d.directoryid = :directoryid";
-        $params = array('directoryid' => $directoryid);
+        $params = ['directoryid' => $directoryid];
         if (!$dirtreedata = $DB->get_record_sql($sql, $params)) {
             throw new directorytree_exception("Attempting to find category for non-existent directory $directoryid");
         }

@@ -38,27 +38,27 @@ admin_externalpage_setup('campusconnectimportedcourses');
 
 // Set up table contents.
 $table = new html_table();
-$table->attributes = array('width' => '100%');
-$table->head = array(
+$table->attributes = ['width' => '100%'];
+$table->head = [
     get_string('title', 'local_campusconnect'),
     get_string('links', 'local_campusconnect'),
     get_string('importedfrom', 'local_campusconnect'),
     get_string('metadata', 'local_campusconnect')
-);
+];
 
-$table->data = array();
-$table->attributes = array('class' => 'generaltable campusconnect_imported');
+$table->data = [];
+$table->attributes = ['class' => 'generaltable campusconnect_imported'];
 
 $ecslist = ecssettings::list_ecs();
 foreach ($ecslist as $ecsid => $ecsname) {
     $links = courselink::list_links($ecsid);
     foreach ($links as $link) {
-        $row = array(
+        $row = [
             format_string($link->get_title()),
             $link->get_link(),
             format_string($link->get_participantname()),
             format_text($link->get_summary(), FORMAT_HTML)
-        );
+        ];
         $table->data[] = $row;
     }
 }

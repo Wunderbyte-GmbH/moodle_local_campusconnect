@@ -31,10 +31,10 @@ require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
 class local_campusconnect_metadata_test extends campusconnect_base_testcase {
 
     public function test_set_import_mapping() {
-        $defaultmappings = array(
+        $defaultmappings = [
             'fullname' => '{title}', 'shortname' => '{id}', 'idnumber' => '', 'startdate' => 'firstDate',
             'lang' => 'lang', 'timecreated' => '', 'timemodified' => ''
-        );
+        ];
 
         // Test the default settings.
         $meta = new metadata($this->connect[1]->get_settings(), true);
@@ -87,7 +87,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
     }
 
     public function test_set_export_mapping() {
-        $defaultmappings = array(
+        $defaultmappings = [
             'destinationForDisplay' => '', 'lang' => 'lang', 'hoursPerWeek' => '',
             'id' => '{shortname}', 'number' => '', 'term' => '', 'credits' => '',
             'status' => '', 'courseType' => '', 'title' => '{fullname}',
@@ -99,7 +99,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
             'datesAndVenues.lastDate.startDatetime' => '',
             'datesAndVenues.lastDate.endDatetime' => '',
             'degreeProgrammes' => '', 'lecturers' => ''
-        );
+        ];
 
         // Test the default settings.
         $meta = new metadata($this->connect[1]->get_settings(), true);
@@ -152,38 +152,38 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
     }
 
     public function test_map_remote_to_course() {
-        $mappings = array(
+        $mappings = [
             'fullname' => 'Title: {title}', 'shortname' => '{title}', 'idnumber' => '{id}', 'startdate' => 'firstDate',
             'lang' => 'lang', 'timecreated' => '', 'timemodified' => '',
             'summary' => 'Destination: {destinationForDisplay}, firstDate: {firstDate}'
-        );
+        ];
 
-        $datesandvenues = array(
-            (object)array(
+        $datesandvenues = [
+            (object)[
                 'day' => 'Monday', 'start' => '2012-06-20T14:48:00+01:00', 'end' => '2012-06-30T15:00:00+01:00',
                 'cycle' => 'week', 'venue' => 'Room 101',
-                'firstDate' => (object)array(
+                'firstDate' => (object)[
                     'startDatetime' => '2012-06-20T14:48:00+01:00',
                     'endDatetime' => '2012-06-20T15:00:00+01:00'
-                ),
-                'lastDate' => (object)array(
+                ],
+                'lastDate' => (object)[
                     'startDatetime' => '2012-06-30T14:48:00+01:00',
                     'endDatetime' => '2012-06-30T15:00:00+01:00'
-                )
-            )
-        );
-        $lecturers = array(
-            (object)array('firstName' => 'Prof.', 'lastName' => 'Plum'),
-            (object)array('firstName' => 'C.', 'lastName' => 'Mustard')
-        );
-        $remotedata = (object)array(
+                ]
+            ]
+        ];
+        $lecturers = [
+            (object)['firstName' => 'Prof.', 'lastName' => 'Plum'],
+            (object)['firstName' => 'C.', 'lastName' => 'Mustard']
+        ];
+        $remotedata = (object)[
             'url' => 'http://www.synergy-learning.com', 'destinationForDisplay' => 'Test org',
             'lang' => 'en', 'hoursPerWeek' => 5, 'id' => 'ABC-123', 'number' => '5', 'term' => '1st',
             'credits' => 50, 'status' => 'open', 'courseType' => 'online', 'title' => 'Test course',
             'firstDate' => '2012-06-20T14:48:00+01:00', 'datesAndVenues' => $datesandvenues
-        );
+        ];
 
-        $expectedcourse = (object)array(
+        $expectedcourse = (object)[
             'fullname' => 'Title: '.$remotedata->title,
             'shortname' => $remotedata->title,
             'idnumber' => 'ABC-123',
@@ -192,7 +192,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
             'startdate' => strtotime($remotedata->firstDate),
             'visible' => 1,
             'lang' => $remotedata->lang
-        );
+        ];
 
         $meta = new metadata($this->connect[1]->get_settings(), true);
         $meta->set_import_mappings($mappings);
@@ -202,7 +202,7 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
     }
 
     public function test_map_course_to_remote() {
-        $mappings = array(
+        $mappings = [
             'destinationForDisplay' => '', 'lang' => 'lang', 'hoursPerWeek' => '',
             'id' => '{idnumber}', 'number' => '', 'term' => '', 'credits' => '', 'status' => '',
             'courseType' => '', 'title' => '{fullname} - {shortname} - {startdate}', 'firstDate' => 'startdate',
@@ -211,26 +211,26 @@ class local_campusconnect_metadata_test extends campusconnect_base_testcase {
             'datesAndVenues.firstDate.startDatetime' => 'startdate', 'datesAndVenues.firstDate.endDatetime' => '',
             'datesAndVenues.lastDate.startDatetime' => '', 'datesAndVenues.lastDate.endDatetime' => '',
             'degreeProgrammes' => '', 'lecturers' => ''
-        );
+        ];
 
-        $course = (object)array(
+        $course = (object)[
             'fullname' => 'Test course fullname',
             'shortname' => 'Shortname',
             'summary' => "I don't expect to see this summary in the output",
             'lang' => 'en',
             'startdate' => 1340200080,
             'visible' => 1
-        );
+        ];
 
         $startdatestr = userdate($course->startdate, '%Y-%m-%dT%H:%M:%S%z');
-        $expectedremote = (object)array(
+        $expectedremote = (object)[
             'lang' => $course->lang,
             'id' => '',
             'title' => $course->fullname.' - '.$course->shortname.' - '.$startdatestr,
             'firstDate' => $startdatestr,
-            'datesAndVenues' => array((object)array('firstDate' => (object)array('startDatetime' => $startdatestr))),
+            'datesAndVenues' => [(object)['firstDate' => (object)['startDatetime' => $startdatestr]]],
             'status' => 'online'
-        );
+        ];
 
         $meta = new metadata($this->connect[1]->get_settings(), true);
         $meta->set_export_mappings($mappings);

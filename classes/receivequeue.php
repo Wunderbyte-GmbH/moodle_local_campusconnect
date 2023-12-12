@@ -34,7 +34,7 @@ class receivequeue {
     /**
      * @var integer[] IDs of events that were unsuccessful and should be tried again next update
      */
-    protected static $skipevents = array();
+    protected static $skipevents = [];
 
     /**
      * Code for pulling events from the ECS server and adding them to
@@ -81,11 +81,11 @@ class receivequeue {
         global $DB;
 
         // Check for existing event.
-        $oldevent = $DB->get_record('local_campusconnect_eventin', array(
+        $oldevent = $DB->get_record('local_campusconnect_eventin', [
             'type' => $event->get_resource_type(),
             'resourceid' => $event->get_resource_id(),
             'serverid' => $event->get_ecs_id()
-        ));
+        ]);
 
         if ($oldevent) {
             // Event already in the queue - update it, if necessary.
@@ -119,8 +119,8 @@ class receivequeue {
     protected function get_event_from_queue(ecssettings $ecssettings = null) {
         global $DB;
 
-        $params = array();
-        $select = array();
+        $params = [];
+        $select = [];
         if ($ecssettings != null) {
             $params['serverid'] = $ecssettings->get_id();
             $select[] = 'serverid = :serverid';
@@ -150,7 +150,7 @@ class receivequeue {
     protected function remove_event_from_queue(event $event) {
         global $DB;
 
-        $DB->delete_records('local_campusconnect_eventin', array('id' => $event->get_id()));
+        $DB->delete_records('local_campusconnect_eventin', ['id' => $event->get_id()]);
     }
 
     /**
@@ -161,7 +161,7 @@ class receivequeue {
         global $DB;
         self::$skipevents[] = $event->get_id();
 
-        $DB->set_field('local_campusconnect_eventin', 'failcount', $event->get_failcount() + 1, array('id' => $event->get_id()));
+        $DB->set_field('local_campusconnect_eventin', 'failcount', $event->get_failcount() + 1, ['id' => $event->get_id()]);
     }
 
     /**

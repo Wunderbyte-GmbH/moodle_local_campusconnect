@@ -91,11 +91,11 @@ function local_campusconnect_ecs_error_notification(ecssettings $ecssettings, $m
     $admins = get_admins();
     $fromuser = reset($admins);
 
-    $details = (object)array(
+    $details = (object)[
         'ecsname' => $ecssettings->get_name(),
         'ecsid' => $ecssettings->get_id(),
         'msg' => $msg
-    );
+    ];
 
     $eventdata = new \core\message\message();
     $eventdata->component = 'local_campusconnect';

@@ -26,7 +26,7 @@ require_once(dirname(__FILE__).'/../../config.php');
 global $DB, $SESSION, $FULLME;
 
 $courseid = required_param('id', PARAM_INT);
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
 
 // Retain the entire URL just as it is - otherwise the hash will not be calculated properly.
 $SESSION->wantsurl = $FULLME;
@@ -36,5 +36,5 @@ $SESSION->wantsurl = $FULLME;
 require_login($course, false, null, false);
 
 // If we get this far, then it means we were already logged in - just do a straight redirect.
-$url = new moodle_url('/course/view.php', array('id' => $course->id));
+$url = new moodle_url('/course/view.php', ['id' => $course->id]);
 redirect($url);

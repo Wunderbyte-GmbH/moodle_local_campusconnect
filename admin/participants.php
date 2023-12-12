@@ -43,9 +43,9 @@ admin_externalpage_setup('campusconnectparticipants');
 $refreshdone = optional_param('refreshdone', null, PARAM_INT);
 $refreshmsg = null;
 
-$error = array();
+$error = [];
 $ecslist = ecssettings::list_ecs();
-$allcommunities = array();
+$allcommunities = [];
 foreach ($ecslist as $ecsid => $ecsname) {
     $settings = new ecssettings($ecsid);
     try {
@@ -60,23 +60,23 @@ foreach ($ecslist as $ecsid => $ecsname) {
     }
 }
 
-$settingerrors = array();
-$confirmmsgs = array();
-$confirmparams = array();
+$settingerrors = [];
+$confirmmsgs = [];
+$confirmparams = [];
 if (optional_param('saveparticipants', false, PARAM_TEXT)) {
     require_sesskey();
 
     // Array of participant identifiers that were included in this update.
     $updateparticipants = required_param_array('updateparticipants', PARAM_ALPHANUMEXT);
     // Array of participant identifiers to export to.
-    $export = optional_param_array('export', array(), PARAM_ALPHANUMEXT);
-    $exportenrolment = optional_param_array('exportenrolment', array(), PARAM_ALPHANUMEXT);
-    $exporttoken = optional_param_array('exporttoken', array(), PARAM_ALPHANUMEXT);
-    $uselegacy = optional_param_array('uselegacy', array(), PARAM_ALPHANUMEXT);
+    $export = optional_param_array('export', [], PARAM_ALPHANUMEXT);
+    $exportenrolment = optional_param_array('exportenrolment', [], PARAM_ALPHANUMEXT);
+    $exporttoken = optional_param_array('exporttoken', [], PARAM_ALPHANUMEXT);
+    $uselegacy = optional_param_array('uselegacy', [], PARAM_ALPHANUMEXT);
     // Array of participant identifiers to import from.
-    $import = optional_param_array('import', array(), PARAM_ALPHANUMEXT);
-    $importenrolment = optional_param_array('importenrolment', array(), PARAM_ALPHANUMEXT);
-    $importtoken = optional_param_array('importtoken', array(), PARAM_ALPHANUMEXT);
+    $import = optional_param_array('import', [], PARAM_ALPHANUMEXT);
+    $importenrolment = optional_param_array('importenrolment', [], PARAM_ALPHANUMEXT);
+    $importtoken = optional_param_array('importtoken', [], PARAM_ALPHANUMEXT);
     // Array of import types (indexed by participant identifiers).
     $importtypes = required_param_array('importtype', PARAM_INT);
 
@@ -156,22 +156,22 @@ if ($ecsid = optional_param('refresh', null, PARAM_INT)) {
     $ret = local_campusconnect_refresh_ecs($ecssettings, true);
 
     $table = new html_table();
-    $table->head = array(
+    $table->head = [
         '',
         get_string('created', 'local_campusconnect'),
         get_string('updated', 'local_campusconnect'),
         get_string('deleted', 'local_campusconnect')
-    );
-    $table->data = array();
+    ];
+    $table->data = [];
 
-    $errors = array();
+    $errors = [];
     foreach ($ret as $item => $data) {
-        $row = array(
+        $row = [
             $item,
             count($data->created),
             count($data->updated),
             count($data->deleted)
-        );
+        ];
         $table->data[] = $row;
         if (!empty($data->errors)) {
             $errors = array_merge($errors, $data->errors);
@@ -184,10 +184,10 @@ if ($ecsid = optional_param('refresh', null, PARAM_INT)) {
         foreach ($errors as $error) {
             $err .= html_writer::tag('li', $error);
         }
-        echo html_writer::tag('ul', $err, array('class' => 'error'));
+        echo html_writer::tag('ul', $err, ['class' => 'error']);
     }
 
-    $redir = new moodle_url($PAGE->url, array('refreshdone' => $ecsid));
+    $redir = new moodle_url($PAGE->url, ['refreshdone' => $ecsid]);
     echo $OUTPUT->continue_button($redir);
 
     echo $OUTPUT->box_end();
@@ -197,11 +197,11 @@ if ($ecsid = optional_param('refresh', null, PARAM_INT)) {
 
 echo $refreshmsg;
 
-$importopts = array(
+$importopts = [
     participantsettings::IMPORT_LINK => get_string('ecscourselink', 'local_campusconnect'),
     participantsettings::IMPORT_COURSE => get_string('course', 'local_campusconnect'),
     participantsettings::IMPORT_CMS => get_string('campusmanagement', 'local_campusconnect')
-);
+];
 
 $strrefresh = get_string('refreshecs', 'local_campusconnect');
 $strparticipants = get_string('participants', 'local_campusconnect');
@@ -234,12 +234,12 @@ if ($settingerrors) {
 foreach ($allcommunities as $ecsname => $communities) {
     $firstcommunity = reset($communities);
     if ($firstcommunity) {
-        $url = new moodle_url('/local/campusconnect/admin/participants.php', array(
+        $url = new moodle_url('/local/campusconnect/admin/participants.php', [
             'refresh' => $firstcommunity->ecsid,
             'sesskey' => sesskey()
-        ));
+        ]);
         $refreshlink = $OUTPUT->single_button($url, $strrefresh, 'POST');
-        $refreshlink = html_writer::tag('span', $refreshlink, array('class' => 'campusconnect_refresh'));
+        $refreshlink = html_writer::tag('span', $refreshlink, ['class' => 'campusconnect_refresh']);
     } else {
         $refreshlink = '';
     }
@@ -268,7 +268,7 @@ foreach ($allcommunities as $ecsname => $communities) {
                 $partid = $participant->get_identifier();
                 $name = s($participant->get_name());
                 $userdataurl = new moodle_url('/local/campusconnect/admin/userdatamapping.php',
-                                              array('ecsid' => $participant->get_ecs_id(), 'mid' => $participant->get_mid()));
+                                              ['ecsid' => $participant->get_ecs_id(), 'mid' => $participant->get_mid()]);
                 $userdatalink = '<br/>'.html_writer::link($userdataurl,
                                                           get_string('edituserdatamapping', 'local_campusconnect'));
                 echo '<tr><td><h4';
@@ -289,17 +289,17 @@ foreach ($allcommunities as $ecsname => $communities) {
                 echo html_writer::checkbox('export[]', $partid,
                                            $participant->is_export_enabled(),
                                            get_string('externalcourse', 'local_campusconnect'),
-                                           array('id' => 'export_'.$partid));
+                                           ['id' => 'export_'.$partid]);
                 echo '<br/>';
                 echo html_writer::checkbox('exportenrolment[]', $partid,
                                            $participant->is_export_enrolment_enabled(),
                                            get_string('enrolmentstatus', 'local_campusconnect'),
-                                           array('id' => 'exportenrolment_'.$partid));
+                                           ['id' => 'exportenrolment_'.$partid]);
                 echo '<br/>';
                 echo html_writer::checkbox('exporttoken[]', $partid,
                                            $participant->is_export_token_enabled(),
                                            get_string('authenticationtoken', 'local_campusconnect'),
-                                           array('id' => 'exporttoken_'.$partid));
+                                           ['id' => 'exporttoken_'.$partid]);
                 if ($participant->is_export_token_enabled()) {
                     echo $userdatalink;
                 }
@@ -308,22 +308,22 @@ foreach ($allcommunities as $ecsname => $communities) {
                 echo html_writer::checkbox('import[]', $partid,
                                            $participant->is_import_enabled(),
                                            get_string('enabled', 'local_campusconnect'),
-                                           array('id' => 'import_'.$partid));
+                                           ['id' => 'import_'.$partid]);
                 echo '<br/>';
                 echo html_writer::checkbox('importenrolment[]', $partid,
                                            $participant->is_import_enrolment_enabled(),
                                            get_string('enrolmentstatus', 'local_campusconnect'),
-                                           array('id' => 'importenrolment_'.$partid));
+                                           ['id' => 'importenrolment_'.$partid]);
                 echo '<br/>';
                 echo html_writer::checkbox('importtoken[]', $partid,
                                            $participant->is_import_token_enabled(),
                                            get_string('authenticationtoken', 'local_campusconnect'),
-                                           array('id' => 'importtoken_'.$partid));
+                                           ['id' => 'importtoken_'.$partid]);
                 echo '<br/>';
                 echo html_writer::checkbox('uselegacy[]', $partid,
                                            $participant->is_legacy_export(),
                                            get_string('uselegacytoken', 'local_campusconnect'),
-                                           array('id' => 'uselegacy_'.$partid));
+                                           ['id' => 'uselegacy_'.$partid]);
                 if ($participant->is_import_token_enabled()) {
                     echo $userdatalink;
                 }
@@ -333,17 +333,17 @@ foreach ($allcommunities as $ecsname => $communities) {
                 echo html_writer::select($importopts, 'importtype['.$partid.']',
                                          $participant->get_import_type(), '');
 
-                echo html_writer::empty_tag('input', array(
+                echo html_writer::empty_tag('input', [
                     'type' => 'hidden',
                     'name' => 'updateparticipants[]',
                     'value' => $partid,
                     'class' => 'participantidentifier'
-                ));
-                echo html_writer::empty_tag('input', array(
+                ]);
+                echo html_writer::empty_tag('input', [
                     'type' => 'hidden',
                     'name' => 'sesskey',
                     'value' => sesskey()
-                ));
+                ]);
                 echo '</td>';
                 echo '</tr>';
             }

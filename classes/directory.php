@@ -59,13 +59,13 @@ class directory {
     protected $stillexists = false; // Flag used during updates from ECS.
     protected $parent = null;
 
-    protected static $dbfields = array(
+    protected static $dbfields = [
         'resourceid', 'rootid', 'directoryid', 'title', 'parentid', 'sortorder', 'categoryid', 'mapping'
-    );
+    ];
 
-    protected static $dirs = array();
+    protected static $dirs = [];
     /** @var directory[] $newdirs */
-    protected static $newdirs = array();
+    protected static $newdirs = [];
 
     /**
      * Create a directory instance
@@ -149,7 +149,7 @@ class directory {
      * @return directory[]
      */
     public function get_children() {
-        $children = array();
+        $children = [];
         $dirs = self::get_directories($this->rootid);
         foreach ($dirs as $dir) {
             if ($dir->parentid == $this->directoryid) {
@@ -178,14 +178,14 @@ class directory {
      * @return string HTML fragment
      */
     public function output_directory_tree_node($radioname, $selecteddir = null) {
-        static $classes = array(
+        static $classes = [
             self::STATUS_PENDING_UNMAPPED => 'status_pending_unmapped',
             self::STATUS_PENDING_AUTOMATIC => 'status_pending_automatic',
             self::STATUS_PENDING_MANUAL => 'status_pending_manual',
             self::STATUS_MAPPED_MANUAL => 'status_mapped_manual',
             self::STATUS_MAPPED_AUTOMATIC => 'status_mapped_automatic',
             self::STATUS_DELETED => 'status_deleted'
-        );
+        ];
 
         $expand = false;
         $childnodes = '';
@@ -199,17 +199,17 @@ class directory {
         }
         $status = $this->get_status();
         $class = $classes[$status];
-        $ret = html_writer::tag('span', s($this->title), array('class' => $class));
+        $ret = html_writer::tag('span', s($this->title), ['class' => $class]);
         if ($radioname) {
             $elid = $radioname.'-'.$this->directoryid;
-            $label = html_writer::tag('label', $ret, array('for' => $elid));
-            $radioparams = array(
+            $label = html_writer::tag('label', $ret, ['for' => $elid]);
+            $radioparams = [
                 'type' => 'radio',
                 'name' => $radioname,
                 'id' => $elid,
                 'class' => 'directoryradio',
                 'value' => $this->directoryid
-            );
+            ];
             if ($selecteddir == $this->directoryid) {
                 $radioparams['checked'] = 'checked';
                 $expand = true;
@@ -230,11 +230,11 @@ class directory {
         }
         $ret .= $childnodes;
         if ($expand) {
-            $params = array('class' => 'expanded');
+            $params = ['class' => 'expanded'];
         } else {
-            $params = array();
+            $params = [];
         }
-        return array(html_writer::tag('li', $ret, $params), $expand);
+        return [html_writer::tag('li', $ret, $params), $expand];
     }
 
     /**
@@ -324,7 +324,7 @@ class directory {
     protected function set_field($field, $value) {
         global $DB;
 
-        $DB->set_field('local_campusconnect_dir', $field, $value, array('id' => $this->recordid));
+        $DB->set_field('local_campusconnect_dir', $field, $value, ['id' => $this->recordid]);
         $this->$field = $value;
     }
 
@@ -337,7 +337,7 @@ class directory {
 
         $this->set_field('title', $title);
         if ($this->categoryid) {
-            $DB->set_field('course_categories', 'name', $this->title, array('id' => $this->categoryid));
+            $DB->set_field('course_categories', 'name', $this->title, ['id' => $this->categoryid]);
         }
     }
 
@@ -378,7 +378,7 @@ class directory {
             return null; // No change.
         }
 
-        if (!$newcategory = $DB->get_record('course_categories', array('id' => $categoryid))) {
+        if (!$newcategory = $DB->get_record('course_categories', ['id' => $categoryid])) {
             throw new coding_exception("Directory tree - attempting to map onto non-existent category $categoryid");
         }
 
@@ -544,8 +544,8 @@ class directory {
      * @param int $rootid the directory tree being deleted
      */
     public static function delete_root_directory($rootid) {
-        //global $DB;
-        //$DB->delete_records('local_campusconnect_dir', array('rootid' => $rootid));
+        // global $DB;
+        // $DB->delete_records('local_campusconnect_dir', array('rootid' => $rootid));
 
         /** @var $dirs directory[] */
         $dirs = self::get_directories($rootid);
@@ -562,7 +562,7 @@ class directory {
     public static function get_directories($rootid) {
         global $DB;
         if (!isset(self::$dirs[$rootid])) {
-            $dirs = $DB->get_records('local_campusconnect_dir', array('rootid' => $rootid), 'id');
+            $dirs = $DB->get_records('local_campusconnect_dir', ['rootid' => $rootid], 'id');
             self::$dirs[$rootid] = array_map(function ($data) {
                 return new directory($data);
             }, $dirs);
@@ -571,7 +571,7 @@ class directory {
     }
 
     public static function clear_directory_cache() {
-        self::$dirs = array();
+        self::$dirs = [];
     }
 
     /**
@@ -581,7 +581,7 @@ class directory {
      */
     public static function get_toplevel_directories($rootid) {
         $dirs = self::get_directories($rootid);
-        $tldirs = array();
+        $tldirs = [];
         foreach ($dirs as $dir) {
             if ($dir->parentid == $rootid) {
                 $tldirs[] = $dir;
@@ -609,14 +609,14 @@ class directory {
             $childdirs = html_writer::tag('ul', $childdirs);
         }
         $elid = $radioname.'-'.$dirtree->get_root_id();
-        $label = html_writer::tag('label', s($dirtree->get_title()), array('for' => $elid));
-        $radioparams = array(
+        $label = html_writer::tag('label', s($dirtree->get_title()), ['for' => $elid]);
+        $radioparams = [
             'type' => 'radio',
             'name' => $radioname,
             'id' => $elid,
             'class' => 'directoryradio',
             'value' => $dirtree->get_root_id()
-        );
+        ];
         if (is_null($selecteddir) || $dirtree->get_root_id() == $selecteddir) {
             $radioparams['checked'] = 'checked';
         }
@@ -624,9 +624,9 @@ class directory {
         $ret .= ' '.$label;
         $ret = html_writer::tag('span', $ret).$childdirs;
         if ($expand) {
-            $params = array('class' => 'expanded');
+            $params = ['class' => 'expanded'];
         } else {
-            $params = array();
+            $params = [];
         }
         return html_writer::tag('ul', html_writer::tag('li', $ret, $params));
     }
@@ -661,18 +661,18 @@ class directory {
         }
         $ret = format_string($category->name);
         $elid = $radioname.'-'.$category->id;
-        $labelparams = array(
+        $labelparams = [
             'for' => $elid,
             'id' => 'label'.$elid,
             'class' => 'categorylabel'
-        );
-        $radioparams = array(
+        ];
+        $radioparams = [
             'type' => 'radio',
             'name' => $radioname,
             'id' => $elid,
             'class' => 'categoryradio',
             'value' => $category->id
-        );
+        ];
         if ($selectedcategory == $category->id) {
             $radioparams['checked'] = 'checked';
             $labelparams['class'] .= ' mapped_category';
@@ -695,7 +695,7 @@ class directory {
             self::$dirs[$rootid][$recordid] = $directory;
         }
         if (!isset(self::$newdirs[$rootid])) {
-            self::$newdirs[$rootid] = array();
+            self::$newdirs[$rootid] = [];
         }
         self::$newdirs[$rootid][$recordid] = $directory;
     }
@@ -731,10 +731,10 @@ class directory {
         global $DB;
 
         // Find all directories at the top level of this tree that have not been manually mapped.
-        $dirstomove = $DB->get_records('local_campusconnect_dir', array(
+        $dirstomove = $DB->get_records('local_campusconnect_dir', [
             'parentid' => $directoryid,
             'mapping' => self::MAPPING_AUTOMATIC
-        ));
+        ]);
 
         // Move the category parents, as needed (checking the old parents were 'oldcategoryid').
         foreach ($dirstomove as $dirtomove) {
@@ -742,7 +742,7 @@ class directory {
                 continue; // Not yet mapped - nothing to do.
             }
 
-            $category = $DB->get_record('course_categories', array('id' => $dirtomove->categoryid), 'id, parent', MUST_EXIST);
+            $category = $DB->get_record('course_categories', ['id' => $dirtomove->categoryid], 'id, parent', MUST_EXIST);
             if ($category->parent != $oldcategoryid) {
                 throw new directorytree_exception("move_category: found automatic directory {$dirtomove->id} where category".
                                                   " parent != old category");
@@ -752,9 +752,9 @@ class directory {
         }
 
         // Move any courses within the root directory.
-        $coursestomove = $DB->get_records('local_campusconnect_course', array('parentid' => $directoryid));
+        $coursestomove = $DB->get_records('local_campusconnect_course', ['parentid' => $directoryid]);
         foreach ($coursestomove as $coursetomove) {
-            $course = $DB->get_record('course', array('id' => $coursetomove->id), 'id, category', MUST_EXIST);
+            $course = $DB->get_record('course', ['id' => $coursetomove->id], 'id, category', MUST_EXIST);
             if ($course->category != $oldcategoryid) {
                 throw new directorytree_exception("move_root_category: found course {$course->id} in root directory where".
                                                   " category != root directory category");
@@ -804,7 +804,7 @@ class directory {
                 }
             }
         }
-        self::$newdirs = array();
+        self::$newdirs = [];
         fix_course_sortorder();
     }
 
@@ -818,7 +818,7 @@ class directory {
     public static function sort_categories($rootid, $dirs, $categories) {
         global $DB;
         $updated = false;
-        $sorteddirs = array();
+        $sorteddirs = [];
         foreach ($dirs as $dir) {
             if ($dir->rootid != $rootid) {
                 continue;
@@ -827,7 +827,7 @@ class directory {
                 continue; // Only automatically mapped categories should be sorted.
             }
             if (!isset($sorteddirs[$dir->parentid])) {
-                $sorteddirs[$dir->parentid] = array();
+                $sorteddirs[$dir->parentid] = [];
             }
             $sortorder = $dir->sortorder;
             while (isset($sorteddirs[$dir->parentid][$sortorder])) {
@@ -854,7 +854,7 @@ class directory {
                 $catsort = $categories[$catid]->sortorder;
                 if ($catsort <= $lastsort) {
                     $catsort = $lastsort + 1;
-                    $DB->set_field('course_categories', 'sortorder', $catsort, array('id' => $catid));
+                    $DB->set_field('course_categories', 'sortorder', $catsort, ['id' => $catid]);
                     $updated = true;
                 }
                 $lastsort = $catsort;

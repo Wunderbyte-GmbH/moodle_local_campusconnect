@@ -31,7 +31,7 @@ class community {
     public $desciption;
     public $ecsid;
     /** @var participantsettings[] */
-    public $participants = array();
+    public $participants = [];
 
     public function __construct($ecsid, $name, $description) {
         $this->name = $name;

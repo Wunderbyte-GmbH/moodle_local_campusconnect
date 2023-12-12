@@ -30,7 +30,7 @@ global $CFG;
 require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
 
 class local_campusconnect_receivequeue_test extends campusconnect_base_testcase {
-    protected $resources = array();
+    protected $resources = [];
     /** @var receivequeue */
     protected $queue = null;
 
@@ -39,7 +39,7 @@ class local_campusconnect_receivequeue_test extends campusconnect_base_testcase 
         parent::setUp();
 
         // Data for test resources to create.
-        $this->resources[1] = (object)array('url' => 'http://www.example.com/test123',
+        $this->resources[1] = (object)['url' => 'http://www.example.com/test123',
                                             'title' => 'Course from ECS',
                                             'organization' => 'Synergy Learning',
                                             'lang' => 'en',
@@ -48,9 +48,9 @@ class local_campusconnect_receivequeue_test extends campusconnect_base_testcase 
                                             'term' => 'WS 06/07',
                                             'credits' => '10',
                                             'status' => 'online',
-                                            'courseType' => 'Vorlesung');
+                                            'courseType' => 'Vorlesung'];
 
-        $this->resources[2] = (object)array('url' => 'http://www.example.com/test456');
+        $this->resources[2] = (object)['url' => 'http://www.example.com/test456'];
 
         // General settings used by the tests.
         $this->queue = new receivequeue();
@@ -58,8 +58,8 @@ class local_campusconnect_receivequeue_test extends campusconnect_base_testcase 
 
     public function tearDown() {
         $this->clear_ecs_resources(event::RES_COURSELINK);
-        $this->connect = array();
-        $this->mid = array();
+        $this->connect = [];
+        $this->mid = [];
     }
 
     public function test_update_from_ecs_empty() {
@@ -76,11 +76,11 @@ class local_campusconnect_receivequeue_test extends campusconnect_base_testcase 
         $eid = $this->connect[1]->add_resource(event::RES_COURSELINK, $this->resources[1], $this->community);
 
         // Set up the expectations - 3 records inserted, none deleted/updated.
-        $expecteddata = array();
-        $expecteddata[0] = (object)array('type' => 'campusconnect/courselinks',
+        $expecteddata = [];
+        $expecteddata[0] = (object)['type' => 'campusconnect/courselinks',
                                          'resourceid' => "$eid",
                                          'serverid' => $this->connect[2]->get_ecs_id(),
-                                         'status' => event::STATUS_CREATED);
+                                         'status' => event::STATUS_CREATED];
         $expecteddata[1] = clone $expecteddata[0];
         $expecteddata[1]->status = event::STATUS_UPDATED;
         $expecteddata[2] = clone $expecteddata[0];
@@ -150,16 +150,16 @@ class local_campusconnect_receivequeue_test extends campusconnect_base_testcase 
         $records = $DB->get_records('local_campusconnect_eventin', [], 'id');
         $record = array_shift($records);
         unset($record->id, $record->failcount);
-        $this->assertEquals((object)array('type' => 'campusconnect/courselinks',
+        $this->assertEquals((object)['type' => 'campusconnect/courselinks',
                                           'resourceid' => "$eid",
                                           'serverid' => $this->connect[2]->get_ecs_id(),
-                                          'status' => event::STATUS_CREATED), $record);
+                                          'status' => event::STATUS_CREATED], $record);
         $record = array_shift($records);
         unset($record->id, $record->failcount);
-        $this->assertEquals((object)array('type' => 'campusconnect/courselinks',
+        $this->assertEquals((object)['type' => 'campusconnect/courselinks',
                                           'resourceid' => "$eid2",
                                           'serverid' => $this->connect[2]->get_ecs_id(),
-                                          'status' => event::STATUS_CREATED), $record);
+                                          'status' => event::STATUS_CREATED], $record);
 
         // Check there are no events in the queue any more.
         $result = $this->connect[2]->read_event_fifo();

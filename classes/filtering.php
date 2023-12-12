@@ -35,10 +35,10 @@ defined('MOODLE_INTERNAL') || die();
 class filtering {
 
     public static $config = null;
-    public static $globalsettings = array(
+    public static $globalsettings = [
         'enabled' => 'bool', 'defaultcategory' => 'int', 'usesinglecategory' => 'bool',
         'singlecategory' => 'int', 'attributes' => 'array'
-    );
+    ];
 
     // -------------------------------------------
     // Using the course filtering
@@ -55,7 +55,7 @@ class filtering {
             throw new coding_exception("Must not call get_categories() when course import filtering is disabled.");
         }
 
-        $categories = array();
+        $categories = [];
         if ($createincategory = self::create_in_category()) {
             $categories[] = $createincategory;
         }
@@ -69,7 +69,7 @@ class filtering {
         }
 
         if (empty($categories)) {
-            $categories = array(self::get_default_category());
+            $categories = [self::get_default_category()];
         }
         return $categories;
     }
@@ -120,7 +120,7 @@ class filtering {
         global $DB;
 
         if (count($attributes) == 0) {
-            return array($categoryid);
+            return [$categoryid];
         }
 
         $attributekeys = array_keys($attributes);
@@ -128,11 +128,11 @@ class filtering {
         $settings = array_shift($attributes);
 
         if ($settings->createsubdirectories) {
-            $catids = array();
+            $catids = [];
             // Creating subcategories for this attribute.
             $catnames = $coursedata[$attribute];
             if (!is_array($catnames)) {
-                $catnames = array($catnames);
+                $catnames = [$catnames];
             } else {
                 if (!$settings->allwords) {
                     // Only create subcategories for matching words (if 'allwords' not selected).
@@ -144,7 +144,7 @@ class filtering {
                                            " course '{$coursedata['title']}' has no matching values for this attribute");
             }
             foreach ($catnames as $catname) {
-                if (!$subcatid = $DB->get_field('course_categories', 'id', array('parent' => $categoryid, 'name' => $catname))) {
+                if (!$subcatid = $DB->get_field('course_categories', 'id', ['parent' => $categoryid, 'name' => $catname])) {
                     // Need to create a new subcategory.
                     $ins = new stdClass();
                     $ins->parent = $categoryid;
@@ -215,7 +215,7 @@ class filtering {
         if (isset($config->filteringattributes)) {
             return explode(',', $config->filteringattributes);
         }
-        return array();
+        return [];
     }
 
     /**
@@ -224,7 +224,7 @@ class filtering {
      * @return array
      */
     public static function load_global_settings() {
-        $settings = array();
+        $settings = [];
         $config = self::get_config();
         foreach (self::$globalsettings as $name => $type) {
             $configname = "filtering{$name}";
@@ -235,7 +235,7 @@ class filtering {
                 }
             } else {
                 if ($type == 'array') {
-                    $val = array();
+                    $val = [];
                 } else {
                     $val = false;
                 }
@@ -294,19 +294,19 @@ class filtering {
         global $DB;
 
         // Get all the course filter settings and store by categoryid.
-        $ordered = array();
-        $params = array();
+        $ordered = [];
+        $params = [];
         if (!is_null($categoryid)) {
             $params['categoryid'] = $categoryid;
         }
         $settings = $DB->get_records('local_campusconnect_filter', $params);;
         foreach ($settings as $setting) {
             if (!isset($ordered[$setting->categoryid])) {
-                $ordered[$setting->categoryid] = array();
+                $ordered[$setting->categoryid] = [];
             }
             $setting->allwords = empty($setting->words);
             if ($setting->allwords) {
-                $setting->words = array();
+                $setting->words = [];
             } else {
                 $setting->words = explode(',', $setting->words);
             }
@@ -314,22 +314,22 @@ class filtering {
         }
 
         // Make sure only valid attributes are listed and they are in the correct order.
-        $ret = array();
+        $ret = [];
         $validattribs = self::course_attributes();
         foreach ($ordered as $catid => $attribs) {
             foreach ($validattribs as $validattrib) {
                 if (isset($attribs[$validattrib])) {
                     if (!isset($ret[$catid])) {
-                        $ret[$catid] = array();
+                        $ret[$catid] = [];
                     }
                     $ret[$catid][$validattrib] = $attribs[$validattrib];
                 } else {
-                    //continue 2; // Once a valid attribute is missing, skip all the rest.
+                    // continue 2; // Once a valid attribute is missing, skip all the rest.
                 }
             }
         }
         if ($categoryid) {
-            return isset($ret[$categoryid]) ? $ret[$categoryid] : array();
+            return isset($ret[$categoryid]) ? $ret[$categoryid] : [];
         }
         return $ret;
     }
@@ -345,7 +345,7 @@ class filtering {
         // Check for any attributes that are no longer active.
         foreach ($oldsettings as $attribute => $oldsetting) {
             if (!isset($settings[$attribute])) {
-                $DB->delete_records('local_campusconnect_filter', array('id' => $oldsetting->id));
+                $DB->delete_records('local_campusconnect_filter', ['id' => $oldsetting->id]);
                 unset($oldsettings[$attribute]);
             }
         }
@@ -353,7 +353,7 @@ class filtering {
         foreach ($settings as $attribute => $setting) {
             $upd = new stdClass();
             if (!empty($setting->allwords)) {
-                $upd->words = array();
+                $upd->words = [];
             } else {
                 if (!isset($setting->words)) {
                     throw new coding_exception("Required setting 'words' missing from settings for '{$attribute}'");
@@ -400,7 +400,7 @@ class filtering {
             $ret .= self::output_category_and_children($cat, $baseurl, $activecategories, $selectedcategory);
         }
 
-        return html_writer::tag('ul', $ret, array('class' => 'filtering_categorylist'));
+        return html_writer::tag('ul', $ret, ['class' => 'filtering_categorylist']);
     }
 
     /**
@@ -423,13 +423,13 @@ class filtering {
         $name = format_string($category->name);
         if ($category->id == $selectedcategory) {
             $name .= ' ===&gt;';
-            $ret = html_writer::tag('span', $name, array('class' => 'selectedcategory'));
+            $ret = html_writer::tag('span', $name, ['class' => 'selectedcategory']);
         } else {
-            $url = new moodle_url($baseurl, array('categoryid' => $category->id));
+            $url = new moodle_url($baseurl, ['categoryid' => $category->id]);
             $ret = html_writer::link($url, $name);
         }
         if (in_array($category->id, $activecategories)) {
-            $ret = html_writer::tag('span', $ret, array('class' => 'activecategory'));
+            $ret = html_writer::tag('span', $ret, ['class' => 'activecategory']);
         }
         $ret .= $childcats;
         return html_writer::tag('li', $ret);

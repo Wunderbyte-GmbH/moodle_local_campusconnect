@@ -33,11 +33,11 @@ class connect {
     /** @var $curlresource resource - curl connection currently being prepared * */
     protected $curlresource = null;
     /** The headers to send in the next request **/
-    protected $headers = array();
+    protected $headers = [];
     /** The settings for connecting to the server **/
     protected $settings = null;
     /** The response headers from the last request **/
-    protected $responseheaders = array();
+    protected $responseheaders = [];
     /** Used to output debug information from the curl request */
     protected $debug = false;
 
@@ -52,8 +52,8 @@ class connect {
     const CONTENT = 'content';
     const TRANSFERDETAILS = 'transferdetails';
 
-    protected static $validsent = array(self::SENT, self::RECEIVED);
-    protected static $validtransferdetails = array(self::CONTENT, self::TRANSFERDETAILS);
+    protected static $validsent = [self::SENT, self::RECEIVED];
+    protected static $validtransferdetails = [self::CONTENT, self::TRANSFERDETAILS];
 
     /**
      * Construct a new connection
@@ -169,7 +169,7 @@ class connect {
      */
     public static function generate_legacy_realm($courseurl, $userdata) {
         $str = $courseurl;
-        $params = array('ecs_login', 'ecs_firstname', 'ecs_lastname', 'ecs_email', 'ecs_institution', 'ecs_uid');
+        $params = ['ecs_login', 'ecs_firstname', 'ecs_lastname', 'ecs_email', 'ecs_institution', 'ecs_uid'];
         foreach ($params as $param) {
             if (!isset($userdata[$param])) {
                 if ($param == 'ecs_uid' && isset($userdata['ecs_uid_hash'])) {
@@ -300,7 +300,7 @@ class connect {
 
         $result = $this->call();
         if (!$this->check_status(self::HTTP_CODE_OK)) {
-            //throw new connect_exception('get_resource - bad response: '.$this->get_status()." ($resourcepath)");
+            // throw new connect_exception('get_resource - bad response: '.$this->get_status()." ($resourcepath)");
             return false; // Resource does not exist on the server.
         }
 
@@ -612,7 +612,7 @@ class connect {
         if (substr($resourcepath, 0, 1) != '/' || substr($resourcepath, -1) == '/') {
             throw new coding_exception('Resource path must start with \'/\' and not end with \'/\'');
         }
-        $this->headers = array(); // Clear out any headers from previous calls.
+        $this->headers = []; // Clear out any headers from previous calls.
         $this->curlresource = curl_init($this->settings->get_url().$resourcepath);
 
         // Set up standard options.
@@ -745,8 +745,8 @@ class connect {
         }
 
         $this->set_option(CURLOPT_HTTPHEADER, $this->get_headers());
-        $this->set_option(CURLOPT_HEADERFUNCTION, array($this, 'parse_response_header'));
-        $this->responseheaders = array();
+        $this->set_option(CURLOPT_HEADERFUNCTION, [$this, 'parse_response_header']);
+        $this->responseheaders = [];
 
         if (($res = curl_exec($this->curlresource)) === false) {
             throw new connect_exception('curl error: '.curl_error($this->curlresource).
@@ -789,7 +789,7 @@ class connect {
             return false;
         }
 
-        $ret = array();
+        $ret = [];
         foreach ($this->headers as $key => $val) {
             $ret[] = "$key: $val";
         }
@@ -803,7 +803,7 @@ class connect {
      * @return \stdClass|null
      */
     protected function get_from_uri_list($urilist) {
-        $ret = array();
+        $ret = [];
         $urls = explode("\n", $urilist);
         foreach ($urls as $url) {
             $url = trim($url);
@@ -838,7 +838,7 @@ class connect {
             }
             */
         }
-        //return $ret;
+        // return $ret;
         return null;
     }
 

@@ -35,7 +35,7 @@ class campusconnect_rolemapping_form extends moodleform {
     protected $mappings;
 
     public function definition() {
-        $this->roles = array();
+        $this->roles = [];
         $roles = role_fix_names(get_all_roles(), context_system::instance(), ROLENAME_ORIGINAL);
         $allowedroleids = get_roles_for_contextlevels(CONTEXT_COURSE);
         foreach ($roles as $role) {
@@ -55,7 +55,7 @@ class campusconnect_rolemapping_form extends moodleform {
 
         if (!isset($this->mappings)) {
             global $DB;
-            $this->mappings = $DB->get_records_menu('local_campusconnect_rolemap', array(),
+            $this->mappings = $DB->get_records_menu('local_campusconnect_rolemap', [],
                                                     'ccrolename', 'ccrolename, moodleroleid');
         }
 
@@ -63,11 +63,11 @@ class campusconnect_rolemapping_form extends moodleform {
         $ccrolename = $mform->createElement('text', 'ccrolename', get_string('ccrolename', 'local_campusconnect'));
         $moodleroleid = $mform->createElement('select', 'moodleroleid', get_string('moodlerole', 'local_campusconnect'),
                                               $this->roles);
-        $mapping = new MoodleQuickForm_group('mapping', null, array($ccrolename, $moodleroleid));
-        $repeatels = array(
+        $mapping = new MoodleQuickForm_group('mapping', null, [$ccrolename, $moodleroleid]);
+        $repeatels = [
             $mapping
-        );
-        $this->repeat_elements($repeatels, count($this->mappings) + 3, array(), 'numtexts', 'addtexts', 3);
+        ];
+        $this->repeat_elements($repeatels, count($this->mappings) + 3, [], 'numtexts', 'addtexts', 3);
 
         // Default mappings.
         $id = 0;

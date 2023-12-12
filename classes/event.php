@@ -41,11 +41,11 @@ class event {
     const RES_COURSE_URL = 'campusconnect/course_urls';
     const RES_ENROLMENT = 'campusconnect/member_status';
 
-    protected static $validstatus = array(self::STATUS_CREATED, self::STATUS_UPDATED, self::STATUS_DESTROYED);
-    protected static $validresources = array(
+    protected static $validstatus = [self::STATUS_CREATED, self::STATUS_UPDATED, self::STATUS_DESTROYED];
+    protected static $validresources = [
         self::RES_COURSELINK, self::RES_DIRECTORYTREE, self::RES_COURSE,
         self::RES_COURSE_MEMBERS, self::RES_COURSE_URL, self::RES_ENROLMENT
-    );
+    ];
 
     protected $resource;
     protected $resourceid;

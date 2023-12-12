@@ -29,7 +29,7 @@ global $CFG;
 require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
 
 class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
-    protected $testdata = array(
+    protected $testdata = [
         'name' => 'test1name',
         'url' => 'http://www.example.com',
         'auth' => ecssettings::AUTH_NONE,
@@ -37,7 +37,7 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
         'importcategory' => null,  // Set via 'setUp' function, below.
         'importrole' => 'student',
         'importperiod' => 6
-    );
+    ];
 
     public function setUp() {
         global $DB;
@@ -45,7 +45,7 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
         parent::setUp();
 
         // Use the first course category found in the database as the import category, for testing.
-        $importcategory = $DB->get_records('course_categories', array(), 'id', 'id', 0, 1);
+        $importcategory = $DB->get_records('course_categories', [], 'id', 'id', 0, 1);
         $importcategory = reset($importcategory);
         $this->testdata['importcategory'] = $importcategory->id;
     }
@@ -210,7 +210,7 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
 
         $ecslist = array_diff(ecssettings::list_ecs(), $startingecs);
         $this->assertTrue(is_array($ecslist));
-        $this->assertEquals(array($id1 => 'test1name'), $ecslist);
+        $this->assertEquals([$id1 => 'test1name'], $ecslist);
 
         // Add a second ECS and test it is also in the list.
         $data['name'] = 'test2name';
@@ -220,22 +220,22 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
 
         $ecslist = array_diff(ecssettings::list_ecs(), $startingecs);
         $this->assertTrue(is_array($ecslist));
-        $this->assertEquals(array(
+        $this->assertEquals([
             $id1 => 'test1name',
             $id2 => 'test2name'
-        ), $ecslist);
+        ], $ecslist);
 
         // Delete the first ECS and test the list only contains the second one.
         $settings1->delete();
         $ecslist = array_diff(ecssettings::list_ecs(), $startingecs);
         $this->assertTrue(is_array($ecslist));
-        $this->assertEquals(array($id2 => 'test2name'), $ecslist);
+        $this->assertEquals([$id2 => 'test2name'], $ecslist);
 
         // Delete the second ECS and test the list is empty.
         $settings2->delete();
         $ecslist = array_diff(ecssettings::list_ecs(), $startingecs);
         $this->assertTrue(is_array($ecslist));
-        $this->assertEquals(array(), $ecslist);
+        $this->assertEquals([], $ecslist);
     }
 
     public function test_incoming_setting_validation() {
@@ -265,7 +265,7 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
 
         // Check importcategory validation.
         $data = $this->testdata;
-        $lastcategory = $DB->get_records('course_categories', array(), 'id DESC', 'id', 0, 1);
+        $lastcategory = $DB->get_records('course_categories', [], 'id DESC', 'id', 0, 1);
         $lastcategory = reset($lastcategory);
         $data['importcategory'] = $lastcategory->id + 1;
         try {
@@ -297,16 +297,16 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
         $data['notifycontent'] = 'testa@example.com,testb@example.com,testc@example.com';
         $data['notifycourses'] = 'testa@example.com';
         $settings->save_settings($data);
-        $this->assertEquals(array('testa@example.com', 'testb@example.com', 'testc@example.com'), $settings->get_notify_users());
-        $this->assertEquals(array('testa@example.com', 'testb@example.com', 'testc@example.com'), $settings->get_notify_content());
-        $this->assertEquals(array('testa@example.com'), $settings->get_notify_courses());
+        $this->assertEquals(['testa@example.com', 'testb@example.com', 'testc@example.com'], $settings->get_notify_users());
+        $this->assertEquals(['testa@example.com', 'testb@example.com', 'testc@example.com'], $settings->get_notify_content());
+        $this->assertEquals(['testa@example.com'], $settings->get_notify_courses());
     }
 
     public function test_settings_retrieval() {
-        $notifyusers = array('testa@example.com', 'testb@example.com');
-        $notifycontent = array('testc@example.com', 'testd@example.com');
-        $notifycourses = array('teste@example.com', 'testf@example.com');
-        $data = array_merge($this->testdata, array(
+        $notifyusers = ['testa@example.com', 'testb@example.com'];
+        $notifycontent = ['testc@example.com', 'testd@example.com'];
+        $notifycourses = ['teste@example.com', 'testf@example.com'];
+        $data = array_merge($this->testdata, [
             'crontime' => 60,
             'httpuser' => 'username',
             'httppass' => 'pass',
@@ -317,7 +317,7 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
             'notifyusers' => implode(',', $notifyusers),
             'notifycontent' => implode(',', $notifycontent),
             'notifycourses' => implode(',', $notifycourses)
-        ));
+        ]);
 
         $settings = new ecssettings();
         $settings->save_settings($data);
@@ -337,11 +337,11 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
         $this->assertEquals($data['auth'], $settings->get_auth_type());
         $this->assertEquals($data['ecsauth'], $settings->get_ecs_auth());
 
-        $settings->save_settings(array('auth' => ecssettings::AUTH_HTTP));
+        $settings->save_settings(['auth' => ecssettings::AUTH_HTTP]);
         $this->assertEquals($data['httpuser'], $settings->get_http_user());
         $this->assertEquals($data['httppass'], $settings->get_http_password());
 
-        $settings->save_settings(array('auth' => ecssettings::AUTH_CERTIFICATE));
+        $settings->save_settings(['auth' => ecssettings::AUTH_CERTIFICATE]);
         $this->assertEquals($data['cacertpath'], $settings->get_ca_cert_path());
         $this->assertEquals($data['certpath'], $settings->get_client_cert_path());
         $this->assertEquals($data['keypath'], $settings->get_key_path());

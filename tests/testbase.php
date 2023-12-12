@@ -40,8 +40,8 @@ defined('MOODLE_INTERNAL') || die();
 
 class campusconnect_base_testcase extends advanced_testcase {
     /** @var connect[] */
-    protected $connect = array();
-    protected $mid = array();
+    protected $connect = [];
+    protected $mid = [];
     protected $community = 'unittest';
 
     public function setUp() {
@@ -50,17 +50,17 @@ class campusconnect_base_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         // Create the connections for testing.
-        $names = array(1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3');
+        $names = [1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3'];
         foreach ($names as $key => $name) {
-            $category = $this->getDataGenerator()->create_category(array('name' => 'import'.$key));
+            $category = $this->getDataGenerator()->create_category(['name' => 'import'.$key]);
             $ecs = new ecssettings();
-            $ecs->save_settings(array(
+            $ecs->save_settings([
                                     'url' => 'http://localhost:3000',
                                     'auth' => ecssettings::AUTH_NONE,
                                     'ecsauth' => $name,
                                     'importcategory' => $category->id,
                                     'importrole' => 'student',
-                                ));
+                                ]);
             $this->connect[$key] = new connect($ecs);
         }
 
@@ -75,13 +75,13 @@ class campusconnect_base_testcase extends advanced_testcase {
         }
 
         // Set participant 1 as the CMS for participant 2.
-        $part = (object)array(
+        $part = (object)[
             'ecsid' => $this->connect[2]->get_ecs_id(),
             'mid' => $this->mid[1],
             'export' => 0,
             'import' => 1,
             'importtype' => participantsettings::IMPORT_CMS,
-        );
+        ];
         $DB->insert_record('local_campusconnect_part', $part);
         participantsettings::get_cms_participant(true); // Reset the cached 'cms participant' value.
     }
@@ -89,8 +89,8 @@ class campusconnect_base_testcase extends advanced_testcase {
     protected function tearDown() {
         $this->clear_ecs_resources(event::RES_DIRECTORYTREE);
 
-        $this->connect = array();
-        $this->mid = array();
+        $this->connect = [];
+        $this->mid = [];
     }
 
     protected function clear_ecs_resources($type) {

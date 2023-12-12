@@ -55,10 +55,10 @@ if (optional_param('refreshall', false, PARAM_BOOL)) {
 }
 
 // Get list of exported courses (and course details).
-$courses = array();
+$courses = [];
 $exports = export::list_all_exports();
 if ($exports) {
-    $courseids = array();
+    $courseids = [];
     foreach ($exports as $export) {
         $courseids[] = $export->get_courseid();
     }
@@ -67,31 +67,31 @@ if ($exports) {
 
 // Table headings.
 $table = new html_table();
-$table->head = array(
+$table->head = [
     get_string('coursename', 'local_campusconnect'),
     get_string('exportparticipants', 'local_campusconnect')
-);
-$table->attributes = array('style' => 'width: 90%;');
-$table->size = array(
+];
+$table->attributes = ['style' => 'width: 90%;'];
+$table->size = [
     '40%',
     '60%'
-);
+];
 
-$strstatus = array(
+$strstatus = [
     export::STATUS_CREATED => get_string('exportcreated', 'local_campusconnect'),
     export::STATUS_UPDATED => get_string('exportupdated', 'local_campusconnect'),
     export::STATUS_DELETED => get_string('exportdeleted', 'local_campusconnect'),
-);
+];
 
 // Gather details for each exported course.
-$table->data = array();
+$table->data = [];
 foreach ($exports as $export) {
     /** @var $export export */
     $coursename = format_string($courses[$export->get_courseid()]->fullname);
-    $courseurl = new moodle_url('/course/view.php', array('id' => $export->get_courseid()));
+    $courseurl = new moodle_url('/course/view.php', ['id' => $export->get_courseid()]);
     $courselink = html_writer::link($courseurl, $coursename);
 
-    $part = array();
+    $part = [];
     $participants = $export->list_current_exports();
     if (empty($participants)) {
         continue;
@@ -106,15 +106,15 @@ foreach ($exports as $export) {
         $part[] = $partname;
     }
 
-    $row = array(
+    $row = [
         $courselink,
         implode('<br/>', $part)
-    );
+    ];
 
     $table->data[] = $row;
 }
 
-$refreshurl = new moodle_url($PAGE->url, array('refreshall' => 1, 'sesskey' => sesskey()));
+$refreshurl = new moodle_url($PAGE->url, ['refreshall' => 1, 'sesskey' => sesskey()]);
 
 // Output exported details.
 echo $OUTPUT->header();

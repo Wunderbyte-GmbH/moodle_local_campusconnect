@@ -31,9 +31,9 @@ require_once("$CFG->libdir/formslib.php");
 
 $mform = new campusconnect_import_form();
 
-$redir = new moodle_url('/local/campusconnect/admin/datamapping.php', array('type' => 'import'));
+$redir = new moodle_url('/local/campusconnect/admin/datamapping.php', ['type' => 'import']);
 
-$errors = array();
+$errors = [];
 $ecslist = ecssettings::list_ecs();
 if ($mform->is_cancelled()) {
 
@@ -41,11 +41,11 @@ if ($mform->is_cancelled()) {
 
 } else if ($post = $mform->get_data()) {
 
-    $coursedata = array();
-    $courselinkdata = array();
+    $coursedata = [];
+    $courselinkdata = [];
     foreach ($ecslist as $ecsid => $ecsname) {
-        $courselinkdata[$ecsid] = array();
-        $coursedata[$ecsid] = array();
+        $courselinkdata[$ecsid] = [];
+        $coursedata[$ecsid] = [];
         foreach (metadata::list_local_fields() as $fieldname) {
             $fullfieldname = $ecsid.'_'.$fieldname.'_courselink';
             if (isset($post->{$fullfieldname})) {
@@ -116,7 +116,7 @@ foreach ($remotefields as $remotefield) {
 print "<div style='float: right; width: 45%; border: 1px solid #000; background: #ddd; margin: 10px 5px; padding: 5px'><strong>"
     .get_string('courseextavailablefields', 'local_campusconnect').':</strong><br />'.$helpcontent."</div>";
 
-echo html_writer::empty_tag('br', array('class' => 'clearer'));
+echo html_writer::empty_tag('br', ['class' => 'clearer']);
 
 if (!empty($errors)) {
     $mform->set_errors($errors);
@@ -151,7 +151,7 @@ class campusconnect_import_form extends moodleform {
                 if ($localmap == 'summary') {
                     $mform->addElement('editor', $elname, $localmap);
                     $mform->setType($elname, PARAM_RAW);
-                    $mform->setDefault($elname, array('text' => $currentmappings[$localmap], 'format' => FORMAT_HTML));
+                    $mform->setDefault($elname, ['text' => $currentmappings[$localmap], 'format' => FORMAT_HTML]);
                 } else if ($metadata->is_text_field($localmap)) {
                     $mform->addElement('text', $elname, $localmap, $currentmappings[$localmap]);
                     $mform->setDefault($elname, $currentmappings[$localmap]);
@@ -159,12 +159,12 @@ class campusconnect_import_form extends moodleform {
                 } else {
                     $maparray = $metadata->list_remote_to_local_fields($localmap, false);
                     if ($maparray) {
-                        $maps = array('' => $strunmapped);
+                        $maps = ['' => $strunmapped];
                         foreach ($maparray as $i) {
                             $maps[$i] = $i;
                         }
                     } else {
-                        $maps = array('' => $strnomappings);
+                        $maps = ['' => $strnomappings];
                     }
                     $mform->addElement('select', $elname, $localmap, $maps, $currentmappings[$localmap]);
                     $mform->setDefault($elname, $currentmappings[$localmap]);
@@ -181,7 +181,7 @@ class campusconnect_import_form extends moodleform {
                 if ($localmap == 'summary') {
                     $mform->addElement('editor', $elname, $localmap);
                     $mform->setType($elname, PARAM_RAW);
-                    $mform->setDefault($elname, array('text' => $currentmappings[$localmap], 'format' => FORMAT_HTML));
+                    $mform->setDefault($elname, ['text' => $currentmappings[$localmap], 'format' => FORMAT_HTML]);
                 } else if ($metadata->is_text_field($localmap)) {
                     $mform->addElement('text', $elname, $localmap, $currentmappings[$localmap]);
                     $mform->setDefault($elname, $currentmappings[$localmap]);
@@ -189,12 +189,12 @@ class campusconnect_import_form extends moodleform {
                 } else {
                     $maparray = $metadata->list_remote_to_local_fields($localmap, true);
                     if ($maparray) {
-                        $maps = array('' => $strunmapped);
+                        $maps = ['' => $strunmapped];
                         foreach ($maparray as $i) {
                             $maps[$i] = $i;
                         }
                     } else {
-                        $maps = array('' => $strnomappings);
+                        $maps = ['' => $strnomappings];
                     }
                     $mform->addElement('select', $elname, $localmap, $maps, $currentmappings[$localmap]);
                     $mform->setDefault($elname, $currentmappings[$localmap]);

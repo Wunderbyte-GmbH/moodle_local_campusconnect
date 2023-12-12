@@ -86,25 +86,25 @@ class parallelgroups {
         switch ($scenario) {
             case self::PGROUP_NONE:
             case self::PGROUP_SEPARATE_GROUPS:
-                $courses = array($parallelgroups);
+                $courses = [$parallelgroups];
                 break;
 
             case self::PGROUP_SEPARATE_COURSES:
-                $courses = array();
+                $courses = [];
                 foreach ($parallelgroups as $key => $group) {
-                    $courses[] = array($key => $group);
+                    $courses[] = [$key => $group];
                 }
                 break;
 
             case self::PGROUP_SEPARATE_LECTURERS:
-                $courses = array();
+                $courses = [];
                 foreach ($parallelgroups as $pgroup) {
                     $lecturer = $pgroup->lecturer;
                     if (empty($lecturer)) {
                         $lecturer = 0;
                     }
                     if (!isset($courses[$lecturer])) {
-                        $courses[$lecturer] = array();
+                        $courses[$lecturer] = [];
                     }
                     $courses[$lecturer][] = $pgroup;
                 }
@@ -112,11 +112,11 @@ class parallelgroups {
 
             default:
                 debugging("Unknown parallel groups scenario: {$scenario}");
-                $courses = array();
+                $courses = [];
                 $scenario = self::PGROUP_NONE;
         }
 
-        return array($courses, $scenario);
+        return [$courses, $scenario];
     }
 
     /**
@@ -126,11 +126,11 @@ class parallelgroups {
      */
     protected static function get_parallel_group_internal($course) {
         if (!isset($course->groups)) {
-            return array();
+            return [];
         }
 
         $groupnum = 0;
-        $groups = array();
+        $groups = [];
         foreach ($course->groups as $group) {
             $details = new stdClass();
             $details->cmscourseid = $course->lectureID;
@@ -164,26 +164,26 @@ class parallelgroups {
     public static function get_groups_for_user($pgroups, $cmscourseid, $defaultcourseids, $defaultrole) {
         global $DB;
 
-        static $groupcache = array();
+        static $groupcache = [];
         if (PHPUNIT_TEST) {
-            $groupcache = array(); // Static cache breaks unit tests when more than one test uses the same cmscourseid.
+            $groupcache = []; // Static cache breaks unit tests when more than one test uses the same cmscourseid.
         }
 
         // User enroling in parallel groups - generate a list of all the courses they need to enrol in.
-        $ret = array();
+        $ret = [];
         foreach ($pgroups as $groupnum => $grouprole) {
             if (!isset($groupcache[$cmscourseid])) {
-                $groupcache[$cmscourseid] = $DB->get_records('local_campusconnect_pgroup', array('cmscourseid' => $cmscourseid),
+                $groupcache[$cmscourseid] = $DB->get_records('local_campusconnect_pgroup', ['cmscourseid' => $cmscourseid],
                                                              '', 'groupnum, courseid, groupid');
             }
             $coursegroups = $groupcache[$cmscourseid];
             if (isset($coursegroups[$groupnum])) {
-                $ret[] = (object)array(
+                $ret[] = (object)[
                     'courseid' => $coursegroups[$groupnum]->courseid,
                     'role' => ($grouprole >= 0) ? $grouprole : $defaultrole,
                     'groupid' => $coursegroups[$groupnum]->groupid,
                     'groupnum' => $groupnum
-                );
+                ];
                 if (!in_array($coursegroups[$groupnum]->courseid, $defaultcourseids)) {
                     debugging("Expected {$coursegroups[$groupnum]->courseid}, the course for parallel group".
                               " {$groupnum}, to be in the list of courses: (".implode(', ', $defaultcourseids).")");
@@ -193,14 +193,14 @@ class parallelgroups {
 
         // No parallel groups found - just enrol into the first course with the default role.
         if (empty($ret)) {
-            $ret = array(
-                (object)array(
+            $ret = [
+                (object)[
                     'courseid' => reset($defaultcourseids),
                     'role' => $defaultrole,
                     'groupid' => 0,
                     'groupnum' => 0,
-                )
-            );
+                ]
+            ];
         }
 
         return $ret;
@@ -219,19 +219,19 @@ class parallelgroups {
     public function match_parallel_groups_to_courses($cmscourseid, $pgroups, $pgroupsmode, $firstcourseid) {
         global $DB;
 
-        $matched = array();
-        $notmatched = array();
-        $existing = $DB->get_records('local_campusconnect_pgroup', array(
+        $matched = [];
+        $notmatched = [];
+        $existing = $DB->get_records('local_campusconnect_pgroup', [
             'ecsid' => $this->ecssettings->get_id(),
             'resourceid' => $this->resourceid,
             'cmscourseid' => $cmscourseid
-        ),
+        ],
                                      '', 'id, cmscourseid, groupnum, courseid');
         if (empty($existing)) {
             // This probably means we've just switched from PGROUP_NONE to one of the scenarios. Assume that the existing
             // course matches the first pgcourse.
             $pgcourse = array_shift($pgroups);
-            return array(array($firstcourseid => $pgcourse), $pgroups);
+            return [[$firstcourseid => $pgcourse], $pgroups];
         }
 
         foreach ($pgroups as $pcourse) {
@@ -260,7 +260,7 @@ class parallelgroups {
             $notmatched[] = $pcourse;
         }
 
-        return array($matched, $notmatched);
+        return [$matched, $notmatched];
     }
 
     /**
@@ -285,10 +285,10 @@ class parallelgroups {
                   LEFT JOIN {groups} g ON g.id = pg.groupid
                  WHERE pg.ecsid = :ecsid AND pg.resourceid = :resourceid
                    AND pg.courseid = :courseid AND pg.cmscourseid = :cmscourseid";
-        $params = array(
+        $params = [
             'ecsid' => $this->ecssettings->get_id(), 'resourceid' => $this->resourceid,
             'courseid' => $course->id, 'cmscourseid' => $cmscourseid
-        );
+        ];
         $existing = $DB->get_records_sql($sql, $params);
 
         unset($params['courseid']);
@@ -362,10 +362,10 @@ class parallelgroups {
 
                 } else {
                     // The pgroup does not yet exist.
-                    if ($DB->record_exists('local_campusconnect_pgroup', array(
+                    if ($DB->record_exists('local_campusconnect_pgroup', [
                         'cmscourseid' => $cmscourseid,
                         'groupnum' => $pg->groupnum
-                    ))
+                    ])
                     ) {
                         debugging("Group already exists with cmscourseid: {$cmscourseid} and groupnum: {$pg->groupnum}".
                                   " - skipping creation of new group");

@@ -36,7 +36,7 @@ $mappings = member_personid::get_mapping();
 
 // Load form.
 $form = new campusconnect_personidmapping_form();
-$form->set_data(array('userfieldmapping' => $mappings));
+$form->set_data(['userfieldmapping' => $mappings]);
 
 if ($data = $form->get_data()) {
     member_personid::set_mapping($data->userfieldmapping);

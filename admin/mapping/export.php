@@ -31,9 +31,9 @@ require_once("$CFG->libdir/formslib.php");
 
 $mform = new campusconnect_export_form();
 
-$redir = new moodle_url('/local/campusconnect/admin/datamapping.php', array('type' => 'export'));
+$redir = new moodle_url('/local/campusconnect/admin/datamapping.php', ['type' => 'export']);
 
-$errors = array();
+$errors = [];
 $ecslist = ecssettings::list_ecs();
 if ($mform->is_cancelled()) {
 
@@ -41,11 +41,11 @@ if ($mform->is_cancelled()) {
 
 } else if ($post = $mform->get_data()) {
 
-    $courselinkdata = array();
-    $coursedata = array();
+    $courselinkdata = [];
+    $coursedata = [];
     foreach ($ecslist as $ecsid => $ecsname) {
-        $courselinkdata[$ecsid] = array();
-        $coursedata[$ecsid] = array();
+        $courselinkdata[$ecsid] = [];
+        $coursedata[$ecsid] = [];
         foreach (metadata::list_remote_fields(true) as $fieldname) {
             $fullfieldname = $ecsid.'_'.$fieldname.'_courselink';
             if (isset($post->{$fullfieldname})) {
@@ -106,13 +106,13 @@ foreach ($remotefields as $remotefield) {
 print "<div style='float: left; width: 45%; border: 1px solid #000; background: #ddd; margin: 10px 5px; padding: 5px;'><strong>"
     .get_string('courseavailablefields', 'local_campusconnect').':</strong><br />'.$helpcontent."</div>";
 
-echo html_writer::empty_tag('br', array('class' => 'clearer'));
+echo html_writer::empty_tag('br', ['class' => 'clearer']);
 
 if (!empty($errors)) {
     $mform->set_errors($errors);
 }
 
-echo html_writer::start_tag('span', array('class' => 'campusconnect_metadata'));
+echo html_writer::start_tag('span', ['class' => 'campusconnect_metadata']);
 $mform->display();
 echo html_writer::end_tag('span');
 
@@ -185,7 +185,7 @@ class campusconnect_export_form extends moodleform {
                 if ($remotemap == 'summary') {
                     $mform->addElement('editor', $elname, $remotemap);
                     $mform->setType($elname, PARAM_RAW);
-                    $mform->setDefault($elname, array('text' => $currentmappings[$remotemap], 'format' => FORMAT_HTML));
+                    $mform->setDefault($elname, ['text' => $currentmappings[$remotemap], 'format' => FORMAT_HTML]);
                 } else if ($metadata->is_remote_text_field($remotemap, true)) {
                     $mform->addElement('text', $elname, $remotemap);
                     if (isset($currentmappings[$remotemap])) {
@@ -195,12 +195,12 @@ class campusconnect_export_form extends moodleform {
                 } else {
                     $maparray = $metadata->list_local_to_remote_fields($remotemap, true);
                     if ($maparray) {
-                        $maps = array('' => $strunmapped);
+                        $maps = ['' => $strunmapped];
                         foreach ($maparray as $i) {
                             $maps[$i] = $i;
                         }
                     } else {
-                        $maps = array('' => $strnomappings);
+                        $maps = ['' => $strnomappings];
                     }
                     $mform->addElement('select', $elname, $remotemap, $maps);
                     if (isset($currentmappings[$remotemap])) {

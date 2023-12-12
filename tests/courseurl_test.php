@@ -47,11 +47,11 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
     /**
      * @var connect[]
      */
-    protected $connect = array();
+    protected $connect = [];
     /**
      * @var integer[]
      */
-    protected $mid = array();
+    protected $mid = [];
 
     protected function setUp() {
         global $DB;
@@ -59,17 +59,17 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         $this->resetAfterTest();
 
         // Create the connections for testing.
-        $names = array(1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3');
+        $names = [1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3'];
         foreach ($names as $key => $name) {
-            $category = $this->getDataGenerator()->create_category(array('name' => 'import'.$key));
+            $category = $this->getDataGenerator()->create_category(['name' => 'import'.$key]);
             $ecs = new ecssettings();
-            $ecs->save_settings(array(
+            $ecs->save_settings([
                                     'url' => 'http://localhost:3000',
                                     'auth' => ecssettings::AUTH_NONE,
                                     'ecsauth' => $name,
                                     'importcategory' => $category->id,
                                     'importrole' => 'student',
-                                ));
+                                ]);
             $this->connect[$key] = new connect($ecs);
         }
 
@@ -85,13 +85,13 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         }
 
         // Set 'unittest2' as the CMS for 'unittest1'.
-        $part = (object)array(
+        $part = (object)[
             'ecsid' => $this->connect[1]->get_ecs_id(),
             'mid' => $this->mid[2],
             'export' => 0,
             'import' => 1,
             'importtype' => participantsettings::IMPORT_CMS,
-        );
+        ];
         $DB->insert_record('local_campusconnect_part', $part);
         participantsettings::get_cms_participant(true); // Reset the cached 'cms participant' value.
 
@@ -116,15 +116,15 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             }
         }
 
-        $this->connect = array();
-        $this->mid = array();
+        $this->connect = [];
+        $this->mid = [];
     }
 
     public function test_create_course_url() {
         global $DB;
 
         // Create crs record.
-        $ins = (object)array(
+        $ins = (object)[
             'courseid' => '110', // Made-up courseid.
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
@@ -135,7 +135,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
             'sortorder' => 0,
             'directoryid' => 0,
-        );
+        ];
         $crsid = $DB->insert_record('local_campusconnect_crs', $ins);
 
         // Add it to queue.
@@ -154,7 +154,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
 
         $this->assertEquals($ins->cmsid, $courseurlres->cms_course_id);
         $this->assertCount(1, $courseurlres->lms_course_urls); // No parallel groups => only 1 URL expected.
-        $expectedurl = new moodle_url('/course/view.php', array('id' => $ins->courseid));
+        $expectedurl = new moodle_url('/course/view.php', ['id' => $ins->courseid]);
         $actualurl = reset($courseurlres->lms_course_urls);
         $this->assertEquals($expectedurl->out(), $actualurl->url);
     }
@@ -163,7 +163,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         global $DB;
 
         // Create crs record.
-        $ins = (object)array(
+        $ins = (object)[
             'courseid' => '110', // Made-up courseid.
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
@@ -174,7 +174,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
             'sortorder' => 0,
             'directoryid' => 0,
-        );
+        ];
         $crsid = $DB->insert_record('local_campusconnect_crs', $ins);
 
         // Add it to queue.
@@ -194,10 +194,10 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         $this->assertEquals($ins->cmsid, $courseurlres->cms_course_id);
 
         // Update the course record.
-        $upd = (object)array(
+        $upd = (object)[
             'id' => $crsid,
             'cmsid' => 'updated456',
-        );
+        ];
         $DB->update_record('local_campusconnect_crs', $upd);
         $courseurl = new course_url($crsid);
         $courseurl->update();
@@ -220,7 +220,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         global $DB;
 
         // Create crs record.
-        $ins = (object)array(
+        $ins = (object)[
             'courseid' => '110', // Made-up courseid.
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
@@ -231,7 +231,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
             'sortorder' => 0,
             'directoryid' => 0,
-        );
+        ];
         $crsid = $DB->insert_record('local_campusconnect_crs', $ins);
 
         // Add it to queue.
@@ -256,10 +256,10 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
     public function test_refresh_ecs() {
         global $DB;
 
-        $resids = array();
+        $resids = [];
 
         // Create crs record.
-        $ins = (object)array(
+        $ins = (object)[
             'courseid' => '110', // Made-up courseid.
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
@@ -270,7 +270,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
             'sortorder' => 0,
             'directoryid' => 0,
-        );
+        ];
         $crsid = $DB->insert_record('local_campusconnect_crs', $ins);
 
         // Add it to queue.
@@ -279,19 +279,19 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
 
         // Update ECS (from 'unittest1' to CMS 'unittest2').
         course_url::update_ecs($this->connect[1]);
-        $resids[1] = $DB->get_field('local_campusconnect_crs', 'urlresourceid', array('id' => $crsid), MUST_EXIST);
+        $resids[1] = $DB->get_field('local_campusconnect_crs', 'urlresourceid', ['id' => $crsid], MUST_EXIST);
 
         // Insert an extra, unwanted URL resource on the server.
         $cms = participantsettings::get_cms_participant();
-        $fakecourseurl = (object)array(
+        $fakecourseurl = (object)[
             'cms_course_id' => 'unwantedurl',
             'ecs_course_url' => $this->connect[1]->get_resource_url('40', event::RES_COURSE), // Fake resource id.
-            'lms_course_url' => array((object)array('title' => 'fakeurl', 'url' => 'fakeurl')),
-        );
+            'lms_course_url' => [(object)['title' => 'fakeurl', 'url' => 'fakeurl']],
+        ];
         $resids[2] = $this->connect[1]->add_resource(event::RES_COURSE_URL, $fakecourseurl, null, $cms->get_mid());
 
         // Add an extra crs record, that is not synced with server.
-        $ins2 = (object)array(
+        $ins2 = (object)[
             'courseid' => '130', // Made-up courseid.
             'resourceid' => '56', // Made-up resourceid.
             'cmsid' => 'anothertest456',
@@ -302,14 +302,14 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
             'sortorder' => 0,
             'directoryid' => 0,
-        );
+        ];
         $crsid2 = $DB->insert_record('local_campusconnect_crs', $ins2);
 
         // Change the 'cmsid' for the existing exported URL.
-        $upd = (object)array(
+        $upd = (object)[
             'id' => $crsid,
             'cmsid' => 'updated456',
-        );
+        ];
         $DB->update_record('local_campusconnect_crs', $upd);
 
         // Check the current status on the ECS server, this should show:
@@ -365,7 +365,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         // Expect a single exported course url record, which links to the two parallel groups, but not to the internal link.
 
         // Create crs records.
-        $ins = (object)array(
+        $ins = (object)[
             'courseid' => '110', // Made-up courseid.
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
@@ -376,7 +376,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
             'sortorder' => 0,
             'directoryid' => 0,
-        );
+        ];
         $crsid1 = $DB->insert_record('local_campusconnect_crs', $ins);
 
         // Add a paralell group record (note this is a separate course, not an internal link back to the first course,
@@ -408,9 +408,9 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         $this->assertEquals($ins->cmsid, $courseurlres->cms_course_id);
         $this->assertCount(2, $courseurlres->lms_course_urls); // 2 parallel groups => 2 course urls exptected (but not the internal link).
 
-        $expectedurl1 = new moodle_url('/course/view.php', array('id' => $ins->courseid));
-        $expectedurl2 = new moodle_url('/course/view.php', array('id' => $ins2->courseid));
-        $actualurls = array();
+        $expectedurl1 = new moodle_url('/course/view.php', ['id' => $ins->courseid]);
+        $expectedurl2 = new moodle_url('/course/view.php', ['id' => $ins2->courseid]);
+        $actualurls = [];
         foreach ($courseurlres->lms_course_urls as $lmsurl) {
             $actualurls[] = $lmsurl->url;
         }
@@ -418,9 +418,9 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         $this->assertContains($expectedurl2->out(), $actualurls);
 
         // Check the urlresourceids have been correctly saved in the DB.
-        $crs1 = $DB->get_record('local_campusconnect_crs', array('id' => $crsid1));
-        $crs2 = $DB->get_record('local_campusconnect_crs', array('id' => $crsid2));
-        $crs3 = $DB->get_record('local_campusconnect_crs', array('id' => $crsid3));
+        $crs1 = $DB->get_record('local_campusconnect_crs', ['id' => $crsid1]);
+        $crs2 = $DB->get_record('local_campusconnect_crs', ['id' => $crsid2]);
+        $crs3 = $DB->get_record('local_campusconnect_crs', ['id' => $crsid3]);
 
         $this->assertEquals($courseurlid, $crs1->urlresourceid);
         $this->assertEquals($courseurlid, $crs2->urlresourceid);
@@ -430,7 +430,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
     public function test_multiple_refresh_ecs() {
         global $DB;
 
-        $resids = array();
+        $resids = [];
 
         // This test creates 3 crs records - 2 pointing to parallel groups, 1 pointing to an internal link course.
         // Expect a single exported course url record, which links to the two parallel groups, but not to the internal link.
@@ -438,7 +438,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         // Expect the ECS to match the local records, after the update.
 
         // Create crs record.
-        $ins = (object)array(
+        $ins = (object)[
             'courseid' => '110', // Made-up courseid.
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
@@ -449,7 +449,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
             'sortorder' => 0,
             'directoryid' => 0,
-        );
+        ];
         $crsid = $DB->insert_record('local_campusconnect_crs', $ins);
 
         // Add a paralell group record (note this is a separate course, not an internal link back to the first course,
@@ -470,19 +470,19 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
 
         // Update ECS (from 'unittest1' to CMS 'unittest2').
         course_url::update_ecs($this->connect[1]);
-        $resids[1] = $DB->get_field('local_campusconnect_crs', 'urlresourceid', array('id' => $crsid), MUST_EXIST);
+        $resids[1] = $DB->get_field('local_campusconnect_crs', 'urlresourceid', ['id' => $crsid], MUST_EXIST);
 
         // Insert an extra, unwanted URL resource on the server.
         $cms = participantsettings::get_cms_participant();
-        $fakecourseurl = (object)array(
+        $fakecourseurl = (object)[
             'cms_course_id' => 'unwantedurl',
             'ecs_course_url' => $this->connect[1]->get_resource_url('40', event::RES_COURSE), // Fake resource id.
-            'lms_course_url' => array((object)array('title' => 'fakeurl', 'url' => 'fakeurl')),
-        );
+            'lms_course_url' => [(object)['title' => 'fakeurl', 'url' => 'fakeurl']],
+        ];
         $resids[2] = $this->connect[1]->add_resource(event::RES_COURSE_URL, $fakecourseurl, null, $cms->get_mid());
 
         // Add an extra crs record, that is not synced with server.
-        $ins4 = (object)array(
+        $ins4 = (object)[
             'courseid' => '130', // Made-up courseid.
             'resourceid' => '56', // Made-up resourceid.
             'cmsid' => 'anothertest456',
@@ -493,14 +493,14 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
             'sortorder' => 0,
             'directoryid' => 0,
-        );
+        ];
         $crsid4 = $DB->insert_record('local_campusconnect_crs', $ins4);
 
         // Change the 'cmsid' for the existing exported URL.
-        $upd = (object)array(
+        $upd = (object)[
             'id' => $crsid,
             'cmsid' => 'updated456',
-        );
+        ];
         $DB->update_record('local_campusconnect_crs', $upd);
 
         // Check the current status on the ECS server, this should show:
@@ -543,9 +543,9 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         $res1 = $this->connect[2]->get_resource($resids[1], event::RES_COURSE_URL);
         $this->assertEquals($upd->cmsid, $res1->cms_course_id); // Make sure the cms_course_id was updated.
         $this->assertCount(2, $res1->lms_course_urls); // Make sure there are the two 'real' course URLs.
-        $expectedurl1 = new moodle_url('/course/view.php', array('id' => $ins->courseid));
-        $expectedurl2 = new moodle_url('/course/view.php', array('id' => $ins2->courseid));
-        $actualurls = array();
+        $expectedurl1 = new moodle_url('/course/view.php', ['id' => $ins->courseid]);
+        $expectedurl2 = new moodle_url('/course/view.php', ['id' => $ins2->courseid]);
+        $actualurls = [];
         foreach ($res1->lms_course_urls as $lmsurl) {
             $actualurls[] = $lmsurl->url;
         }
@@ -555,7 +555,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         $res2 = $this->connect[2]->get_resource($resids[3], event::RES_COURSE_URL);
         $this->assertEquals($ins4->cmsid, $res2->cms_course_id); // Make sure the new resource was inserted correctly.
         $this->assertCount(1, $res2->lms_course_urls);
-        $expectedurl = new moodle_url('/course/view.php', array('id' => $ins4->courseid));
+        $expectedurl = new moodle_url('/course/view.php', ['id' => $ins4->courseid]);
         $actualurl = reset($res2->lms_course_urls);
         $this->assertEquals($expectedurl->out(), $actualurl->url);
     }

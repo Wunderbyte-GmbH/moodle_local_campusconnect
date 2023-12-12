@@ -58,8 +58,8 @@ $PAGE->set_title("CMS Emulator");
 
 // Load the details of all known participants in the configured ECS.
 $ecslist = ecssettings::list_ecs();
-$participants = array();
-$allcommunities = array();
+$participants = [];
+$allcommunities = [];
 /** @var $cms participantsettings */
 $cms = participantsettings::get_cms_participant();
 if (!$cms) {
@@ -126,14 +126,14 @@ $dirtrees = $connect->get_resource_list(event::RES_DIRECTORYTREE);
 $crses = $connect->get_resource_list(event::RES_COURSE);
 $memberships = $connect->get_resource_list(event::RES_COURSE_MEMBERS);
 
-$custom = array(
+$custom = [
     'participants' => $participants,
     'cmsparticipant' => $cmspart->get_identifier(),
     'thisparticipant' => $thispart->get_identifier(),
     'dirresources' => $dirtrees->get_ids(),
     'crsresources' => $crses->get_ids(),
     'mbrresources' => $memberships->get_ids(),
-);
+];
 $frmdata = new stdClass();
 
 // Retrieve existing data and display in the form.
@@ -256,18 +256,18 @@ if ($data = $form->get_data()) {
 
     if (!empty($data->dirsubmit)) {
         if ($data->diraction == 'create' || $data->diraction == 'update') {
-            $dirtree = (object)array(
+            $dirtree = (object)[
                 'rootID' => $data->dirrootid,
                 'directoryTreeTitle' => $data->dirtreetitle,
-                'nodes' => array(),
-            );
-            $node = (object)array(
+                'nodes' => [],
+            ];
+            $node = (object)[
                 'id' => $data->dirid,
                 'title' => $data->dirtitle,
-                'parent' => (object)array(
+                'parent' => (object)[
                     'id' => $data->dirparentid,
-                ),
-            );
+                ],
+            ];
             if (!empty($data->dirorder)) {
                 $node->order = $data->dirorder;
             }
@@ -275,11 +275,11 @@ if ($data = $form->get_data()) {
             if ($data->diraction == 'create') {
                 $dirresourceid = $connect->add_resource(event::RES_DIRECTORYTREE, $dirtree, null, $dstmid);
                 $msg = 'Created new directory tree with resource id: '.$dirresourceid;
-                redirect(new moodle_url($PAGE->url, array('showdir' => $dirresourceid)), $msg, 3);
+                redirect(new moodle_url($PAGE->url, ['showdir' => $dirresourceid]), $msg, 3);
             } else {
                 $connect->update_resource($data->dirresourceid, event::RES_DIRECTORYTREE, $dirtree, null, $dstmid);
                 $msg = 'Updated directory tree, resource id: '.$data->dirresourceid;
-                redirect(new moodle_url($PAGE->url, array('showdir' => $data->dirresourceid)), $msg, 3);
+                redirect(new moodle_url($PAGE->url, ['showdir' => $data->dirresourceid]), $msg, 3);
             }
 
         } else if ($data->diraction == 'delete') {
@@ -288,56 +288,56 @@ if ($data = $form->get_data()) {
             redirect($PAGE->url, $msg, 3);
 
         } else if ($data->diraction == 'retrieve') {
-            redirect(new moodle_url($PAGE->url, array('showdir' => $data->dirresourceid)));
+            redirect(new moodle_url($PAGE->url, ['showdir' => $data->dirresourceid]));
         }
 
     } else if (!empty($data->crssubmit)) {
         if ($data->crsaction == 'create' || $data->crsaction == 'update') {
-            $crs = (object)array(
+            $crs = (object)[
                 'organisation' => $data->crsorganisation,
                 'lectureID' => $data->crsid,
                 'term' => $data->crsterm,
                 'title' => $data->crstitle,
                 'lectureType' => $data->crstype,
-                //'maxParticipants' => $data->crsmaxpart,
-                //'lecturers' => array(),
-                'allocations' => array(),
-                'groups' => array(),
-            );
+                // 'maxParticipants' => $data->crsmaxpart,
+                // 'lecturers' => array(),
+                'allocations' => [],
+                'groups' => [],
+            ];
             if ($data->crsparallel > 0) {
                 $crs->groupScenario = $data->crsparallel;
             }
             for ($i = 1; $i < 4; $i++) {
                 if (!empty($data->crslecturerfirst[$i]) && !empty($data->crslecturerlast[$i])) {
-                    $crs->lecturers[] = (object)array(
+                    $crs->lecturers[] = (object)[
                         'firstName' => $data->crslecturerfirst[$i],
                         'lastName' => $data->crslecturerlast[$i],
-                    );
+                    ];
                 }
                 if (!empty($data->crsallparent[$i])) {
-                    $allocation = (object)array(
+                    $allocation = (object)[
                         'parentID' => $data->crsallparent[$i],
-                    );
+                    ];
                     if (!empty($data->crsallorder[$i])) {
                         $allocation->order = $data->crsallorder[$i];
                     }
                     $crs->allocations[] = $allocation;
                 }
                 if (!empty($data->crsptitle[$i]) && !empty($data->crspid[$i])) {
-                    $pgroup = (object)array(
+                    $pgroup = (object)[
                         'title' => $data->crsptitle[$i],
                         'id' => $data->crspid[$i],
-                        'lecturers' => array(),
-                    );
+                        'lecturers' => [],
+                    ];
                     if (!empty($data->crspcomment[$i])) {
                         $pgroup->comment = $data->crspcomment[$i];
                     }
                     for ($j = 1; $j <= 4; $j++) {
                         if (!empty($data->crsplecturerfirst[$i][$j]) && !empty($data->crsplecturerlast[$i][$j])) {
-                            $pgroup->lecturers[] = (object)array(
+                            $pgroup->lecturers[] = (object)[
                                 'firstName' => $data->crsplecturerfirst[$i][$j],
                                 'lastName' => $data->crsplecturerlast[$i][$j],
-                            );
+                            ];
                         }
                     }
                     $crs->parallelGroups[] = $pgroup;
@@ -347,11 +347,11 @@ if ($data = $form->get_data()) {
             if ($data->crsaction == 'create') {
                 $crsresourceid = $connect->add_resource(event::RES_COURSE, $crs, null, $dstmid);
                 $msg = 'Created new course with resource id: '.$crsresourceid;
-                redirect(new moodle_url($PAGE->url, array('showcrs' => $crsresourceid)), $msg, 3);
+                redirect(new moodle_url($PAGE->url, ['showcrs' => $crsresourceid]), $msg, 3);
             } else {
                 $connect->update_resource($data->crsresourceid, event::RES_COURSE, $crs, null, $dstmid);
                 $msg = 'Updated course, resource id: '.$data->crsresourceid;
-                redirect(new moodle_url($PAGE->url, array('showcrs' => $data->crsresourceid)), $msg, 3);
+                redirect(new moodle_url($PAGE->url, ['showcrs' => $data->crsresourceid]), $msg, 3);
             }
 
         } else if ($data->crsaction == 'delete') {
@@ -360,15 +360,15 @@ if ($data = $form->get_data()) {
             redirect($PAGE->url, $msg, 3);
 
         } else if ($data->crsaction == 'retrieve') {
-            redirect(new moodle_url($PAGE->url, array('showcrs' => $data->crsresourceid)));
+            redirect(new moodle_url($PAGE->url, ['showcrs' => $data->crsresourceid]));
         }
 
     } else if (!empty($data->mbrsubmit)) {
         if ($data->mbraction == 'create' || $data->mbraction == 'update') {
-            $mbr = (object)array(
+            $mbr = (object)[
                 'courseID' => $data->mbrcourseid,
-                'members' => array(),
-            );
+                'members' => [],
+            ];
             for ($i = 1; $i <= 5; $i++) {
                 if (!empty($data->mbrid[$i])) {
                     $mbrmbr = new stdClass();
@@ -384,7 +384,7 @@ if ($data = $form->get_data()) {
                                 $pgroup->groupRole = $data->mbrpgrole[$i][$j];
                             }
                             if (!isset($mbrmbr->parallelGroups)) {
-                                $mbrmbr->parallelGroups = array();
+                                $mbrmbr->parallelGroups = [];
                             }
                             $mbrmbr->parallelGroups[] = $pgroup;
                         }
@@ -393,7 +393,7 @@ if ($data = $form->get_data()) {
                 }
             }
             if ($data->mbraction == 'create') {
-                $data->mbrresourceid = $connect->add_resource(event::RES_COURSE_MEMBERS, array(), null, $dstmid);
+                $data->mbrresourceid = $connect->add_resource(event::RES_COURSE_MEMBERS, [], null, $dstmid);
                 $msg = 'Created new membership list with resource id: '.$data->mbrresourceid;
             } else {
                 $msg = 'Updated membership list, resource id: '.$data->mbrresourceid;
@@ -401,10 +401,10 @@ if ($data = $form->get_data()) {
 
             // Write the contents to a file, so it can be served back to the VLE later - put the access URL in the resource.
             file_put_contents($membershipdir.$data->mbrresourceid, json_encode($mbr));
-            $url = new moodle_url('/local/campusconnect/fakecms.php', array('sendfile' => $data->mbrresourceid));
+            $url = new moodle_url('/local/campusconnect/fakecms.php', ['sendfile' => $data->mbrresourceid]);
             $urls = $url->out();
             $connect->update_resource($data->mbrresourceid, event::RES_COURSE_MEMBERS, $urls, null, $dstmid);
-            redirect(new moodle_url($PAGE->url, array('showmbr' => $data->mbrresourceid)), $msg, 3);
+            redirect(new moodle_url($PAGE->url, ['showmbr' => $data->mbrresourceid]), $msg, 3);
 
         } else if ($data->mbraction == 'delete') {
             $connect->delete_resource($data->mbrresourceid, event::RES_COURSE_MEMBERS);
@@ -412,7 +412,7 @@ if ($data = $form->get_data()) {
             redirect($PAGE->url, $msg, 3);
 
         } else if ($data->mbraction == 'retrieve') {
-            redirect(new moodle_url($PAGE->url, array('showmbr' => $data->mbrresourceid)));
+            redirect(new moodle_url($PAGE->url, ['showmbr' => $data->mbrresourceid]));
         }
     }
 }

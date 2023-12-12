@@ -60,7 +60,7 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     }
 
     public function test_directorytree_class() {
-        $data = (object)array(
+        $data = (object)[
             'id' => -1,
             'resourceid' => 5,
             'rootid' => 8,
@@ -72,7 +72,7 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
             'takeovertitle' => true,
             'takeoverposition' => true,
             'takeoverallocation' => true
-        );
+        ];
 
         $dirtree = new directorytree($data);
 
@@ -86,7 +86,7 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     }
 
     public function test_directorytree_create() {
-        $data = (object)array(
+        $data = (object)[
             'resourceid' => 5,
             'rootid' => 8,
             'title' => 'Test directory',
@@ -98,7 +98,7 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
             'takeovertitle' => true,
             'takeoverposition' => true,
             'takeoverallocation' => true
-        );
+        ];
 
         $dirtree = new directorytree();
         $dirtree->create($data->resourceid, $data->rootid, $data->title, $data->ecsid, $data->mid);
@@ -126,13 +126,13 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     public function test_directorytree_set_title_and_category() {
         global $DB;
 
-        $data = (object)array(
+        $data = (object)[
             'resourceid' => 5,
             'rootid' => 8,
             'title' => 'Test directory',
             'ecsid' => -1,
             'mid' => 14,
-        );
+        ];
 
         // Check updating the title, when no category id assigned.
         $newtitle = 'Change title';
@@ -146,7 +146,7 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
 
         // Set the category and make sure the name is updated.
         $this->assertEquals(directorytree::MODE_PENDING, $dirtree->get_mode());
-        $category = $this->getDataGenerator()->create_category(array('name' => 'Original name'));
+        $category = $this->getDataGenerator()->create_category(['name' => 'Original name']);
         $dirtree->map_category($category->id);
 
         $this->assertEquals($category->id, $dirtree->get_category_id());
@@ -154,7 +154,7 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
         $dirtree = directorytree::get_by_root_id($data->rootid);
         $this->assertEquals($category->id, $dirtree->get_category_id());
         $this->assertEquals(directorytree::MODE_WHOLE, $dirtree->get_mode());
-        $this->assertEquals($newtitle, $DB->get_field('course_categories', 'name', array('id' => $category->id)));
+        $this->assertEquals($newtitle, $DB->get_field('course_categories', 'name', ['id' => $category->id]));
 
         // Set the title again and make sure the category name is updated.
         $newtitle = 'A different title';
@@ -163,27 +163,27 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
         $this->assertEquals($category->id, $dirtree->get_category_id());
         $dirtree = directorytree::get_by_root_id($data->rootid);
         $this->assertEquals($category->id, $dirtree->get_category_id());
-        $this->assertEquals($newtitle, $DB->get_field('course_categories', 'name', array('id' => $category->id)));
+        $this->assertEquals($newtitle, $DB->get_field('course_categories', 'name', ['id' => $category->id]));
 
         // Turn off 'take over title' and check the title is no longer updated in the category.
         $anothernewtitle = 'Another change of title';
-        $dirtree->update_settings(array('takeovertitle' => false));
+        $dirtree->update_settings(['takeovertitle' => false]);
         $dirtree->set_title($anothernewtitle);
 
         $this->assertEquals($category->id, $dirtree->get_category_id());
         $dirtree = directorytree::get_by_root_id($data->rootid);
         $this->assertEquals($category->id, $dirtree->get_category_id());
-        $this->assertEquals($newtitle, $DB->get_field('course_categories', 'name', array('id' => $category->id)));
+        $this->assertEquals($newtitle, $DB->get_field('course_categories', 'name', ['id' => $category->id]));
     }
 
     public function test_directorytree_set_mode() {
-        $data = (object)array(
+        $data = (object)[
             'resourceid' => 5,
             'rootid' => 8,
             'title' => 'Test directory',
             'ecsid' => -1,
             'mid' => 14,
-        );
+        ];
 
         $dirtree = new directorytree();
         $dirtree->create($data->resourceid, $data->rootid, $data->title, $data->ecsid, $data->mid);
@@ -223,13 +223,13 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     }
 
     public function test_directorytree_delete() {
-        $data = (object)array(
+        $data = (object)[
             'resourceid' => 5,
             'rootid' => 8,
             'title' => 'Test directory',
             'ecsid' => -1,
             'mid' => 14,
-        );
+        ];
 
         $dirtree = new directorytree();
         $dirtree->create($data->resourceid, $data->rootid, $data->title, $data->ecsid, $data->mid);
@@ -253,29 +253,29 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     }
 
     public function test_list_directory_trees() {
-        $treedata1 = (object)array(
+        $treedata1 = (object)[
             'resourceid' => 5,
             'rootid' => 8,
             'title' => 'Test directory',
             'ecsid' => -1,
             'mid' => 14,
-        );
+        ];
 
-        $treedata2 = (object)array(
+        $treedata2 = (object)[
             'resourceid' => 5,
             'rootid' => 10,
             'title' => 'Test directory2',
             'ecsid' => -1,
             'mid' => 14,
-        );
+        ];
 
-        $treedata3 = (object)array(
+        $treedata3 = (object)[
             'resourceid' => 5,
             'rootid' => 15,
             'title' => 'Test directory3',
             'ecsid' => -1,
             'mid' => 14,
-        );
+        ];
 
         $tree1 = new directorytree();
         $tree1->create($treedata1->resourceid, $treedata1->rootid, $treedata1->title, $treedata1->ecsid, $treedata1->mid);
@@ -307,34 +307,34 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     }
 
     public function test_directorytree_refresh_create() {
-        $dirtree = (object)array(
+        $dirtree = (object)[
             'rootID' => '5',
             'directoryTreeTitle' => 'Testing directory tree',
             'term' => '2',
-            'nodes' => array(
-                (object)array(
+            'nodes' => [
+                (object)[
                     'id' => '6',
                     'title' => 'First directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '5',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '7',
                     'title' => 'Second directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '8',
                     'title' => 'Third directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                )
-            ),
-        );
+                    ]
+                ]
+            ],
+        ];
 
         // Add a directorytree resource.
         $this->connect[1]->add_resource(event::RES_DIRECTORYTREE, $dirtree, $this->community, null);
@@ -371,34 +371,34 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     }
 
     public function test_directorytree_refresh_update() {
-        $dirtree = (object)array(
+        $dirtree = (object)[
             'rootID' => '5',
             'directoryTreeTitle' => 'Testing directory tree',
             'term' => '2',
-            'nodes' => array(
-                (object)array(
+            'nodes' => [
+                (object)[
                     'id' => '6',
                     'title' => 'First directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '5',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '7',
                     'title' => 'Second directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '8',
                     'title' => 'Third directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                )
-            ),
-        );
+                    ]
+                ]
+            ],
+        ];
 
         // Add a directorytree resource.
         $eid = $this->connect[1]->add_resource(event::RES_DIRECTORYTREE, $dirtree, $this->community, null);
@@ -450,34 +450,34 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     }
 
     public function test_directorytree_refresh_delete() {
-        $dirtree = (object)array(
+        $dirtree = (object)[
             'rootID' => '5',
             'directoryTreeTitle' => 'Testing directory tree',
             'term' => '2',
-            'nodes' => array(
-                (object)array(
+            'nodes' => [
+                (object)[
                     'id' => '6',
                     'title' => 'First directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '5',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '7',
                     'title' => 'Second directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '8',
                     'title' => 'Third directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                )
-            ),
-        );
+                    ]
+                ]
+            ],
+        ];
 
         // Add a directorytree resource.
         $eid = $this->connect[1]->add_resource(event::RES_DIRECTORYTREE, $dirtree, $this->community, null);
@@ -493,34 +493,34 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     }
 
     public function test_directorytree_directory_create() {
-        $dirtree = (object)array(
+        $dirtree = (object)[
             'rootID' => '5',
             'directoryTreeTitle' => 'Testing directory tree',
             'term' => '2',
-            'nodes' => array(
-                (object)array(
+            'nodes' => [
+                (object)[
                     'id' => '6',
                     'title' => 'First directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '5',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '7',
                     'title' => 'Second directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '8',
                     'title' => 'Third directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                )
-            ),
-        );
+                    ]
+                ]
+            ],
+        ];
 
         // Add a directorytree resource.
         $this->connect[1]->add_resource(event::RES_DIRECTORYTREE, $dirtree, $this->community, null);
@@ -560,34 +560,34 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     }
 
     public function test_directorytree_directory_update() {
-        $dirtree = (object)array(
+        $dirtree = (object)[
             'rootID' => '5',
             'directoryTreeTitle' => 'Testing directory tree',
             'term' => '2',
-            'nodes' => array(
-                (object)array(
+            'nodes' => [
+                (object)[
                     'id' => '6',
                     'title' => 'First directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '5',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '7',
                     'title' => 'Second directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '8',
                     'title' => 'Third directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                )
-            ),
-        );
+                    ]
+                ]
+            ],
+        ];
 
         // Add a directorytree resource.
         $eid = $this->connect[1]->add_resource(event::RES_DIRECTORYTREE, $dirtree, $this->community, null);
@@ -643,34 +643,34 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
     }
 
     public function test_directorytree_directory_delete() {
-        $dirtree = (object)array(
+        $dirtree = (object)[
             'rootID' => '5',
             'directoryTreeTitle' => 'Testing directory tree',
             'term' => '2',
-            'nodes' => array(
-                (object)array(
+            'nodes' => [
+                (object)[
                     'id' => '6',
                     'title' => 'First directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '5',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '7',
                     'title' => 'Second directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                ),
-                (object)array(
+                    ]
+                ],
+                (object)[
                     'id' => '8',
                     'title' => 'Third directory',
-                    'parent' => (object)array(
+                    'parent' => (object)[
                         'id' => '6',
-                    )
-                )
-            ),
-        );
+                    ]
+                ]
+            ],
+        ];
 
         // Add a directorytree resource.
         $eid = $this->connect[1]->add_resource(event::RES_DIRECTORYTREE, $dirtree, $this->community, null);

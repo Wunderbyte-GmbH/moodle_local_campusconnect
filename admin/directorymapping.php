@@ -42,7 +42,7 @@ $categoryid = optional_param('category', null, PARAM_INT);
 $directoryid = optional_param('directory', null, PARAM_ALPHANUMEXT);
 $showdirectory = optional_param('showdirectory', null, PARAM_ALPHANUMEXT);
 
-$url = new moodle_url('/local/campusconnect/admin/directorymapping.php', array('id' => $rootid));
+$url = new moodle_url('/local/campusconnect/admin/directorymapping.php', ['id' => $rootid]);
 if ($showmapping && $directoryid) {
     $url->param('showdirectory', $directoryid);
     redirect($url);
@@ -56,7 +56,7 @@ $PAGE->set_url($url);
 $PAGE->navbar->add(s($dirtree->get_title()), $PAGE->url);
 
 // Process the general settings form.
-$form = new campusconnect_directorymapping_form(null, array('dirtree' => $dirtree));
+$form = new campusconnect_directorymapping_form(null, ['dirtree' => $dirtree]);
 if ($form->is_cancelled()) {
     redirect($PAGE->url); // Will clear the settings back to their previous values.
 }
@@ -100,13 +100,13 @@ if ($mapdirectory || $unmapdirectory) {
                 ) {
 
                     if (!optional_param('mappingconfirm', false, PARAM_BOOL)) {
-                        $continue = new moodle_url($PAGE->url, array(
+                        $continue = new moodle_url($PAGE->url, [
                             'sesskey' => sesskey(),
                             'category' => $categoryid,
                             'directory' => $directoryid,
                             'mapdirectory' => 1,
                             'mappingconfirm' => 1
-                        ));
+                        ]);
                         $cancel = $PAGE->url;
 
                         echo $OUTPUT->header();
@@ -147,46 +147,46 @@ if ($showdirectory) {
 }
 
 // Initialise the page javascript.
-$opts = array(
+$opts = [
     'mappings' => $dirtree->list_all_mappings()
-);
-$jsmodule = array(
+];
+$jsmodule = [
     'name' => 'campusconnect_directorymapping',
     'fullpath' => new moodle_url('/local/campusconnect/admin/directorymapping.js'),
-    'strings' => array(
-        array('mapdirectory', 'local_campusconnect'),
-        array('remapdirectory', 'local_campusconnect')
-    ),
-    'requires' => array('node', 'event')
-);
-$PAGE->requires->js_init_call('M.campusconnect_directorymapping.init', array($opts), true, $jsmodule);
+    'strings' => [
+        ['mapdirectory', 'local_campusconnect'],
+        ['remapdirectory', 'local_campusconnect']
+    ],
+    'requires' => ['node', 'event']
+];
+$PAGE->requires->js_init_call('M.campusconnect_directorymapping.init', [$opts], true, $jsmodule);
 
 // Generate the category & directory trees.
 $table = new html_table();
-$table->head = array(
+$table->head = [
     get_string('localcategories', 'local_campusconnect'),
     get_string('cmsdirectories', 'local_campusconnect')
-);
-$table->size = array(
+];
+$table->size = [
     '50%',
     ''
-);
-$table->attributes = array('style' => 'width: 90%;');
+];
+$table->attributes = ['style' => 'width: 90%;'];
 
 $categorytree = directory::output_category_tree('category', $selectedcat);
-$categorytree = html_writer::tag('div', $categorytree, array('id' => 'campusconnect_categorytree'));
+$categorytree = html_writer::tag('div', $categorytree, ['id' => 'campusconnect_categorytree']);
 if ($dirtree = directory::output_directory_tree($dirtree, 'directory', $selecteddir)) {
-    $dirtree = html_writer::tag('div', $dirtree, array('id' => 'campusconnect_dirtree'));
+    $dirtree = html_writer::tag('div', $dirtree, ['id' => 'campusconnect_dirtree']);
 } else {
     $dirtree = get_string('nodirectories', 'local_campusconnect');
 }
-$row = array(
+$row = [
     $categorytree,
     $dirtree
-);
-$table->data = array($row);
+];
+$table->data = [$row];
 
-$mappingurl = new moodle_url($PAGE->url, array('sesskey' => sesskey()));
+$mappingurl = new moodle_url($PAGE->url, ['sesskey' => sesskey()]);
 
 // Output everything.
 echo $OUTPUT->header();
@@ -194,32 +194,32 @@ echo $OUTPUT->header();
 $form->display();
 echo $OUTPUT->heading(get_string('directorymapping', 'local_campusconnect'));
 
-echo html_writer::start_tag('form', array(
+echo html_writer::start_tag('form', [
     'method' => 'POST',
     'action' => $mappingurl->out_omit_querystring()
-));
+]);
 echo html_writer::input_hidden_params($mappingurl);
-echo html_writer::empty_tag('input', array(
+echo html_writer::empty_tag('input', [
     'type' => 'submit',
     'name' => 'mapdirectory',
     'id' => 'mapdirectorybutton',
     'class' => 'submit',
     'value' => get_string('mapdirectory', 'local_campusconnect')
-));
-echo html_writer::empty_tag('input', array(
+]);
+echo html_writer::empty_tag('input', [
     'type' => 'submit',
     'name' => 'unmapdirectory',
     'id' => 'unmapdirectorybutton',
     'class' => 'submit',
     'value' => get_string('unmapdirectory', 'local_campusconnect')
-));
-echo html_writer::empty_tag('input', array(
+]);
+echo html_writer::empty_tag('input', [
     'type' => 'submit',
     'name' => 'showmapping',
     'id' => 'showmappingbutton',
     'class' => 'submit',
     'value' => get_string('showmapping', 'local_campusconnect')
-));
+]);
 if ($mappingerror) {
     echo ' '.$OUTPUT->error_text($mappingerror);
 }

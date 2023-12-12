@@ -46,7 +46,7 @@ class membership {
     const ROLE_STUDENT = 1;
     const ROLE_ASSISTANT = 2;
 
-    protected static $validroles = array(self::ROLE_LECTURER, self::ROLE_STUDENT, self::ROLE_ASSISTANT);
+    protected static $validroles = [self::ROLE_LECTURER, self::ROLE_STUDENT, self::ROLE_ASSISTANT];
 
     /**
      * Functions to create & update membership lists based on events from the ECS
@@ -134,8 +134,8 @@ class membership {
         }
 
         // Sort all the existing memberships by courseid and personid.
-        $sortedcurrmembers = array();
-        $sortedcurrmembers[$membership->lectureID] = array();
+        $sortedcurrmembers = [];
+        $sortedcurrmembers[$membership->lectureID] = [];
         foreach ($currmembers as $idx => $currmember) {
             if ($currmember->cmscourseid == $membership->lectureID) {
                 $sortedcurrmembers[$currmember->cmscourseid][$currmember->personidtype][$currmember->personid] = $currmember;
@@ -148,7 +148,7 @@ class membership {
             if ($currmember->status != self::STATUS_DELETED) {
                 if ($currmember->status == self::STATUS_CREATED) {
                     // Record created, but never used => just delete the record.
-                    $DB->delete_records('local_campusconnect_mbr', array('id' => $currmember->id));
+                    $DB->delete_records('local_campusconnect_mbr', ['id' => $currmember->id]);
                 } else {
                     // Record created & used => mark for deletion.
                     $upd = new stdClass();
@@ -203,7 +203,7 @@ class membership {
                 foreach ($coursemembers as $removedmember) {
                     if ($removedmember->status == self::STATUS_CREATED) {
                         // Record was created but never processed - just delete it.
-                        $DB->delete_records('local_campusconnect_mbr', array('id' => $removedmember->id));
+                        $DB->delete_records('local_campusconnect_mbr', ['id' => $removedmember->id]);
                     } else if ($removedmember->status != self::STATUS_DELETED) {
                         // Mark record as ready for deletion.
                         $upd = new stdClass();
@@ -227,11 +227,11 @@ class membership {
         if (!isset($member->groups)) {
             return '';
         }
-        $pgroups = array();
+        $pgroups = [];
         foreach ($member->groups as $pgroup) {
-            $num = str_replace(array('#', ':', ','), array('#23', '#3a', '#2c'), $pgroup->num);
+            $num = str_replace(['#', ':', ','], ['#23', '#3a', '#2c'], $pgroup->num);
             if (isset($pgroup->role)) {
-                $grouprole = str_replace(array('#', ':', ','), array('#23', '#3a', '#2c'), $pgroup->role);
+                $grouprole = str_replace(['#', ':', ','], ['#23', '#3a', '#2c'], $pgroup->role);
             } else {
                 $grouprole = '';
             }
@@ -248,17 +248,17 @@ class membership {
      */
     protected static function extract_parallel_groups($member) {
         if (empty($member->parallelgroups)) {
-            return array();
+            return [];
         }
         $pgroups = explode(',', $member->parallelgroups);
-        $ret = array();
+        $ret = [];
         foreach ($pgroups as $pgroup) {
             list($num, $grouprole) = explode(':', $pgroup, 2);
             if ($grouprole === '') {
                 $grouprole = self::ROLE_UNSPECIFIED;
             }
-            $num = str_replace(array('#23', '#3a', '#2c'), array('#', ':', ','), $num);
-            $ret[$num] = str_replace(array('#23', '#3a', '#2c'), array('#', ':', ','), $grouprole);
+            $num = str_replace(['#23', '#3a', '#2c'], ['#', ':', ','], $num);
+            $ret[$num] = str_replace(['#23', '#3a', '#2c'], ['#', ':', ','], $grouprole);
         }
         return $ret;
     }
@@ -276,7 +276,7 @@ class membership {
         $currmembers = self::get_by_resourceid($resourceid);
         foreach ($currmembers as $currmember) {
             if ($currmember->status == self::STATUS_CREATED) {
-                $DB->delete_records('local_campusconnect_mbr', array('id' => $currmember->id));
+                $DB->delete_records('local_campusconnect_mbr', ['id' => $currmember->id]);
             } else {
                 if ($currmember->status != self::STATUS_DELETED) {
                     $upd = new stdClass();
@@ -300,7 +300,7 @@ class membership {
     public static function refresh_from_ecs(ecssettings $ecssettings) {
         global $DB;
 
-        $ret = (object)array('created' => array(), 'updated' => array(), 'deleted' => array());
+        $ret = (object)['created' => [], 'updated' => [], 'deleted' => []];
 
         // Get the CMS participant.
         /** @var $cms participantsettings */
@@ -313,7 +313,7 @@ class membership {
         }
 
         // Get full list of courselinks from this ECS.
-        $memberships = $DB->get_records('local_campusconnect_mbr', array(), '', 'DISTINCT resourceid');
+        $memberships = $DB->get_records('local_campusconnect_mbr', [], '', 'DISTINCT resourceid');
 
         // Get full list of courselink resources shared with us.
         $connect = new connect($ecssettings);
@@ -371,7 +371,7 @@ class membership {
         }
 
         // Load membership list items from the database (which have status != ASSIGNED).
-        $memberships = $DB->get_records_select('local_campusconnect_mbr', 'status != ?', array(self::STATUS_ASSIGNED));
+        $memberships = $DB->get_records_select('local_campusconnect_mbr', 'status != ?', [self::STATUS_ASSIGNED]);
         if (empty($memberships)) {
             return;
         }
@@ -391,8 +391,8 @@ class membership {
         }
 
         // Get a list of all affected users.
-        $personids = array();
-        $cmscourseids = array();
+        $personids = [];
+        $cmscourseids = [];
         foreach ($memberships as $membership) {
             $personids[] = new member_personid($membership->personid, $membership->personidtype);
             $cmscourseids[$membership->cmscourseid] = $membership->cmscourseid;
@@ -410,7 +410,7 @@ class membership {
         list($csql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
         $enrolinstances = $DB->get_records_select('enrol', "enrol = 'campusconnect' AND courseid $csql",
                                                   $params, 'sortorder, id ASC');
-        $courseenrol = array();
+        $courseenrol = [];
         foreach ($enrolinstances as $enrolinstance) {
             if (!isset($courseenrol[$enrolinstance->courseid])) {
                 $courseenrol[$enrolinstance->courseid] = $enrolinstance;
@@ -457,7 +457,7 @@ class membership {
                     }
                     $enrol->unenrol_user($enrolinstance, $userid);
 
-                    $DB->delete_records('local_campusconnect_mbr', array('id' => $membership->id));
+                    $DB->delete_records('local_campusconnect_mbr', ['id' => $membership->id]);
                 } else {
                     $roleid = self::get_roleid($pgroup->role);
                     if ($membership->status == self::STATUS_UPDATED) {
@@ -468,10 +468,10 @@ class membership {
                                    "'{$membership->cmscourseid}' ({$pgroup->courseid}) to role '{$membership->role}' ({$roleid})");
                         }
                         $context = context_course::instance($pgroup->courseid);
-                        role_unassign_all(array(
+                        role_unassign_all([
                                               'contextid' => $context->id, 'userid' => $userid,
                                               'component' => 'enrol_campusconnect', 'itemid' => $enrolinstance->id
-                                          ));
+                                          ]);
                     } else {
                         // Created => enrol the user with the given role.
                         if ($output) {
@@ -512,7 +512,7 @@ class membership {
     public static function assign_course_users($courseids, $cmscourseid) {
         global $DB;
 
-        $memberships = self::get_by_cmscourseids(array($cmscourseid));
+        $memberships = self::get_by_cmscourseids([$cmscourseid]);
         if (empty($memberships)) {
             return true;
         }
@@ -526,7 +526,7 @@ class membership {
         }
 
         // Get a list of all affected users.
-        $personids = array();
+        $personids = [];
         foreach ($memberships as $membership) {
             $personids[] = new member_personid($membership->personid, $membership->personidtype);
         }
@@ -536,7 +536,7 @@ class membership {
         list($csql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
         $enrolinstances = $DB->get_recordset_select('enrol', "enrol = 'campusconnect' AND courseid $csql", $params,
                                                     'sortorder, id ASC');
-        $courseenrol = array();
+        $courseenrol = [];
         foreach ($enrolinstances as $enrolinstance) {
             if (!isset($courseenol[$enrolinstance->courseid])) { // Only use the first instance of campusconnect enrol in a course.
                 $courseenrol[$enrolinstance->courseid] = $enrolinstance;
@@ -599,7 +599,7 @@ class membership {
         }
 
         // Get a list of all the courses to enrol the user into.
-        $cmscourseids = array();
+        $cmscourseids = [];
         foreach ($memberships as $membership) {
             $cmscourseids[$membership->cmscourseid] = $membership->cmscourseid;
         }
@@ -612,7 +612,7 @@ class membership {
         list($csql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
         $enrolinstances = $DB->get_records_select('enrol', "enrol = 'campusconnect' AND courseid $csql",
                                                   $params, 'sortorder, id ASC');
-        $courseenrol = array();
+        $courseenrol = [];
         foreach ($enrolinstances as $enrolinstance) {
             if (!isset($courseenrol[$enrolinstance->courseid])) {
                 $courseenrol[$enrolinstance->courseid] = $enrolinstance;
@@ -665,31 +665,31 @@ class membership {
         global $DB;
 
         if (empty($personids)) {
-            return array();
+            return [];
         }
 
         // Organise the personids by personidtype.
-        $bytype = array();
+        $bytype = [];
         foreach ($personids as $personid) {
             if (!is_object($personid) || get_class($personid) != 'local_campusconnect\member_personid') {
                 throw new coding_exception('get_userids_from_personids expects an array of'.
                                            ' \local_campusconnect\member_personid objects');
             }
             if (!isset($bytype[$personid->type])) {
-                $bytype[$personid->type] = array();
+                $bytype[$personid->type] = [];
             }
             $bytype[$personid->type][$personid->id] = $personid->id; // Avoid duplicates.
         }
 
         // Process the different personidtypes one at a time (possibly slightly inefficient, but should rarely be more than one).
-        $ret = array();
+        $ret = [];
         foreach ($bytype as $personidtype => $personids) {
             if (!$userfield = member_personid::get_userfield_from_type($personidtype)) {
                 log::add("personIDtype '{$personidtype}' included in course_members resource, but not currently".
                          " mapped onto a Moodle user field", false, true, false);
                 continue;
             }
-            $ret[$personidtype] = array();
+            $ret[$personidtype] = [];
             list($psql, $params) = $DB->get_in_or_equal($personids, SQL_PARAMS_NAMED);
             if ($fieldname = member_personid::is_custom_field($userfield)) {
                 // Look for the personid in the 'user_info_data' table.
@@ -737,7 +737,7 @@ class membership {
         global $DB, $CFG;
 
         // Find all ways this user could be identified, based on the different personidtypes.
-        $ret = array();
+        $ret = [];
         foreach (member_personid::$valididtypes as $personidtype) {
             if (!$userfield = member_personid::get_userfield_from_type($personidtype)) {
                 continue; // Personidtype not mapped => skip it.
@@ -758,10 +758,10 @@ class membership {
                 $personid = $user->$userfield;
             }
             $select = "personid = :personid AND personidtype = :personidtype AND (status = :created OR status = :updated)";
-            $params = array(
+            $params = [
                 'personid' => $personid, 'personidtype' => $personidtype,
                 'created' => self::STATUS_CREATED, 'updated' => self::STATUS_UPDATED
-            );
+            ];
             $records = $DB->get_records_select('local_campusconnect_mbr', $select, $params);
             $ret = $ret + $records;
         }
@@ -775,7 +775,7 @@ class membership {
      * @return object[] the local_campusconnect_mbr that relate to the given course
      */
     protected static function get_by_course($course) {
-        $cmscourseids = course::get_cmscourseids_from_courseids(array($course->id));
+        $cmscourseids = course::get_cmscourseids_from_courseids([$course->id]);
 
         return self::get_by_cmscourseids($cmscourseids);
     }
@@ -788,7 +788,7 @@ class membership {
     protected static function get_by_cmscourseids($cmscourseids) {
         global $DB;
         if (empty($cmscourseids)) {
-            return array();
+            return [];
         }
         list($csql, $params) = $DB->get_in_or_equal($cmscourseids, SQL_PARAMS_NAMED);
         $params['created'] = self::STATUS_CREATED;
@@ -805,7 +805,7 @@ class membership {
      */
     protected static function get_by_resourceid($resourceid) {
         global $DB;
-        return $DB->get_records('local_campusconnect_mbr', array('resourceid' => $resourceid));
+        return $DB->get_records('local_campusconnect_mbr', ['resourceid' => $resourceid]);
     }
 
     /**
@@ -822,14 +822,14 @@ class membership {
                 return false;
             }
         }
-        if (!$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST)) {
+        if (!$course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST)) {
             return false;
         }
         if (!$enrolid = $enrol->add_default_instance($course)) {
             return false;
         }
 
-        return $DB->get_record('enrol', array('id' => $enrolid));
+        return $DB->get_record('enrol', ['id' => $enrolid]);
     }
 
     /**
@@ -851,7 +851,7 @@ class membership {
             $ecsid = $cmsparticipant->get_ecs_id();
             $ecssettings = new ecssettings($ecsid);
             $defaultrole = $ecssettings->get_import_role();
-            $defaultroleid = $DB->get_field('role', 'id', array('shortname' => $defaultrole));
+            $defaultroleid = $DB->get_field('role', 'id', ['shortname' => $defaultrole]);
         }
 
         return $defaultroleid;

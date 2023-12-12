@@ -48,11 +48,11 @@ class campusconnect_coursefiltering_form extends moodleform {
 
         $mform->addElement('header', '', get_string('courseattributes', 'local_campusconnect'));
         $attributes = array_combine($attributes, $attributes);
-        $attributes = array(-1 => get_string('unused', 'local_campusconnect')) + $attributes;
-        $repeatarray = array(
+        $attributes = [-1 => get_string('unused', 'local_campusconnect')] + $attributes;
+        $repeatarray = [
             $mform->createElement('select', 'attributes', get_string('filteringattribute', 'local_campusconnect'), $attributes)
-        );
-        $repeatopts = array('attributes' => array('default' => -1));
+        ];
+        $repeatopts = ['attributes' => ['default' => -1]];
         $stradd = get_string('addattributes', 'local_campusconnect');
         $this->repeat_elements($repeatarray, $attributescount, $repeatopts, 'attributescount', 'add_attributes', 2, $stradd, true);
 
@@ -71,7 +71,7 @@ class campusconnect_coursefiltering_form extends moodleform {
     public function validation($data, $files) {
         // Check that each course attribute is only listed once.
         $errors = parent::validation($data, $files);
-        $usedattrib = array();
+        $usedattrib = [];
         if (isset($data['attributes'])) {
             foreach ($data['attributes'] as $idx => $value) {
                 if ($value == -1) {

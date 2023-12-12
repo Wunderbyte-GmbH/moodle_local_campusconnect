@@ -48,11 +48,11 @@ class local_campusconnect_courselink_test extends advanced_testcase {
     /**
      * @var connect[]
      */
-    protected $connect = array();
+    protected $connect = [];
     /**
      * @var integer[]
      */
-    protected $mid = array();
+    protected $mid = [];
 
     protected function setUp() {
         global $CFG;
@@ -62,17 +62,17 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $this->resetAfterTest();
 
         // Create the connections for testing.
-        $names = array(1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3');
+        $names = [1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3'];
         foreach ($names as $key => $name) {
-            $category = $this->getDataGenerator()->create_category(array('name' => 'import'.$key));
+            $category = $this->getDataGenerator()->create_category(['name' => 'import'.$key]);
             $ecs = new ecssettings();
-            $ecs->save_settings(array(
+            $ecs->save_settings([
                                     'url' => 'http://localhost:3000',
                                     'auth' => ecssettings::AUTH_NONE,
                                     'ecsauth' => $name,
                                     'importcategory' => $category->id,
                                     'importrole' => 'student',
-                                ));
+                                ]);
             $this->connect[$key] = new connect($ecs);
         }
 
@@ -110,8 +110,8 @@ class local_campusconnect_courselink_test extends advanced_testcase {
             }
         }
 
-        $this->connect = array();
-        $this->mid = array();
+        $this->connect = [];
+        $this->mid = [];
     }
 
     protected function setup_courselink() {
@@ -119,20 +119,20 @@ class local_campusconnect_courselink_test extends advanced_testcase {
 
         // Course link from 'unittest1' => 'unittest2'.
         $part1 = new participantsettings($this->connect[1]->get_ecs_id(), $this->mid[2]);
-        $part1->save_settings(array('export' => true));
+        $part1->save_settings(['export' => true]);
         $part2 = new participantsettings($this->connect[2]->get_ecs_id(), $this->mid[1]);
-        $part2->save_settings(array('import' => true, 'importtype' => participantsettings::IMPORT_LINK));
+        $part2->save_settings(['import' => true, 'importtype' => participantsettings::IMPORT_LINK]);
 
         // Check there are currently no course links on 'unittest2'.
-        $courselinks = $DB->get_records('local_campusconnect_clink', array(
+        $courselinks = $DB->get_records('local_campusconnect_clink', [
             'ecsid' => $this->connect[2]->get_ecs_id(),
             'mid' => $this->mid[1]
-        ));
+        ]);
         $this->assertEmpty($courselinks);
 
         // Generate a course + export it to 'unittest2'.
         $srccourse = $this->getDataGenerator()->create_course(
-            array('fullname' => 'test full name', 'shortname' => 'test short name')
+            ['fullname' => 'test full name', 'shortname' => 'test short name']
         );
         $export = new export($srccourse->id);
         $export->set_export($part1->get_identifier(), true);
@@ -142,33 +142,33 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         courselink::refresh_from_participant($this->connect[2]->get_ecs_id(), $this->mid[1]); // Import.
 
         // Retrieve the courselinks on 'unittest2'.
-        $courselinks = $DB->get_records('local_campusconnect_clink', array(
+        $courselinks = $DB->get_records('local_campusconnect_clink', [
             'ecsid' => $this->connect[2]->get_ecs_id(),
             'mid' => $this->mid[1]
-        ));
+        ]);
         $this->assertCount(1, $courselinks); // Should only have imported 1 course link.
         $courselink = reset($courselinks);
         $dstcourseid = $courselink->courseid; // The course that represents the course link on 'unittest1'.
-        $course = $DB->get_record('course', array('id' => $dstcourseid));
+        $course = $DB->get_record('course', ['id' => $dstcourseid]);
         $this->assertEquals('test full name', $course->fullname); // Make sure the correct course link has been created.
         // Cannot test the shortname, as that will have been renamed for conflicting with the original course shortname.
 
-        return array($dstcourseid, $part1, $part2);
+        return [$dstcourseid, $part1, $part2];
     }
 
     public function test_legacy_courselink_authentication() {
         list($dstcourseid, $part1, $part2) = $this->setup_courselink();
         /** @var participantsettings $part2 */
-        $part2->save_settings(array('uselegacy' => true));
+        $part2->save_settings(['uselegacy' => true]);
 
         // Generate a URL on 'unittest2'.
         $authuser = $this->getDataGenerator()->create_user(
-            array(
+            [
                 'firstname' => 'firstname1',
                 'lastname' => 'lastname1',
                 'email' => 'testuser1@example.com',
                 'username' => 'firstname1.lastname1'
-            )
+            ]
         );
         $url = courselink::check_redirect($dstcourseid, $authuser);
         $this->assertNotEquals(false, $url); // Make sure this is correctly identified as a course link.
@@ -176,7 +176,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         // Authenticate the URL on 'unittest1'.
         $userdetails = auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails); // Check the user has authenticated correctly.
-        foreach (array('firstname', 'lastname', 'email') as $fieldname) { // Make sure all user details transferred as expected.
+        foreach (['firstname', 'lastname', 'email'] as $fieldname) { // Make sure all user details transferred as expected.
             $this->assertEquals($authuser->$fieldname, $userdetails->$fieldname);
         }
 
@@ -191,25 +191,25 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $userdetails2 = auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails2);
         $this->assertEquals($userdetails->username, $userdetails2->username); // Should be matched up to the same username.
-        foreach (array('firstname', 'lastname', 'email') as $fieldname) { // Make sure all user details updated.
+        foreach (['firstname', 'lastname', 'email'] as $fieldname) { // Make sure all user details updated.
             $this->assertEquals($authuser->$fieldname, $userdetails2->$fieldname);
         }
     }
 
     public function test_token_settings() {
         $authuser = $this->getDataGenerator()->create_user(
-            array(
+            [
                 'firstname' => 'firstname1',
                 'lastname' => 'lastname1',
                 'email' => 'testuser1@example.com',
                 'username' => 'firstname1.lastname1'
-            )
+            ]
         );
         list($dstcourseid, $part1, $part2) = $this->setup_courselink();
 
         // Make sure the token data is ignored when disabled on the receiving site.
         /** @var participantsettings $part1 */
-        $part1->save_settings(array('exporttoken' => false)); // Disable handling of token for exported courselinks.
+        $part1->save_settings(['exporttoken' => false]); // Disable handling of token for exported courselinks.
         $url = courselink::check_redirect($dstcourseid, $authuser);
 
         $this->assertNotEquals(false, $url); // Make sure this is correctly identified as a course link.
@@ -221,7 +221,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
 
         // Make sure the token data is not generated when disabled on the sending site.
         /** @var participantsettings $part2 */
-        $part2->save_settings(array('importtoken' => false)); // Disable sending of token for imported courselinks.
+        $part2->save_settings(['importtoken' => false]); // Disable sending of token for imported courselinks.
         $url = courselink::check_redirect($dstcourseid, $authuser);
 
         $this->assertNotEquals(false, $url); // Make sure this is correctly identified as a course link.
@@ -236,12 +236,12 @@ class local_campusconnect_courselink_test extends advanced_testcase {
 
         // Generate a URL on 'unittest2'.
         $authuser = $this->getDataGenerator()->create_user(
-            array(
+            [
                 'firstname' => 'firstname1',
                 'lastname' => 'lastname1',
                 'email' => 'testuser1@example.com',
                 'username' => 'firstname1.lastname1'
-            )
+            ]
         );
         $url = courselink::check_redirect($dstcourseid, $authuser);
         $this->assertNotEquals(false, $url); // Make sure this is correctly identified as a course link.
@@ -258,7 +258,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         // Authenticate the URL on 'unittest1'.
         $userdetails = auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails); // Check the user has authenticated correctly.
-        foreach (array('firstname', 'lastname', 'email') as $fieldname) { // Make sure all user details transferred as expected.
+        foreach (['firstname', 'lastname', 'email'] as $fieldname) { // Make sure all user details transferred as expected.
             $this->assertEquals($authuser->$fieldname, $userdetails->$fieldname);
         }
 
@@ -273,7 +273,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $userdetails2 = auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails2);
         $this->assertEquals($userdetails->username, $userdetails2->username); // Should be matched up to the same username.
-        foreach (array('firstname', 'lastname', 'email') as $fieldname) { // Make sure all user details updated.
+        foreach (['firstname', 'lastname', 'email'] as $fieldname) { // Make sure all user details updated.
             $this->assertEquals($authuser->$fieldname, $userdetails2->$fieldname);
         }
     }
@@ -283,7 +283,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         require_once($CFG->dirroot.'/user/profile/lib.php');
         require_once($CFG->dirroot.'/user/profile/definelib.php');
         require_once($CFG->dirroot.'/user/profile/field/text/define.class.php');
-        $data = (object)array(
+        $data = (object)[
             'categoryid' => 1,
             'datatype' => 'text',
             'shortname' => $fieldname,
@@ -296,26 +296,26 @@ class local_campusconnect_courselink_test extends advanced_testcase {
             'param1' => 30,
             'param2' => 2048,
             'param3' => 0,
-        );
+        ];
         $formfield = new profile_define_text();
         $formfield->define_save($data);
     }
 
     protected function set_profile_field($user, $field, $value) {
         global $DB;
-        $fieldid = $DB->get_field('user_info_field', 'id', array('shortname' => $field));
-        if ($existing = $DB->get_record('user_info_data', array('fieldid' => $fieldid, 'userid' => $user->id))) {
-            $upd = (object)array(
+        $fieldid = $DB->get_field('user_info_field', 'id', ['shortname' => $field]);
+        if ($existing = $DB->get_record('user_info_data', ['fieldid' => $fieldid, 'userid' => $user->id])) {
+            $upd = (object)[
                 'id' => $existing->id,
                 'data' => $value,
-            );
+            ];
             $DB->update_record('user_info_data', $upd);
         } else {
-            $ins = (object)array(
+            $ins = (object)[
                 'fieldid' => $fieldid,
                 'userid' => $user->id,
                 'data' => $value,
-            );
+            ];
             $DB->insert_record('user_info_data', $ins);
         }
     }
@@ -336,7 +336,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $exportfields = $part2->get_export_fields();
         $exportfields[] = courselink::PERSON_EPPN;
         $exportfields[] = courselink::PERSON_UNIQUECODE;
-        $part2->save_settings(array('exportfieldmapping' => $mapping, 'exportfields' => $exportfields));
+        $part2->save_settings(['exportfieldmapping' => $mapping, 'exportfields' => $exportfields]);
 
         // Override the default import mappings.
         /** @var participantsettings $part1 */
@@ -344,17 +344,17 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $mapping[courselink::PERSON_EPPN] = 'custom_eppn2';
         $mapping[courselink::PERSON_UNIQUECODE] = 'address';
         $mapping[courselink::PERSON_EMAIL] = 'idnumber';
-        $part1->save_settings(array('importfieldmapping' => $mapping));
+        $part1->save_settings(['importfieldmapping' => $mapping]);
 
         // Generate a URL on 'unittest2'.
         $authuser = $this->getDataGenerator()->create_user(
-            array(
+            [
                 'firstname' => 'firstname1',
                 'lastname' => 'lastname1',
                 'email' => 'testuser1@example.com',
                 'username' => 'firstname1.lastname1',
                 'department' => 'department1'
-            ) // Mapped on to 'ecs_PersonalUniqueCode.
+            ] // Mapped on to 'ecs_PersonalUniqueCode.
         );
         $this->set_profile_field($authuser, 'eppn', 'myeppn');
         $authuser = get_complete_user_data('id', $authuser->id);
@@ -410,25 +410,25 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $exportmappings = $part2->get_export_mappings();
         $exportmappings[courselink::PERSON_LOGINUID] = 'idnumber';
         $personuidtype = courselink::PERSON_LOGINUID;
-        $part2->save_settings(array(
+        $part2->save_settings([
                                   'exportfields' => $exportfields,
                                   'exportfieldmapping' => $exportmappings,
                                   'personuidtype' => $personuidtype
-                              ));
+                              ]);
 
         $importfields = $part1->get_import_mappings();
         $importfields[courselink::PERSON_LOGINUID] = 'idnumber';
-        $part1->save_settings(array('importfieldmapping' => $importfields));
+        $part1->save_settings(['importfieldmapping' => $importfields]);
 
         // Generate a URL on 'unittest2'.
         $authuser = $this->getDataGenerator()->create_user(
-            array(
+            [
                 'firstname' => 'firstname1',
                 'lastname' => 'lastname1',
                 'email' => 'testuser1@example.com',
                 'username' => 'firstname1.lastname1',
                 'idnumber' => 'myloginuid1'
-            ) // Mapped on to PERSON_LOGINUID in export / import.
+            ] // Mapped on to PERSON_LOGINUID in export / import.
         );
         $url = courselink::check_redirect($dstcourseid, $authuser);
         $this->assertNotEquals(false, $url); // Make sure this is correctly identified as a course link.

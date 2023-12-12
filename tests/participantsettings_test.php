@@ -41,8 +41,8 @@ class local_campusconnect_participantsettings_test extends campusconnect_base_te
         $parts = $community->participants;
         $this->assertCount(3, $parts, "Expected 3 participants in the 'unittest' community");
 
-        $expectednames = array('Unit test 1', 'Unit test 2', 'Unit test 3');
-        $expecteddisplaynames = array('unittest: Unit test 1', 'unittest: Unit test 2', 'unittest: Unit test 3');
+        $expectednames = ['Unit test 1', 'Unit test 2', 'Unit test 3'];
+        $expecteddisplaynames = ['unittest: Unit test 1', 'unittest: Unit test 2', 'unittest: Unit test 3'];
         foreach ($parts as $part) {
             $this->assertInstanceOf('\local_campusconnect\participantsettings', $part);
             $name = $part->get_name();
@@ -70,7 +70,7 @@ class local_campusconnect_participantsettings_test extends campusconnect_base_te
                             'Participants should default to importtype IMPORT_LINK');
 
         // Change all the settings.
-        $settings = array('import' => true, 'export' => true, 'importtype' => participantsettings::IMPORT_COURSE);
+        $settings = ['import' => true, 'export' => true, 'importtype' => participantsettings::IMPORT_COURSE];
         $participant->save_settings($settings);
 
         // Check all settings have updated immediately.
@@ -99,7 +99,7 @@ class local_campusconnect_participantsettings_test extends campusconnect_base_te
         /** @var $participant participantsettings */
         $participant = reset($community->participants);
 
-        $settings = array('import' => 'fish', 'export' => 500);
+        $settings = ['import' => 'fish', 'export' => 500];
         $participant->save_settings($settings);
         $this->assertTrue($participant->is_import_enabled());
         $this->assertTrue($participant->is_export_enabled());
