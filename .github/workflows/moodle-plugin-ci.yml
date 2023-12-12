@@ -105,6 +105,7 @@ jobs:
 
       - name: Install moodle-plugin-ci
         run: |
+          moodle-plugin-ci add-plugin --branch main Wunderbyte-GmbH/moodle_auth_campusconnect
           moodle-plugin-ci add-plugin --branch main Wunderbyte-GmbH/moodle-local_wunderbyte_table
           moodle-plugin-ci add-plugin --branch master branchup/moodle-filter_shortcodes
 
