@@ -27,7 +27,10 @@ namespace local_campusconnect;
 use local_campusconnect\event;
 use local_campusconnect\export;
 use local_campusconnect\participantsettings;
-use local_campusconnect\campusconnect_base_testcase;
+
+defined('MOODLE_INTERNAL') || die();
+global $CFG;
+require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
 
 /**
  * Class local_campusconnect_connect_test

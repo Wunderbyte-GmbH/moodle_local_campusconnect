@@ -24,11 +24,14 @@
 namespace local_campusconnect;
 
 use coding_exception;
-use local_campusconnect\campusconnect_base_testcase;
 use local_campusconnect\directory;
 use local_campusconnect\directorytree;
 use local_campusconnect\event;
 use local_campusconnect\receivequeue;
+
+defined('MOODLE_INTERNAL') || die();
+global $CFG;
+require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
 
 /**
  * These tests assume the following set up is already in place with

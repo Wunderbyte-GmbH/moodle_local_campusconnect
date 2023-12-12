@@ -26,7 +26,10 @@ namespace local_campusconnect;
 
 use coding_exception;
 use local_campusconnect\metadata;
-use local_campusconnect\campusconnect_base_testcase;
+
+defined('MOODLE_INTERNAL') || die();
+global $CFG;
+require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
 
 /**
  * Class local_campusconnect_metadata_test

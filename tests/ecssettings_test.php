@@ -26,8 +26,11 @@ namespace local_campusconnect;
 
 use coding_exception;
 use dml_missing_record_exception;
-use local_campusconnect\campusconnect_base_testcase;
 use local_campusconnect\ecssettings;
+
+defined('MOODLE_INTERNAL') || die();
+global $CFG;
+require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
 
 /**
  * These tests assume the following set up is already in place with
