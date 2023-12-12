@@ -26,8 +26,6 @@ namespace local_campusconnect;
 
 use coding_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
 class connect {
 
     /** @var $curlresource resource - curl connection currently being prepared * */
@@ -300,6 +298,7 @@ class connect {
 
         $result = $this->call();
         if (!$this->check_status(self::HTTP_CODE_OK)) {
+            // phpcs:ignore
             // throw new connect_exception('get_resource - bad response: '.$this->get_status()." ($resourcepath)");
             return false; // Resource does not exist on the server.
         }
@@ -638,7 +637,7 @@ class connect {
                     $this->set_option(CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
                 }
             }
-            if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+            if (!empty($CFG->proxyuser) && !empty($CFG->proxypassword)) {
                 $this->set_option(CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
                 if (defined('CURLOPT_PROXYAUTH')) {
                     // Any proxy authentication if PHP 5.1.
@@ -782,7 +781,7 @@ class connect {
 
     /**
      * Generate an array of all requested HTTP headers (ready to add to the call)
-     * @return array of headers
+     * @return array|bool of headers
      */
     protected function get_headers() {
         if (empty($this->headers)) {
@@ -829,6 +828,7 @@ class connect {
             }
 
             return $result;
+            // phpcs:disable
             /*
             // Retained in case we want to return more than one item in the furture.
             if (is_array($result)) {
@@ -837,7 +837,9 @@ class connect {
                 $ret[] = $result;
             }
             */
+            // phpcs:enable
         }
+        // phpcs:ignore
         // return $ret;
         return null;
     }

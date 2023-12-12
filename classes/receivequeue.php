@@ -27,8 +27,6 @@ namespace local_campusconnect;
 use moodle_exception;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 class receivequeue {
 
     /**
@@ -84,7 +82,7 @@ class receivequeue {
         $oldevent = $DB->get_record('local_campusconnect_eventin', [
             'type' => $event->get_resource_type(),
             'resourceid' => $event->get_resource_id(),
-            'serverid' => $event->get_ecs_id()
+            'serverid' => $event->get_ecs_id(),
         ]);
 
         if ($oldevent) {

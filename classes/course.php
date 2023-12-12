@@ -28,8 +28,6 @@ use coding_exception;
 use moodle_url;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Looks after the creation / update of courses based on requests from the CMS (via the ECS)
  */
@@ -101,7 +99,7 @@ class course {
             log::add("Cannot create a course from resource $resourceid - it already exists.");
             return true; // The event should be removed from the queue, so we don't get this error again.
         }
-
+        // phpcs:ignore
         /** @var $categories course_category[] */
         $categories = self::get_categories($course, $ecssettings);
         if (empty($categories)) {
@@ -261,6 +259,7 @@ class course {
                                                            WHERE ccc.id $csql
                                                            ORDER BY c.category", $params);
         $unchangedcategories = [];
+        // phpcs:ignore
         /** @var $newcategories course_category[] */
         $newcategories = [];
         foreach ($categories as $category) {
@@ -514,6 +513,7 @@ class course {
         }
 
         // Get the CMS participant.
+        // phpcs:ignore
         /** @var $cms participantsettings */
         if (!$cms = participantsettings::get_cms_participant()) {
             return $ret;
@@ -702,7 +702,7 @@ class course {
 
         $params = [
             'format', 'numsections', 'hiddensections', 'newsitems', 'showgrades', 'showreports', 'maxbytes',
-            'groupmode', 'groupmodeforce', 'visible', 'lang', 'enablecompletion', 'completionstartonenrol'
+            'groupmode', 'groupmodeforce', 'visible', 'lang', 'enablecompletion', 'completionstartonenrol',
         ];
 
         foreach ($params as $param) {
@@ -785,6 +785,7 @@ class course {
             if ($currcourse->internallink == 0) { // We are trying to remove the 'real' course - instead move it.
                 if (!empty($newcategories) || $firstnewcategory) {
                     // Move it into the newly-mapped category.
+                    // phpcs:ignore
                     /** @var $firstnewcategory course_category */
                     if ($firstnewcategory === false) {
                         // Only one 'real course' per parallel course, so map all onto the first 'new category'.
@@ -834,6 +835,7 @@ class course {
 
         // We are trying to remove some internal links and create new internal links - instead, move as many as possible
         // to new categories.
+        // phpcs:ignore
         /** @var $currentnewcat course_category */
         $currentnewcat = null;
         $currentcatid = null;

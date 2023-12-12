@@ -28,10 +28,11 @@ use coding_exception;
 use html_writer;
 use moodle_url;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Looks after CampusConnect email notifications and sends out the messages automatically.
+ * @package   local_campusconnect
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class notification {
     const MESSAGE_IMPORT_COURSELINK = 1;
@@ -47,7 +48,7 @@ class notification {
 
     public static $messagetypes = [
         self::MESSAGE_IMPORT_COURSELINK, self::MESSAGE_EXPORT_COURSELINK,
-        self::MESSAGE_USER, self::MESSAGE_COURSE, self::MESSAGE_DIRTREE
+        self::MESSAGE_USER, self::MESSAGE_COURSE, self::MESSAGE_DIRTREE,
     ];
 
     public static $messagesubtypes = [self::TYPE_CREATE, self::TYPE_UPDATE, self::TYPE_DELETE, self::TYPE_ERROR];
@@ -76,7 +77,7 @@ class notification {
             'type' => $type,
             'subtype' => $subtype,
             'data' => $dataid,
-            'extra' => $extra
+            'extra' => $extra,
         ];
         $DB->insert_record('local_campusconnect_notify', $ins);
     }
@@ -131,7 +132,7 @@ class notification {
             self::TYPE_CREATE => '',
             self::TYPE_UPDATE => '_update',
             self::TYPE_DELETE => '_delete',
-            self::TYPE_ERROR => '_error'
+            self::TYPE_ERROR => '_error',
         ];
 
         $sitename = format_string($DB->get_field('course', 'fullname', ['id' => SITEID], MUST_EXIST));

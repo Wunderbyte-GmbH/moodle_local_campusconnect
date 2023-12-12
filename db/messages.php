@@ -27,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 $messageproviders = [
     // Send notifications about ECS connection problems.
     'ecserror' => [
-        'capability' => 'moodle/site:config'
-    ]
+        'capability' => 'moodle/site:config',
+    ],
 ];

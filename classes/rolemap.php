@@ -24,8 +24,6 @@
 
 namespace local_campusconnect;
 
-defined('MOODLE_INTERNAL') || die();
-
 class rolemap {
     /*
      * For a given CampusConnect role, return the id of its role mapping (or false when not found)

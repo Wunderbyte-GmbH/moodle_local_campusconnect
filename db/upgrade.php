@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 function xmldb_local_campusconnect_upgrade($oldversion) {
     global $DB;
 
@@ -630,9 +628,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2012120701, 'local', 'campusconnect');
     }
 
-    // -------------------------------------
-    // Convert all CMS IDs from int => char
-    // -------------------------------------
+    // Convert all CMS IDs from int => char.
     if ($oldversion < 2012121000) {
         // Local_campusconnect_dirroot.rootid.
         $table = new xmldb_table('local_campusconnect_dirroot');

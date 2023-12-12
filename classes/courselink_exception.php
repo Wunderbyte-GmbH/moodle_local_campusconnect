@@ -26,8 +26,6 @@ namespace local_campusconnect;
 
 use moodle_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Exception thrown by the \local_campusconnect\courselink object
  */

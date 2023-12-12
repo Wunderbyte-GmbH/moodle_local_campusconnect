@@ -27,8 +27,6 @@ namespace local_campusconnect;
 use moodle_url;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Looks after passing the course URL back to the ECS when a course is created
  */
@@ -112,7 +110,7 @@ class course_url {
      */
     public static function update_ecs(connect $connect) {
         global $DB;
-
+        // phpcs:ignore
         /** @var $cms participantsettings */
         $cms = participantsettings::get_cms_participant();
         if (!$cms) {

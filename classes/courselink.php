@@ -29,6 +29,7 @@ use html_writer;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
+
 global $CFG;
 require_once($CFG->dirroot.'/course/lib.php');
 
@@ -58,11 +59,11 @@ class courselink {
     public static $validexportmappingfields = [
         self::PERSON_EPPN, self::PERSON_LOGINUID, self::PERSON_LOGIN, self::PERSON_UID,
         self::PERSON_EMAIL, self::PERSON_UNIQUECODE, self::PERSON_CUSTOM,
-        self::USERFIELD_LEARNINGPROGRESS, self::USERFIELD_GRADE
+        self::USERFIELD_LEARNINGPROGRESS, self::USERFIELD_GRADE,
     ];
     public static $validimportmappingfields = [
         self::PERSON_EPPN, self::PERSON_LOGINUID, self::PERSON_LOGIN, self::PERSON_UID,
-        self::PERSON_EMAIL, self::PERSON_UNIQUECODE, self::PERSON_CUSTOM
+        self::PERSON_EMAIL, self::PERSON_UNIQUECODE, self::PERSON_CUSTOM,
     ];
 
     const INCLUDE_LEGACY_PARAMS = false; // Include the legacy 'ecs_hash' and 'ecs_uid_hash' params in the courselink url.
@@ -206,6 +207,7 @@ class courselink {
         }
 
         if (is_null($mid)) {
+            // phpcs:ignore
             /** @var $transferdetails details */
             $mid = $transferdetails->get_sender_mid();
             $ecsid = $settings->get_id();
@@ -231,7 +233,6 @@ class courselink {
         if ($partsettings && $partsettings->get_import_type() == participantsettings::IMPORT_LINK) {
             if (!$currlink = self::get_by_resourceid($resourceid, $settings->get_id())) {
                 return self::create($resourceid, $settings, $courselink, $transferdetails);
-                // throw new \local_campusconnect\courselink_exception("Cannot update courselink to resource $resourceid - it doesn't exist");
             }
 
             if ($currlink->mid != $mid) {

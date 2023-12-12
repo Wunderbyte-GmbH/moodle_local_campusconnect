@@ -29,8 +29,6 @@ use Exception;
 use moodle_url;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 class export {
 
     // Holds the status of the exported course until the ECS has been updated.

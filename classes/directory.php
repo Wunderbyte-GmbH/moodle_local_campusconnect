@@ -29,8 +29,6 @@ use coursecat;
 use html_writer;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 class directory {
 
     const MAPPING_AUTOMATIC = 0;
@@ -60,7 +58,7 @@ class directory {
     protected $parent = null;
 
     protected static $dbfields = [
-        'resourceid', 'rootid', 'directoryid', 'title', 'parentid', 'sortorder', 'categoryid', 'mapping'
+        'resourceid', 'rootid', 'directoryid', 'title', 'parentid', 'sortorder', 'categoryid', 'mapping',
     ];
 
     protected static $dirs = [];
@@ -133,6 +131,7 @@ class directory {
         if ($this->parent != null) {
             return $this->parent;
         }
+        // phpcs:ignore
         /** @var $dirs directory[] */
         $dirs = self::get_directories($this->rootid);
         foreach ($dirs as $dir) {
@@ -184,7 +183,7 @@ class directory {
             self::STATUS_PENDING_MANUAL => 'status_pending_manual',
             self::STATUS_MAPPED_MANUAL => 'status_mapped_manual',
             self::STATUS_MAPPED_AUTOMATIC => 'status_mapped_automatic',
-            self::STATUS_DELETED => 'status_deleted'
+            self::STATUS_DELETED => 'status_deleted',
         ];
 
         $expand = false;
@@ -208,7 +207,7 @@ class directory {
                 'name' => $radioname,
                 'id' => $elid,
                 'class' => 'directoryradio',
-                'value' => $this->directoryid
+                'value' => $this->directoryid,
             ];
             if ($selecteddir == $this->directoryid) {
                 $radioparams['checked'] = 'checked';
@@ -450,7 +449,7 @@ class directory {
      * that do not already exist.
      * @param int $rootcategoryid - ID of the category that the root directory is mapped on to
      * @param bool $fixsortorder optional - used to make sure fix_course_sortorder is only called once
-     * @return int $id of the category created (or already allocated)
+     * @return int|null $id of the category created (or already allocated)
      */
     public function create_category($rootcategoryid, $fixsortorder = true) {
         global $DB;
@@ -544,9 +543,7 @@ class directory {
      * @param int $rootid the directory tree being deleted
      */
     public static function delete_root_directory($rootid) {
-        // global $DB;
-        // $DB->delete_records('local_campusconnect_dir', array('rootid' => $rootid));
-
+        // phpcs:ignore
         /** @var $dirs directory[] */
         $dirs = self::get_directories($rootid);
         foreach ($dirs as $dir) {
@@ -594,7 +591,7 @@ class directory {
      * Output the directory tree as nested unordered lists (ready for use with YUI treeview).
      * @param directorytree $dirtree
      * @param string $radioname - optional - if set, creates radio input elements for each item
-     * @param null $selecteddir
+     * @param int|null $selecteddir
      * @return string HTML of the lists
      */
     public static function output_directory_tree(directorytree $dirtree, $radioname, $selecteddir = null) {
@@ -615,7 +612,7 @@ class directory {
             'name' => $radioname,
             'id' => $elid,
             'class' => 'directoryradio',
-            'value' => $dirtree->get_root_id()
+            'value' => $dirtree->get_root_id(),
         ];
         if (is_null($selecteddir) || $dirtree->get_root_id() == $selecteddir) {
             $radioparams['checked'] = 'checked';
@@ -646,7 +643,7 @@ class directory {
     /**
      * @param coursecat $category
      * @param $radioname
-     * @param null $selectedcategory
+     * @param mixed|null $selectedcategory
      * @return string
      * @throws coding_exception
      */
@@ -664,14 +661,14 @@ class directory {
         $labelparams = [
             'for' => $elid,
             'id' => 'label'.$elid,
-            'class' => 'categorylabel'
+            'class' => 'categorylabel',
         ];
         $radioparams = [
             'type' => 'radio',
             'name' => $radioname,
             'id' => $elid,
             'class' => 'categoryradio',
-            'value' => $category->id
+            'value' => $category->id,
         ];
         if ($selectedcategory == $category->id) {
             $radioparams['checked'] = 'checked';
@@ -733,7 +730,7 @@ class directory {
         // Find all directories at the top level of this tree that have not been manually mapped.
         $dirstomove = $DB->get_records('local_campusconnect_dir', [
             'parentid' => $directoryid,
-            'mapping' => self::MAPPING_AUTOMATIC
+            'mapping' => self::MAPPING_AUTOMATIC,
         ]);
 
         // Move the category parents, as needed (checking the old parents were 'oldcategoryid').
@@ -782,6 +779,7 @@ class directory {
 
         $dirtrees = directorytree::list_directory_trees();
         foreach (self::$newdirs as $dirs) {
+            // phpcs:ignore
             /** @var $dir directory */
             foreach ($dirs as $dir) {
                 $founddirtree = null;
@@ -840,6 +838,7 @@ class directory {
             $sorteddirs[$dir->parentid][$sortorder] = $dir;
         }
         foreach ($sorteddirs as $sdirs) {
+            // phpcs:ignore
             /** @var $sdirs directory[] */
             ksort($sdirs);
             $lastsort = -1;

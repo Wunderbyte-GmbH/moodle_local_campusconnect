@@ -27,8 +27,6 @@ namespace local_campusconnect;
 use coding_exception;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 class ecssettings {
 
     const AUTH_NONE = 1; // Development only - direct connection to ECS server.
@@ -83,7 +81,7 @@ class ecssettings {
         'importperiod' => 'importperiod',
         'notifyusers' => 'notifyusers',
         'notifycontent' => 'notifycontent',
-        'notifycourses' => 'notifycourses'
+        'notifycourses' => 'notifycourses',
     ];
 
     protected static $activeecs = null;

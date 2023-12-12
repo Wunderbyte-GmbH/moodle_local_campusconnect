@@ -27,8 +27,6 @@ namespace local_campusconnect;
 use coding_exception;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 class directorytree {
 
     const MODE_PENDING = 0;
@@ -54,7 +52,7 @@ class directorytree {
 
     protected static $dbfields = [
         'resourceid', 'rootid', 'title', 'ecsid', 'mid', 'categoryid', 'mappingmode',
-        'takeovertitle', 'takeoverposition', 'takeoverallocation'
+        'takeovertitle', 'takeoverposition', 'takeoverallocation',
     ];
     protected static $createemptycategories = null;
     protected static $enabled = null;
@@ -304,6 +302,7 @@ class directorytree {
     public function set_still_exists() {
         $this->stillexists = true;
         if ($this->mappingmode == self::MODE_DELETED) {
+            // phpcs:ignore
             // throw new coding_exception("ECS updating directory tree that is marked as deleted");
             // Not sure how it ended up being marked as deleted, but try to resurrect it now.
             $this->update_field('mappingmode', self::MODE_PENDING);
@@ -450,7 +449,7 @@ class directorytree {
                 'term' => isset($directories->term) ? $directories->term : null,
                 'parent' => (object)[
                     'id' => 0,
-                ]
+                ],
             ];
             array_unshift($directories->nodes, $node);
         } else {
@@ -459,8 +458,8 @@ class directorytree {
                 'id' => $directories->id,
                 'title' => $directories->title,
                 'parent' => (object)[
-                    'id' => $directories->parent->id
-                ]
+                    'id' => $directories->parent->id,
+                ],
             ];
             if (isset($directories->order)) {
                 $node->order = $directories->order;
@@ -488,7 +487,7 @@ class directorytree {
         if (!self::enabled()) {
             return $ret; // Mapping disabled.
         }
-
+        // phpcs:ignore
         /** @var $cms participantsettings */
         if (!$cms = participantsettings::get_cms_participant()) {
             return $ret;
@@ -504,6 +503,7 @@ class directorytree {
         }
 
         $trees = self::list_directory_trees(true);
+        // phpcs:ignore
         /** @var $currenttrees directorytree[] */
         $currenttrees = [];
         foreach ($trees as $tree) {
@@ -680,7 +680,7 @@ class directorytree {
         // Get the details of the existing directories / trees in Moodle.
         $existingtreesdb = $DB->get_records('local_campusconnect_dirroot', [
             'resourceid' => $resourceid,
-            'ecsid' => $ecsid, 'mid' => $mid
+            'ecsid' => $ecsid, 'mid' => $mid,
         ]);
         $existingdirsdb = $DB->get_records('local_campusconnect_dir', ['resourceid' => $resourceid]);
         /** @var directorytree[] $existingtrees */
@@ -738,6 +738,7 @@ class directorytree {
         // Check all (non-deleted) directory tree mappings.
         $categoryids = [];
         $trees = $DB->get_records_select('local_campusconnect_dirroot', 'mappingmode <> ?', [self::MODE_DELETED]);
+        // phpcs:ignore
         /** @var $dirtrees directorytree[] */
         $dirtrees = [];
         foreach ($trees as $tree) {
@@ -759,6 +760,7 @@ class directorytree {
 
         // Check all directory mappings.
         $dbdirs = $DB->get_records('local_campusconnect_dir');
+        // phpcs:ignore
         /** @var $dirs directory[] */
         $dirs = [];
         $categoryids = [];
@@ -770,6 +772,7 @@ class directorytree {
             }
         }
         $categories = $DB->get_records_list('course_categories', 'id', $categoryids, 'id', 'id, sortorder');
+        // phpcs:ignore
         /** @var $recreate directory[] */
         $recreate = [];
         foreach ($dirs as $dir) {
@@ -829,6 +832,7 @@ class directorytree {
         }
 
         $dirtree = new directorytree($dirtreedata);
+        // phpcs:ignore
         /** @var $dir directory */
         $dir = $dirtree->get_directory($directoryid);
         return $dir->create_category($dirtree->get_category_id());

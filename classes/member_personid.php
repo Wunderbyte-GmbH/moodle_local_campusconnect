@@ -27,8 +27,6 @@ namespace local_campusconnect;
 use coding_exception;
 use moodle_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
 class member_personid {
     public $id;
     public $type;
@@ -38,7 +36,7 @@ class member_personid {
     public static $valididtypes = [
         courselink::PERSON_UNIQUECODE, courselink::PERSON_EPPN,
         courselink::PERSON_LOGIN, courselink::PERSON_LOGINUID,
-        courselink::PERSON_UID, courselink::PERSON_EMAIL
+        courselink::PERSON_UID, courselink::PERSON_EMAIL,
     ];
 
     protected static $mapping = null;

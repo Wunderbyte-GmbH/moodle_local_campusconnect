@@ -24,8 +24,6 @@
 
 namespace local_campusconnect;
 
-defined('MOODLE_INTERNAL') || die();
-
 class event_exception extends \moodle_exception {
     public function __construct($msg) {
         parent::__construct('error', 'local_campusconnect', '', $msg);

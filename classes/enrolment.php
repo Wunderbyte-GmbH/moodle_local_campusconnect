@@ -26,10 +26,12 @@ namespace local_campusconnect;
 
 use coding_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class enrolment
+ *
+ * @package   local_campusconnect
+ * @copyright 2014 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrolment {
 
@@ -41,8 +43,12 @@ class enrolment {
     const STATUS_INACTIVE = 'inactive_account';
 
     public static $validstatuses = [
-        self::STATUS_ACTIVE, self::STATUS_PENDING, self::STATUS_REJECTED,
-        self::STATUS_UNSUBSCRIBED, self::STATUS_DENIED, self::STATUS_INACTIVE
+        self::STATUS_ACTIVE,
+        self::STATUS_PENDING,
+        self::STATUS_REJECTED,
+        self::STATUS_UNSUBSCRIBED,
+        self::STATUS_DENIED,
+        self::STATUS_INACTIVE,
     ];
 
     /**

@@ -29,8 +29,6 @@ use context_course;
 use enrol_plugin;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Looks after membership update requests.
  */
@@ -303,6 +301,7 @@ class membership {
         $ret = (object)['created' => [], 'updated' => [], 'deleted' => []];
 
         // Get the CMS participant.
+        // phpcs:ignore
         /** @var $cms participantsettings */
         if (!$cms = participantsettings::get_cms_participant()) {
             return $ret;
@@ -363,7 +362,7 @@ class membership {
         global $DB, $CFG;
 
         // Check the enrolment plugin is enabled and we are on the correct ECS for processing course members.
-
+        // phpcs:ignore
         /** @var $cms participantsettings */
         $cms = participantsettings::get_cms_participant();
         if (!$cms || $cms->get_ecs_id() != $ecssettings->get_id()) {
@@ -382,6 +381,7 @@ class membership {
             }
             return;
         }
+        // phpcs:ignore
         /** @var $enrol enrol_plugin */
         if (!$enrol = enrol_get_plugin('campusconnect')) {
             if ($output) {
@@ -470,7 +470,7 @@ class membership {
                         $context = context_course::instance($pgroup->courseid);
                         role_unassign_all([
                                               'contextid' => $context->id, 'userid' => $userid,
-                                              'component' => 'enrol_campusconnect', 'itemid' => $enrolinstance->id
+                                              'component' => 'enrol_campusconnect', 'itemid' => $enrolinstance->id,
                                           ]);
                     } else {
                         // Created => enrol the user with the given role.
@@ -520,6 +520,7 @@ class membership {
         if (!enrol_is_enabled('campusconnect')) {
             return true;
         }
+        // phpcs:ignore
         /** @var $enrol enrol_plugin */
         if (!$enrol = enrol_get_plugin('campusconnect')) {
             return true;
@@ -593,6 +594,7 @@ class membership {
         if (!enrol_is_enabled('campusconnect')) {
             return true;
         }
+        // phpcs:ignore
         /** @var $enrol enrol_plugin */
         if (!$enrol = enrol_get_plugin('campusconnect')) {
             return true;
@@ -760,7 +762,7 @@ class membership {
             $select = "personid = :personid AND personidtype = :personidtype AND (status = :created OR status = :updated)";
             $params = [
                 'personid' => $personid, 'personidtype' => $personidtype,
-                'created' => self::STATUS_CREATED, 'updated' => self::STATUS_UPDATED
+                'created' => self::STATUS_CREATED, 'updated' => self::STATUS_UPDATED,
             ];
             $records = $DB->get_records_select('local_campusconnect_mbr', $select, $params);
             $ret = $ret + $records;
@@ -846,6 +848,7 @@ class membership {
 
         static $defaultroleid = null;
         if (is_null($defaultroleid)) {
+            // phpcs:ignore
             /** @var $cmsparticipant participantsettings */
             $cmsparticipant = participantsettings::get_cms_participant();
             $ecsid = $cmsparticipant->get_ecs_id();

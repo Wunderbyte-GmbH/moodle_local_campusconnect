@@ -24,10 +24,12 @@
 
 namespace local_campusconnect;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Stores details about the Moodle category in which to create a course
+ *
+ * @package   local_campusconnect
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_category {
     /** @var int $categorid */

@@ -27,11 +27,13 @@ namespace local_campusconnect;
 use coding_exception;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Looks after parallel groups - parsing them out of the data from the ECS, matching them up to existing parallel groups
  * and creating the right Moodle groups for them.
+ *
+ * @package   local_campusconnect
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class parallelgroups {
     // Parallel group scenarios.
@@ -173,8 +175,11 @@ class parallelgroups {
         $ret = [];
         foreach ($pgroups as $groupnum => $grouprole) {
             if (!isset($groupcache[$cmscourseid])) {
-                $groupcache[$cmscourseid] = $DB->get_records('local_campusconnect_pgroup', ['cmscourseid' => $cmscourseid],
-                                                             '', 'groupnum, courseid, groupid');
+                $groupcache[$cmscourseid] = $DB->get_records('local_campusconnect_pgroup',
+                                                            ['cmscourseid' => $cmscourseid],
+                                                             '',
+                                                             'groupnum, courseid, groupid',
+                                                            );
             }
             $coursegroups = $groupcache[$cmscourseid];
             if (isset($coursegroups[$groupnum])) {
@@ -199,7 +204,7 @@ class parallelgroups {
                     'role' => $defaultrole,
                     'groupid' => 0,
                     'groupnum' => 0,
-                ]
+                ],
             ];
         }
 
@@ -224,7 +229,7 @@ class parallelgroups {
         $existing = $DB->get_records('local_campusconnect_pgroup', [
             'ecsid' => $this->ecssettings->get_id(),
             'resourceid' => $this->resourceid,
-            'cmscourseid' => $cmscourseid
+            'cmscourseid' => $cmscourseid,
         ],
                                      '', 'id, cmscourseid, groupnum, courseid');
         if (empty($existing)) {
@@ -287,7 +292,7 @@ class parallelgroups {
                    AND pg.courseid = :courseid AND pg.cmscourseid = :cmscourseid";
         $params = [
             'ecsid' => $this->ecssettings->get_id(), 'resourceid' => $this->resourceid,
-            'courseid' => $course->id, 'cmscourseid' => $cmscourseid
+            'courseid' => $course->id, 'cmscourseid' => $cmscourseid,
         ];
         $existing = $DB->get_records_sql($sql, $params);
 
@@ -364,7 +369,7 @@ class parallelgroups {
                     // The pgroup does not yet exist.
                     if ($DB->record_exists('local_campusconnect_pgroup', [
                         'cmscourseid' => $cmscourseid,
-                        'groupnum' => $pg->groupnum
+                        'groupnum' => $pg->groupnum,
                     ])
                     ) {
                         debugging("Group already exists with cmscourseid: {$cmscourseid} and groupnum: {$pg->groupnum}".

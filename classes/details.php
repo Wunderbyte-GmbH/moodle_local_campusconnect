@@ -24,8 +24,6 @@
 
 namespace local_campusconnect;
 
-defined('MOODLE_INTERNAL') || die();
-
 class details {
     protected $url;
     protected $receivers;

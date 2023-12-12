@@ -29,8 +29,6 @@ use html_writer;
 use moodle_url;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 class participantsettings {
 
     const IMPORT_LINK = 1;
@@ -78,7 +76,7 @@ class participantsettings {
         'export', 'exportenrolment', 'exporttoken',
         'import', 'importenrolment', 'importtoken', 'importtype',
         'uselegacy', 'personuidtype', 'exportfields', 'exportfieldmapping',
-        'importfieldmapping'
+        'importfieldmapping',
     ];
     protected static $ecssettings = ['name', 'description', 'dns', 'email', 'org', 'orgabbr', 'communityname', 'itsyou'];
 
@@ -114,13 +112,13 @@ class participantsettings {
 
     protected static $possibleexportfields = [
         'id', 'username', 'idnumber', 'firstname', 'lastname', 'email', 'icq', 'skype', 'yahoo', 'aim', 'msn', 'phone1', 'phone2',
-        'institution', 'department', 'address', 'city', 'country'
+        'institution', 'department', 'address', 'city', 'country',
     ];
 
     // Not 'id', 'username', 'firstname', 'lastname', as these mappings are hard-coded.
     protected static $possibleimportfields = [
         'idnumber', 'email', 'icq', 'skype', 'yahoo', 'aim', 'msn', 'phone1', 'phone2',
-        'institution', 'department', 'address', 'city', 'country'
+        'institution', 'department', 'address', 'city', 'country',
     ];
 
     /**
@@ -327,7 +325,7 @@ class participantsettings {
 
         $settings = $DB->get_record('local_campusconnect_part', [
             'mid' => $mid,
-            'ecsid' => $ecsid
+            'ecsid' => $ecsid,
         ], '*', $strictness);
         if ($settings) {
             $this->set_settings($settings);
@@ -517,6 +515,7 @@ class participantsettings {
      */
     public function check_settings($settings) {
         if ($settings->import && $settings->importtype == self::IMPORT_CMS) {
+            // phpcs:ignore
             /** @var $cms participantsettings */
             if ($cms = self::get_cms_participant(true)) {
                 if ($cms->get_ecs_id() != $this->get_ecs_id() || $cms->get_mid() != $this->get_mid()) {

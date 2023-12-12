@@ -30,20 +30,15 @@ use html_writer;
 use moodle_url;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 class filtering {
 
     public static $config = null;
     public static $globalsettings = [
         'enabled' => 'bool', 'defaultcategory' => 'int', 'usesinglecategory' => 'bool',
-        'singlecategory' => 'int', 'attributes' => 'array'
+        'singlecategory' => 'int', 'attributes' => 'array',
     ];
 
-    // -------------------------------------------
-    // Using the course filtering
-    // -------------------------------------------
-
+    // Using the course filtering.
     /**
      *
      * @param $coursedata
@@ -278,10 +273,7 @@ class filtering {
         self::$config = null; // Clear out the config cache.
     }
 
-    // -------------------------------------------
-    // Category settings for course filtering
-    // -------------------------------------------
-
+    // Category settings for course filtering.
     /**
      * Load the filter settings for each of the Moodle categories. Settings are:
      * - allwords (bool) - whether the filter matches all words, or just specific words
@@ -324,7 +316,7 @@ class filtering {
                     }
                     $ret[$catid][$validattrib] = $attribs[$validattrib];
                 } else {
-                    // continue 2; // Once a valid attribute is missing, skip all the rest.
+                    // Continue 2; // Once a valid attribute is missing, skip all the rest.
                 }
             }
         }
@@ -407,7 +399,7 @@ class filtering {
      * @param $category
      * @param $baseurl
      * @param $activecategories
-     * @param null $selectedcategory
+     * @param mixed|null $selectedcategory
      * @return string
      */
     protected static function output_category_and_children(core_course_category $category, $baseurl, $activecategories,
@@ -435,10 +427,7 @@ class filtering {
         return html_writer::tag('li', $ret);
     }
 
-    // -------------------------------------------
-    // Internal functions
-    // -------------------------------------------
-
+    // Internal functions.
     /**
      * Internal function to load all config settings
      * @return mixed|null

@@ -60,6 +60,7 @@ $PAGE->set_title("CMS Emulator");
 $ecslist = ecssettings::list_ecs();
 $participants = [];
 $allcommunities = [];
+// phpcs:ignore
 /** @var $cms participantsettings */
 $cms = participantsettings::get_cms_participant();
 if (!$cms) {
@@ -72,11 +73,13 @@ foreach ($ecslist as $ecsid => $ecsname) {
     $settings = new ecssettings($ecsid);
     $allcommunities[$ecsid] = participantsettings::load_communities($settings);
     foreach ($allcommunities[$ecsid] as $cid => $community) {
+        // phpcs:ignore
         /** @var $participant participantsettings */
         foreach ($community->participants as $identifier => $participant) {
             $participants[$identifier] = $ecsname.' - '.$participant->get_displayname();
             if ($identifier == $cms->get_identifier()) {
                 $cmscid = $cid; // Found the right community, now find out the MID of this participant there.
+                // phpcs:ignore
                 /** @var $part2 participantsettings */
                 foreach ($community->participants as $id2 => $part2) {
                     if ($part2->is_me()) {
@@ -299,8 +302,10 @@ if ($data = $form->get_data()) {
                 'term' => $data->crsterm,
                 'title' => $data->crstitle,
                 'lectureType' => $data->crstype,
+                // phpcs:disable
                 // 'maxParticipants' => $data->crsmaxpart,
                 // 'lecturers' => array(),
+                // phpcs:enable
                 'allocations' => [],
                 'groups' => [],
             ];
@@ -418,7 +423,9 @@ if ($data = $form->get_data()) {
 }
 
 echo $OUTPUT->header();
-echo html_writer::tag('p', 'This form allows you to send data from one participant to another, as if it was from a Campus Management System. It is only meant for testing purposes and you will need to configure two connections to the ECS for it to work (with one connection acting as the CMS, the other acting as the destination VLE).');
+echo html_writer::tag('p', 'This form allows you to send data from one participant to another, as if it was from
+    a Campus Management System. It is only meant for testing purposes and you will need to configure two connections
+    to the ECS for it to work (with one connection acting as the CMS, the other acting as the destination VLE).');
 if (!empty($msg)) {
     echo $OUTPUT->box($msg);
 }

@@ -28,8 +28,6 @@ use coding_exception;
 use html_writer;
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 class metadata {
 
     const TYPE_IMPORT_COURSE = 1;
@@ -41,7 +39,7 @@ class metadata {
         'fullname' => 'string', 'shortname' => 'string',
         'idnumber' => 'string', 'summary' => 'string',
         'startdate' => 'date', 'lang' => 'lang',
-        'timecreated' => 'date', 'timemodified' => 'date'
+        'timecreated' => 'date', 'timemodified' => 'date',
     ];
 
     protected static $remotefieldcourselink = [
@@ -70,7 +68,7 @@ class metadata {
         'degreeProgrammes' => 'degreelist',
         'lecturers_lastName' => 'personlist',
         'lecturers_firstName' => 'personlist',
-        'lecturers' => 'personlist'
+        'lecturers' => 'personlist',
     ];
 
     protected static $remotefields = [
@@ -100,7 +98,7 @@ class metadata {
         'linkToLecture' => 'link',
         'groups_lecturers' => 'grouplist',
         'groups' => 'grouplist',
-        'modules' => 'moduleslist'
+        'modules' => 'moduleslist',
     ];
     // Note - leaving out fields 'allocations', 'organisationalUnit', 'groups', as there is no obvious place
     // to map these to in Moodle.
@@ -114,7 +112,7 @@ class metadata {
         'startdate' => '',
         'lang' => '',
         'timecreated' => '',
-        'timemodified' => ''
+        'timemodified' => '',
     ];
 
     // Default import mappings.
@@ -126,7 +124,7 @@ class metadata {
         'startdate' => 'firstDate',
         'lang' => 'lang',
         'timecreated' => '',
-        'timemodified' => ''
+        'timemodified' => '',
     ];
 
     // Default export mappings.
@@ -153,7 +151,7 @@ class metadata {
         'targetAudience' => '',
         'links' => '',
         'linkToCourse' => '',
-        'modules' => ''
+        'modules' => '',
     ];
 
     // Default external export mappings.
@@ -179,7 +177,7 @@ class metadata {
         'datesAndVenues.lastDate.startDatetime' => '',
         'datesAndVenues.lastDate.endDatetime' => '',
         'degreeProgrammes' => '',
-        'lecturers' => ''
+        'lecturers' => '',
     ];
 
     protected $lasterrormsg = null;
@@ -296,13 +294,13 @@ class metadata {
                 'term' => get_string('field_term', 'local_campusconnect'),
                 'credits' => get_string('field_credits', 'local_campusconnect'),
                 'status' => get_string('field_status', 'local_campusconnect'),
-                'courseType' => get_string('field_coursetype', 'local_campusconnect')
+                'courseType' => get_string('field_coursetype', 'local_campusconnect'),
             ];
         } else {
             $mapping = [
                 'organisation' => get_string('field_organisation', 'local_campusconnect'),
                 'term' => get_string('field_term', 'local_campusconnect'),
-                'courseType' => get_string('field_coursetype', 'local_campusconnect')
+                'courseType' => get_string('field_coursetype', 'local_campusconnect'),
             ];
         }
         $summary = '';
@@ -535,7 +533,7 @@ class metadata {
         $existing = $DB->get_record('local_campusconnect_mappings', [
             'ecsid' => $this->ecsid,
             'field' => $field,
-            'type' => $type
+            'type' => $type,
         ]);
         if ($existing) {
             $upd = new stdClass();

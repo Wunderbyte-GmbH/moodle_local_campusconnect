@@ -36,5 +36,5 @@ $observers = [
     [
         'eventname' => '\core\event\user_created',
         'callback' => '\local_campusconnect\membership::user_created',
-    ]
+    ],
 ];

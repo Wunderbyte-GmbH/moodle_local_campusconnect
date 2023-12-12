@@ -24,8 +24,6 @@
 
 namespace local_campusconnect;
 
-defined('MOODLE_INTERNAL') || die();
-
 class log {
     const LOGNAME = 'campusconnect.log';
 

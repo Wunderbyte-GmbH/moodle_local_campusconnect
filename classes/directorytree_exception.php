@@ -26,8 +26,6 @@ namespace local_campusconnect;
 
 use moodle_exception;
 
-defined('MOODLE_INTERNAL') || die();
-
 class directorytree_exception extends moodle_exception {
     public function __construct($msg) {
         parent::__construct('error', 'local_campusconnect', '', $msg);

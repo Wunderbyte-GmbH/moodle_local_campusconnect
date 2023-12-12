@@ -25,9 +25,6 @@
 namespace local_campusconnect;
 
 use coding_exception;
-
-defined('MOODLE_INTERNAL') || die();
-
 class event {
     const STATUS_CREATED = 'created';
     const STATUS_UPDATED = 'updated';
@@ -44,9 +41,8 @@ class event {
     protected static $validstatus = [self::STATUS_CREATED, self::STATUS_UPDATED, self::STATUS_DESTROYED];
     protected static $validresources = [
         self::RES_COURSELINK, self::RES_DIRECTORYTREE, self::RES_COURSE,
-        self::RES_COURSE_MEMBERS, self::RES_COURSE_URL, self::RES_ENROLMENT
+        self::RES_COURSE_MEMBERS, self::RES_COURSE_URL, self::RES_ENROLMENT,
     ];
-
     protected $resource;
     protected $resourceid;
     protected $resourcetype;
