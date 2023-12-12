@@ -19,10 +19,7 @@
     font-style: italic;
     color: #ccc;
 }
-#campusconnect_dirtree .status_mapped_manual {
-}
-#campusconnect_dirtree .status_mapped_automatic {
-}
+
 #campusconnect_dirtree .status_deleted {
     color: red;
     text-decoration: line-through;
@@ -52,8 +49,8 @@
 .campusconnect_refreshdone {
     color: black;
     width: 90%;
-    border: 1px solid #00cc00;
-    background-color: #ccffcc;
+    border: 1px solid #0c0;
+    background-color: #cfc;
     margin: auto;
     padding: 1em;
     text-align: center;
