@@ -21,6 +21,9 @@
  * @copyright 2014 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace local_campusconnect;
+
+use advanced_testcase;
 use local_campusconnect\connect;
 use local_campusconnect\courselink;
 use local_campusconnect\ecssettings;
@@ -39,21 +42,22 @@ use local_campusconnect\receivequeue;
  * - all 3 participants have been added to a community called 'unittest'
  * - none of the participants are members of any other community
  */
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class local_campusconnect_enrolment_test
- * @group local_campusconnect
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\enrolment
  */
-class local_campusconnect_enrolment_test extends advanced_testcase {
+class enrolment_test extends advanced_testcase {
     /** @var connect[] */
     protected $connect = [];
     /** @var integer[] */
     protected $mid = [];
     protected $pid = [];
 
-    protected function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
 
         // Create the connections for testing.
@@ -76,7 +80,6 @@ class local_campusconnect_enrolment_test extends advanced_testcase {
             $communities = participantsettings::load_communities($connect->get_settings());
             $community = reset($communities);
             foreach ($community->participants as $participant) {
-                /** \local_campusconnect\participantsettings $participant */
                 if ($participant->is_me()) {
                     $this->mid[$key] = $participant->get_mid();
                     $this->pid[$key] = $participant->get_pid();
@@ -107,7 +110,7 @@ class local_campusconnect_enrolment_test extends advanced_testcase {
         }
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->clear_ecs_resources();
 
         $this->connect = [];
@@ -117,7 +120,9 @@ class local_campusconnect_enrolment_test extends advanced_testcase {
     public function test_enrolment_status() {
         global $DB;
 
-        // Note course link goest 'unittest2' => 'unittest1', user goes 'unittest1' => 'unittest2', status goes 'unittest2' => 'unittest1'.
+        // Note course link goest 'unittest2' => 'unittest1',
+        // user goes 'unittest1' => 'unittest2',
+        // status goes 'unittest2' => 'unittest1'.
 
         // Set 'unittest2' to export course links to 'unittest1'.
         $part1 = new participantsettings($this->connect[2]->get_ecs_id(), $this->mid[1]);
@@ -161,7 +166,7 @@ class local_campusconnect_enrolment_test extends advanced_testcase {
         $userdata = $part1->map_export_data($srcuser);
         $uid = $userdata['ecs_uid'];
         $authcc = get_auth_plugin('campusconnect');
-        $class = new ReflectionClass('auth_plugin_campusconnect'); // Need to use reflection as the method is private.
+        $class = new \ReflectionClass('auth_plugin_campusconnect'); // Need to use reflection as the method is private.
         $usernamefromparams = $class->getMethod('username_from_params');
         $usernamefromparams->setAccessible(true);
         $username = $usernamefromparams->invoke($authcc, 'test_institution', 'test_username',
@@ -172,10 +177,7 @@ class local_campusconnect_enrolment_test extends advanced_testcase {
                                                               'auth' => 'campusconnect', 'username' => $username,
                                                           ]); // User on 'unittest2'.
 
-        // -------------------------------
         // Enrolment.
-        // -------------------------------
-
         // Enrol this user in the 'real' course on 'unittest2'.
         $enrolman = enrol_get_plugin('manual');
         $enrolinst = $DB->get_record('enrol', ['enrol' => 'manual', 'courseid' => $srccourse->id], '*', IGNORE_MULTIPLE);
@@ -217,10 +219,7 @@ class local_campusconnect_enrolment_test extends advanced_testcase {
         $msgs = $this->connect[1]->get_resource_list(event::RES_ENROLMENT);
         $this->assertEmpty($msgs->get_ids()); // Check there are now no 'enrolment status' notifications to be received.
 
-        // -------------------------------
         // Unenrolment.
-        // -------------------------------
-
         // Unenrol the user from the remote course.
         $enrolman->unenrol_user($enrolinst, $dstuser->id);
 

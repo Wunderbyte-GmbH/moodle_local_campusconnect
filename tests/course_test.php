@@ -21,6 +21,11 @@
  * @copyright  2012 Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace local_campusconnect;
+
+use advanced_testcase;
+use moodle_url;
 use local_campusconnect\course;
 use local_campusconnect\details;
 use local_campusconnect\directory;
@@ -38,14 +43,15 @@ use local_campusconnect\participantsettings;
  * - all 3 participants have been added to a community called 'unittest'
  * - none of the participants are members of any other community
  */
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class local_campusconnect_course_test
- * @group local_campusconnect
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\course
  */
-class local_campusconnect_course_test extends advanced_testcase {
+class course_test extends advanced_testcase {
     /** @var ecssettings[] $settings */
     protected $settings = [];
     protected $mid = [];
@@ -131,7 +137,7 @@ class local_campusconnect_course_test extends advanced_testcase {
     }
     ';
 
-    public function setUp() {
+    protected function setUp(): void {
         global $DB;
 
         if (defined('SKIP_CAMPUSCONNECT_COURSE_TESTS')) {
@@ -217,11 +223,11 @@ class local_campusconnect_course_test extends advanced_testcase {
         $this->assertEquals('abc_1234', $course1->shortname);
         $this->assertEquals('Test course creation', $course1->fullname);
         $this->assertEquals($this->directory[0]->get_category_id(), $course1->category);
-        $this->assertContains('Synergy Learning', $course1->summary);
+        $this->assertStringContainsString('Synergy Learning', $course1->summary);
 
         $this->assertEquals('Test course creation', $course2->fullname);
         $this->assertEquals($this->directory[1]->get_category_id(), $course2->category);
-        $this->assertContains('Synergy Learning', $course2->summary);
+        $this->assertStringContainsString('Synergy Learning', $course2->summary);
 
         $this->assertFalse(course::check_redirect($course1->id)); // No redirect for the real course.
         $expectedredirect = new moodle_url('/course/view.php', ['id' => $course1->id]);
@@ -244,8 +250,8 @@ class local_campusconnect_course_test extends advanced_testcase {
         $course2 = array_shift($courses);
         $this->assertEquals('Test course creation', $course1->fullname);
         $this->assertEquals('Test course creation', $course2->fullname);
-        $this->assertContains('Synergy Learning', $course1->summary);
-        $this->assertContains('Synergy Learning', $course2->summary);
+        $this->assertStringContainsString('Synergy Learning', $course1->summary);
+        $this->assertStringContainsString('Synergy Learning', $course2->summary);
 
         // Update the course details.
         $course->title = 'Test update title';
@@ -258,8 +264,8 @@ class local_campusconnect_course_test extends advanced_testcase {
         $realcourse = $course1;
         $this->assertEquals('Test update title', $course1->fullname);
         $this->assertEquals('Test update title', $course2->fullname);
-        $this->assertContains('New organisation', $course1->summary);
-        $this->assertContains('New organisation', $course2->summary);
+        $this->assertStringContainsString('New organisation', $course1->summary);
+        $this->assertStringContainsString('New organisation', $course2->summary);
         $this->assertEquals($this->directory[0]->get_category_id(), $course1->category);
         $this->assertEquals($this->directory[1]->get_category_id(), $course2->category);
         $expectedredirect = new moodle_url('/course/view.php', ['id' => $realcourse->id]);

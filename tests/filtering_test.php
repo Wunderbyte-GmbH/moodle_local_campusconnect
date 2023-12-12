@@ -22,19 +22,25 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_campusconnect;
+
+use advanced_testcase;
+use core_course_category;
 use local_campusconnect\ecssettings;
 use local_campusconnect\filtering;
 use local_campusconnect\metadata;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
- * Class local_campusconnect_coursemembers_test
- * @group local_campusconnect
+ * Class local_campusconnect_filtering_test
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\filtering
  */
-class local_campusconnect_filtering_test extends advanced_testcase {
+class filtering_test extends advanced_testcase {
 
-    public function setUp() {
+    protected function setUp(): void {
         $this->resetAfterTest();
     }
 
@@ -177,10 +183,10 @@ class local_campusconnect_filtering_test extends advanced_testcase {
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertCount(1, $categoryids);
         $categoryid = reset($categoryids);
-        $newcat = coursecat::get($categoryid);
+        $newcat = core_course_category::get($categoryid);
         $this->assertEquals($metadata['attribute1'], $newcat->name);
         $parents = $newcat->get_parents();
-        $parent = coursecat::get(array_pop($parents));
+        $parent = core_course_category::get(array_pop($parents));
         $this->assertEquals($basecategory->id, $parent->id);
 
         // Test creating course in two levels of subcategories.
@@ -199,12 +205,12 @@ class local_campusconnect_filtering_test extends advanced_testcase {
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertCount(1, $categoryids);
         $categoryid = reset($categoryids);
-        $newcat = coursecat::get($categoryid);
+        $newcat = core_course_category::get($categoryid);
         $this->assertEquals($metadata['attribute2'], $newcat->name);
         $parents = $newcat->get_parents();
-        $parent = coursecat::get(array_pop($parents));
+        $parent = core_course_category::get(array_pop($parents));
         $this->assertEquals($metadata['attribute1'], $parent->name);
-        $parent = coursecat::get(array_pop($parents));
+        $parent = core_course_category::get(array_pop($parents));
         $this->assertEquals($basecategory->id, $parent->id);
 
         // Test creating course in subcategory from 2nd filter only.
@@ -223,10 +229,10 @@ class local_campusconnect_filtering_test extends advanced_testcase {
         $categoryids = filtering::find_or_create_categories($metadata, $filter, $basecategory->id);
         $this->assertCount(1, $categoryids);
         $categoryid = reset($categoryids);
-        $newcat = coursecat::get($categoryid);
+        $newcat = core_course_category::get($categoryid);
         $this->assertEquals($metadata['attribute2'], $newcat->name);
         $parents = $newcat->get_parents();
-        $parent = coursecat::get(array_pop($parents));
+        $parent = core_course_category::get(array_pop($parents));
         $this->assertEquals($basecategory->id, $parent->id);
 
         /*        // Test creating course in single level subcategories with multiple attribute values.

@@ -21,6 +21,10 @@
  * @copyright 2015 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace local_campusconnect;
+
+use advanced_testcase;
 use local_campusconnect\connect;
 use local_campusconnect\ecssettings;
 use local_campusconnect\event;
@@ -35,16 +39,18 @@ use local_campusconnect\participantsettings;
  * - all 3 participants have been added to a community called 'unittest'
  * - none of the participants are members of any other community
  */
-
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * @package    local_campusconnect
+ * @copyright 2015 Davo Smith, Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class campusconnect_base_testcase extends advanced_testcase {
     /** @var connect[] */
     protected $connect = [];
     protected $mid = [];
     protected $community = 'unittest';
 
-    public function setUp() {
+    protected function setUp(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -86,7 +92,7 @@ class campusconnect_base_testcase extends advanced_testcase {
         participantsettings::get_cms_participant(true); // Reset the cached 'cms participant' value.
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->clear_ecs_resources(event::RES_DIRECTORYTREE);
 
         $this->connect = [];

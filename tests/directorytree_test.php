@@ -21,6 +21,10 @@
  * @copyright  2012 Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace local_campusconnect;
+
+use coding_exception;
+use local_campusconnect\campusconnect_base_testcase;
 use local_campusconnect\directory;
 use local_campusconnect\directorytree;
 use local_campusconnect\event;
@@ -35,18 +39,16 @@ use local_campusconnect\receivequeue;
  * - all 3 participants have been added to a community called 'unittest'
  * - none of the participants are members of any other community
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
-
 /**
  * Class local_campusconnect_directorytree_test
- * @group local_campusconnect
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\directorytree
  */
-class local_campusconnect_directorytree_test extends campusconnect_base_testcase {
-    public function setUp() {
+class directorytree_test extends campusconnect_base_testcase {
+    protected function setUp(): void {
         parent::setUp();
         $this->clear_ecs_resources(event::RES_DIRECTORYTREE);
 
@@ -54,7 +56,7 @@ class local_campusconnect_directorytree_test extends campusconnect_base_testcase
         directory::clear_directory_cache();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->clear_ecs_resources(event::RES_DIRECTORYTREE);
         parent::tearDown();
     }

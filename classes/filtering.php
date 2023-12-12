@@ -158,10 +158,7 @@ class filtering {
         return $catids;
     }
 
-    // -------------------------------------------
-    // Global settings for course filtering
-    // -------------------------------------------
-
+    // Global settings for course filtering.
     /**
      * Check if courses import filtering is enabled
      * @return bool

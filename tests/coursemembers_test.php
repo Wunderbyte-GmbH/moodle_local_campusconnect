@@ -21,6 +21,10 @@
  * @copyright  2013 Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace local_campusconnect;
+
+use advanced_testcase;
 use local_campusconnect\course;
 use local_campusconnect\courselink;
 use local_campusconnect\details;
@@ -42,14 +46,15 @@ use local_campusconnect\participantsettings;
  * - all 3 participants have been added to a community called 'unittest'
  * - none of the participants are members of any other community
  */
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class local_campusconnect_coursemembers_test
- * @group local_campusconnect
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\coursemembers
  */
-class local_campusconnect_coursemembers_test extends advanced_testcase {
+class coursemembers_test extends advanced_testcase {
     /** @var ecssettings[] $settings */
     protected $settings = [];
     protected $mid = [];
@@ -221,7 +226,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
     }
     ';
 
-    public function setUp() {
+    protected function setUp(): void {
         global $DB;
 
         if (defined('SKIP_CAMPUSCONNECT_COURSEMEMBERS_TESTS')) {
@@ -347,7 +352,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             'param2' => 2048,
             'param3' => 0,
         ];
-        $formfield = new profile_define_text();
+        $formfield = new \profile_define_text();
         $formfield->define_save($data);
     }
 
@@ -405,7 +410,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         global $DB;
 
         // Gain access to the protected function 'extract_parallel_groups'.
-        $class = new ReflectionClass('\local_campusconnect\membership');
+        $class = new \ReflectionClass('\local_campusconnect\membership');
         $extract = $class->getMethod('extract_parallel_groups');
         $extract->setAccessible(true);
 
@@ -499,7 +504,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             $this->assertEmpty($userenrolments);
 
             // Check the roles that each user has been given.
-            $context = context_course::instance($course1->id);
+            $context = \context_course::instance($course1->id);
             $roles1 = get_user_roles($context, $this->users[0]->id, false);
             $roles2 = get_user_roles($context, $this->users[1]->id, false);
             $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -578,7 +583,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             $this->assertEmpty($userenrolments);
 
             // Check the roles that each user has been given.
-            $context = context_course::instance($course1->id);
+            $context = \context_course::instance($course1->id);
             $roles1 = get_user_roles($context, $this->users[0]->id, false);
             $roles2 = get_user_roles($context, $this->users[1]->id, false);
             $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -679,7 +684,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             $this->assertEmpty($userenrolments);
 
             // Check the roles that each user has been given in course1.
-            $context = context_course::instance($course1->id);
+            $context = \context_course::instance($course1->id);
             $roles1 = get_user_roles($context, $this->users[0]->id, false);
             $roles2 = get_user_roles($context, $this->users[1]->id, false);
             $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -699,7 +704,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             $this->assertEquals('student', $role3->shortname); // From group 1.
 
             // Check the roles that each user has been given in course3.
-            $context = context_course::instance($course3->id);
+            $context = \context_course::instance($course3->id);
             $roles1 = get_user_roles($context, $this->users[0]->id, false);
             $roles2 = get_user_roles($context, $this->users[1]->id, false);
             $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -789,7 +794,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             $this->assertEmpty($userenrolments);
 
             // Check the roles that each user has been given in the course.
-            $context = context_course::instance($course1->id);
+            $context = \context_course::instance($course1->id);
             $roles1 = get_user_roles($context, $this->users[0]->id, false);
             $roles2 = get_user_roles($context, $this->users[1]->id, false);
             $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -885,7 +890,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->assertEmpty($userenrolments);
 
         // Check the roles that each user has been given.
-        $context = context_course::instance($course1->id);
+        $context = \context_course::instance($course1->id);
         $roles1 = get_user_roles($context, $this->users[0]->id, false);
         $roles2 = get_user_roles($context, $this->users[1]->id, false);
         $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -963,7 +968,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->assertEmpty($userenrolments); // No remaining enrolments expected.
 
         // Check the users now have no roles.
-        $context = context_course::instance($course1->id);
+        $context = \context_course::instance($course1->id);
         $roles1 = get_user_roles($context, $this->users[0]->id, false);
         $roles2 = get_user_roles($context, $this->users[1]->id, false);
         $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -1043,7 +1048,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->assertEmpty($userenrolments);
 
         // Check the roles that each user has been given in course1.
-        $context = context_course::instance($course1->id);
+        $context = \context_course::instance($course1->id);
         $roles1 = get_user_roles($context, $this->users[0]->id, false);
         $roles2 = get_user_roles($context, $this->users[1]->id, false);
         $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -1063,7 +1068,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->assertEquals('student', $role3->shortname); // From group 1.
 
         // Check the roles that each user has been given in course3.
-        $context = context_course::instance($course3->id);
+        $context = \context_course::instance($course3->id);
         $roles1 = get_user_roles($context, $this->users[0]->id, false);
         $roles2 = get_user_roles($context, $this->users[1]->id, false);
         $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -1174,7 +1179,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->assertEmpty($userenrolments);
 
         // Check the roles that each user has been given in course1.
-        $context = context_course::instance($course1->id);
+        $context = \context_course::instance($course1->id);
         $roles1 = get_user_roles($context, $this->users[0]->id, false);
         $roles2 = get_user_roles($context, $this->users[1]->id, false);
         $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -1196,7 +1201,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
         $this->assertEquals('student', $role3->shortname); // From group 1.
 
         // Check the roles that each user has been given in course3.
-        $context = context_course::instance($course3->id);
+        $context = \context_course::instance($course3->id);
         $roles1 = get_user_roles($context, $this->users[0]->id, false);
         $roles2 = get_user_roles($context, $this->users[1]->id, false);
         $roles3 = get_user_roles($context, $this->users[2]->id, false);
@@ -1254,6 +1259,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             courselink::PERSON_UNIQUECODE => 'flowerpot', // Non-existent user field.
             courselink::PERSON_EPPN => 'custom_eppn', // Map onto user custom field.
             courselink::PERSON_LOGIN => 'username',
+            // phpcs:ignore
             // \local_campusconnect\courselink::PERSON_LOGINUID, // Mapping not specified => expect to be mapped to 'null'.
             courselink::PERSON_UID => null,  // Remove default mapping onto 'id'.
             courselink::PERSON_EMAIL => 'department', // Change from 'email' to 'department'.
@@ -1408,7 +1414,7 @@ class local_campusconnect_coursemembers_test extends advanced_testcase {
             $this->assertEmpty($userenrolments);
 
             // Check the roles that each user has been given.
-            $context = context_course::instance($course1->id);
+            $context = \context_course::instance($course1->id);
             $roles1 = get_user_roles($context, $this->users[0]->id, false);
             $roles2 = get_user_roles($context, $this->users[1]->id, false);
             $roles3 = get_user_roles($context, $this->users[2]->id, false);

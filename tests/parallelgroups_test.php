@@ -21,6 +21,11 @@
  * @copyright  2012 Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace local_campusconnect;
+
+use advanced_testcase;
+use moodle_url;
 use local_campusconnect\course;
 use local_campusconnect\details;
 use local_campusconnect\directory;
@@ -39,14 +44,15 @@ use local_campusconnect\participantsettings;
  * - all 3 participants have been added to a community called 'unittest'
  * - none of the participants are members of any other community
  */
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class local_campusconnect_parallelgroups_test
- * @group local_campusconnect
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\parallelgroups
  */
-class local_campusconnect_parallelgroups_test extends advanced_testcase {
+class parallelgroups_test extends advanced_testcase {
     /** @var ecssettings[] $settings */
     protected $settings = [];
     protected $mid = [];
@@ -207,7 +213,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         ]
     ';
 
-    public function setUp() {
+    protected function setUp(): void {
         global $DB;
 
         if (defined('SKIP_CAMPUSCONNECT_PARALLELGROUPS_TESTS')) {
@@ -337,9 +343,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->assertEquals($course1->id, $pgroup3->courseid);
         $this->assertEquals(0, $pgroup3->groupid);
 
-        // --------------------------------
         // Update the group definition.
-        // --------------------------------
         $course->groups = json_decode($this->altgroupdata);
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
 
@@ -474,9 +478,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->assertEquals($course1->id, $pgroup3->courseid);
         $this->assertEquals($group3->id, $pgroup3->groupid);
 
-        // --------------------------------
         // Update the group definition.
-        // --------------------------------
         $course->groups = json_decode($this->altgroupdata);
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
 
@@ -646,9 +648,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->assertEquals($course5->id, $pgroup3->courseid);
         $this->assertEquals(0, $pgroup3->groupid);
 
-        // --------------------------------
         // Update the group definition.
-        // --------------------------------
         $course->groups = json_decode($this->altgroupdata);
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
 
@@ -847,9 +847,7 @@ class local_campusconnect_parallelgroups_test extends advanced_testcase {
         $this->assertEquals($course3->id, $pgroup3->courseid);
         $this->assertEquals(0, $pgroup3->groupid);
 
-        // --------------------------------
         // Update the group definition.
-        // --------------------------------
         $course->groups = json_decode($this->altgroupdata);
         course::update($resourceid, $this->settings[2], $course, $this->transferdetails);
 

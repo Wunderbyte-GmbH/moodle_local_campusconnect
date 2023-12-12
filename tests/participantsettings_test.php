@@ -22,13 +22,22 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_campusconnect;
+
+use coding_exception;
 use local_campusconnect\participantsettings;
+use local_campusconnect\campusconnect_base_testcase;
 
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
-
-class local_campusconnect_participantsettings_test extends campusconnect_base_testcase {
+/**
+ * Class local_campusconnect_participantsettings_test
+ *
+ * @package   local_campusconnect
+ * @copyright 2016 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\participantsettings
+ */
+class participantsettings_test extends campusconnect_base_testcase {
 
     public function test_load_participants() {
         $communities = participantsettings::load_communities($this->connect[1]->get_settings());
@@ -47,12 +56,12 @@ class local_campusconnect_participantsettings_test extends campusconnect_base_te
             $this->assertInstanceOf('\local_campusconnect\participantsettings', $part);
             $name = $part->get_name();
             $pos = array_search($name, $expectednames);
-            $this->assertInternalType('integer', $pos, "Unexpected participant '$name'");
+            $this->assertIsInt($pos, "Unexpected participant '$name'");
             unset($expectednames[$pos]);
 
             $displayname = $part->get_displayname();
             $pos = array_search($displayname, $expecteddisplaynames);
-            $this->assertInternalType('integer', $pos);
+            $this->assertIsInt('integer', $pos);
         }
     }
 

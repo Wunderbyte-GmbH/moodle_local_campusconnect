@@ -22,13 +22,31 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_campusconnect;
+
+use coding_exception;
+use dml_missing_record_exception;
+use local_campusconnect\campusconnect_base_testcase;
 use local_campusconnect\ecssettings;
 
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
-
-class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
+/**
+ * These tests assume the following set up is already in place with
+ * your ECS server:
+ * - ECS server running on localhost:3000
+ * - participant ids 'unittest1', 'unittest2' and 'unittest3' created
+ * - participants are named 'Unit test 1', 'Unit test 2' and 'Unit test 3'
+ * - all 3 participants have been added to a community called 'unittest'
+ * - none of the participants are members of any other community
+ */
+/**
+ * Class local_campusconnect_ecssettings_test
+ * @package    local_campusconnect
+ * @copyright 2016 Davo Smith, Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\ecssettings
+ */
+class ecssettings_test extends campusconnect_base_testcase {
     protected $testdata = [
         'name' => 'test1name',
         'url' => 'http://www.example.com',
@@ -39,7 +57,7 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
         'importperiod' => 6,
     ];
 
-    public function setUp() {
+    protected function setUp(): void {
         global $DB;
 
         parent::setUp();
@@ -58,7 +76,7 @@ class local_campusconnect_ecssettings_test extends campusconnect_base_testcase {
         $id = $settings->get_id();
 
         // Check the settings have been created successfully.
-        $this->assertInternalType('integer', $id);
+        $this->assertIsInt($id);
         $this->assertTrue($id > 0);
 
         // Check the settings are as expected.

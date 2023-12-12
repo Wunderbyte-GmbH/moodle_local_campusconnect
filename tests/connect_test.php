@@ -21,6 +21,10 @@
  * @copyright  2012 Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace local_campusconnect;
+
+use advanced_testcase;
 use local_campusconnect\connect;
 use local_campusconnect\ecssettings;
 use local_campusconnect\event;
@@ -34,14 +38,15 @@ use local_campusconnect\event;
  * - all 3 participants have been added to a community called 'unittest'
  * - none of the participants are members of any other community
  */
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class local_campusconnect_connect_test
- * @group local_campusconnect
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\connect
  */
-class local_campusconnect_connect_test extends advanced_testcase {
+class connect_test extends advanced_testcase {
     /**
      * @var connect[]
      */
@@ -51,7 +56,7 @@ class local_campusconnect_connect_test extends advanced_testcase {
      */
     protected $mid = [];
 
-    protected function setUp() {
+    protected function setUp(): void {
 
         if (defined('SKIP_CAMPUSCONNECT_CONNECT_TESTS')) {
             $this->markTestSkipped('Skipping connect tests, to save time');
@@ -60,7 +65,7 @@ class local_campusconnect_connect_test extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        // Create the connections for testing
+        // Create the connections for testing.
         $names = [1 => 'unittest1', 2 => 'unittest2', 3 => 'unittest3'];
         foreach ($names as $key => $name) {
             $category = $this->getDataGenerator()->create_category(['name' => 'import'.$key]);
@@ -75,7 +80,7 @@ class local_campusconnect_connect_test extends advanced_testcase {
             $this->connect[$key] = new connect($ecs);
         }
 
-        // Retrieve the mid values for each participant
+        // Retrieve the mid values for each participant.
         foreach ($this->connect as $key => $connect) {
             $memberships = $connect->get_memberships();
             foreach ($memberships[0]->participants as $participant) {
@@ -87,17 +92,17 @@ class local_campusconnect_connect_test extends advanced_testcase {
         }
     }
 
-    protected function tearDown() {
-        // Delete all resources (just in case)
+    protected function tearDown(): void {
+        // Delete all resources (just in case).
         foreach ($this->connect as $connect) {
             $courselinks = $connect->get_resource_list(event::RES_COURSELINK);
             foreach ($courselinks->get_ids() as $eid) {
-                // All courselinks were created by 'unittest1'
+                // All courselinks were created by 'unittest1'.
                 $this->connect[1]->delete_resource($eid, event::RES_COURSELINK);
             }
         }
 
-        // Delete all events
+        // Delete all events.
         foreach ($this->connect as $connect) {
             while ($connect->read_event_fifo(true)) {
                 ;
@@ -108,18 +113,24 @@ class local_campusconnect_connect_test extends advanced_testcase {
         $this->mid = [];
     }
 
+    /**
+     * [Description for test_get_memberships]
+     *
+     * @return mixed
+     *
+     */
     public function test_get_memberships() {
         $result = $this->connect[1]->get_memberships();
 
         // Test that 'unittest1' is a member of only the community 'unittest'
-        // with 3 other participants
-        $this->assertInternalType('array', $result);
+        // with 3 other participants.
+        $this->assertIsArray($result);
         $this->assertEquals(1, count($result));
         $this->assertEquals('unittest', $result[0]->community->name);
         $this->assertEquals(3, count($result[0]->participants));
 
         // Test that the 3 unittest participants are found in the community
-        // and that 'Unit test 1' is identified as 'unittest1'
+        // and that 'Unit test 1' is identified as 'unittest1'.
         $found = [1 => false, 2 => false, 3 => false];
         foreach ($result[0]->participants as $participant) {
             if ($participant->name == 'Unit test 1') {
@@ -142,30 +153,30 @@ class local_campusconnect_connect_test extends advanced_testcase {
         $realm = sha1($url.$params);
         $post = (object)['realm' => $realm];
 
-        // Retrieve an auth hash for connecting from 'unittest1' to 'unittest2'
+        // Retrieve an auth hash for connecting from 'unittest1' to 'unittest2'.
         $hash = $this->connect[1]->add_auth($post, $this->mid[2]);
 
-        // Test that 'unittest1' can confirm this hash
+        // Test that 'unittest1' can confirm this hash.
         $result = $this->connect[1]->get_auth($hash);
         $this->assertEquals($hash, $result->hash);
         $this->assertEquals($realm, $result->realm);
 
-        // Retrieve a new auth hash for connecting from 'unittest1' to 'unittest2'
+        // Retrieve a new auth hash for connecting from 'unittest1' to 'unittest2'.
         $hash = $this->connect[1]->add_auth($post, $this->mid[2]);
 
-        // Test that 'unittest2' can confirm this hash
+        // Test that 'unittest2' can confirm this hash.
         $result = $this->connect[2]->get_auth($hash);
         $this->assertEquals($hash, $result->hash);
         $this->assertEquals($realm, $result->realm);
         $this->assertEquals($this->mid[1], $result->mid);
 
-        // Test that 'unittest2' cannot confirm this hash as second time
-        $this->setExpectedException('\local_campusconnect\connect_exception');
+        // Test that 'unittest2' cannot confirm this hash as second time.
+        $this->expectException('\local_campusconnect\connect_exception');
         $this->connect[2]->get_auth($hash);
 
-        // Test that 'unittest3' cannot retrieve this hash
+        // Test that 'unittest3' cannot retrieve this hash.
         $hash = $this->connect[1]->add_auth($post, $this->mid[2]);
-        $this->setExpectedException('\local_campusconnect\connect_exception');
+        $this->expectException('\local_campusconnect\connect_exception');
         $this->connect[3]->get_auth($hash);
     }
 
@@ -174,17 +185,17 @@ class local_campusconnect_connect_test extends advanced_testcase {
         $post = (object)['url' => $url];
         $community = 'unittest';
 
-        // Add the resource - the response should be an integer > 0
+        // Add the resource - the response should be an integer > 0.
         $eid = $this->connect[1]->add_resource(event::RES_COURSELINK, $post, $community);
-        $this->assertInternalType('integer', $eid);
+        $this->assertIsInt($eid);
         $this->assertTrue($eid > 0);
 
-        // Get the resource - should match the details specified at the top of this function
+        // Get the resource - should match the details specified at the top of this function.
         $result = $this->connect[1]->get_resource($eid, event::RES_COURSELINK);
         $this->assertInstanceOf('stdClass', $result);
         $this->assertEquals($url, $result->url);
 
-        // Get the resource details - should be sent / owned by mid[1] and received by mid[2] & mid[3]
+        // Get the resource details - should be sent / owned by mid[1] and received by mid[2] & mid[3].
         $result = $this->connect[1]->get_resource($eid, event::RES_COURSELINK,
                                                   connect::TRANSFERDETAILS);
         $this->assertInstanceOf('\local_campusconnect\details', $result);
@@ -194,10 +205,10 @@ class local_campusconnect_connect_test extends advanced_testcase {
             $this->assertTrue($result->received_by($recipientid));
         }
 
-        // Delete the resource
+        // Delete the resource.
         $this->connect[1]->delete_resource($eid, event::RES_COURSELINK);
 
-        // Check the resource does not exist any more
+        // Check the resource does not exist any more.
         $result = $this->connect[1]->get_resource($eid, event::RES_COURSELINK,
                                                   connect::CONTENT);
         $this->assertFalse($result);
@@ -208,40 +219,40 @@ class local_campusconnect_connect_test extends advanced_testcase {
         $post = (object)['url' => $url];
         $community = 'unittest';
 
-        // Check the event queue is empty
+        // Check the event queue is empty.
         $result = $this->connect[2]->read_event_fifo();
         $this->assertEmpty($result);
 
-        // Add a resource
+        // Add a resource.
         $eid = $this->connect[1]->add_resource(event::RES_COURSELINK, $post, $community);
 
-        // Check there is a create event in the queue
+        // Check there is a create event in the queue.
         $result = $this->connect[2]->read_event_fifo();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(1, count($result));
         $this->assertInstanceOf('stdClass', $result[0]);
         $this->assertEquals('created', $result[0]->status);
         $this->assertEquals("campusconnect/courselinks/$eid", $result[0]->ressource);
 
-        // Check the event is still there if not deleted
+        // Check the event is still there if not deleted.
         $result = $this->connect[2]->read_event_fifo();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(1, count($result));
         $this->assertInstanceOf('stdClass', $result[0]);
         $this->assertEquals('created', $result[0]->status);
         $this->assertEquals("campusconnect/courselinks/$eid", $result[0]->ressource);
 
-        // Check the event queue is empty after deletion
+        // Check the event queue is empty after deletion.
         $this->connect[2]->read_event_fifo(true);
         $result = $this->connect[2]->read_event_fifo();
         $this->assertEmpty($result);
 
-        // Delete the resource
+        // Delete the resource.
         $this->connect[1]->delete_resource($eid, event::RES_COURSELINK);
 
-        // Check there is now a deleted event
+        // Check there is now a deleted event.
         $result = $this->connect[2]->read_event_fifo();
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $this->assertEquals(1, count($result));
         $this->assertInstanceOf('stdClass', $result[0]);
         $this->assertEquals('destroyed', $result[0]->status);
@@ -252,17 +263,17 @@ class local_campusconnect_connect_test extends advanced_testcase {
         $url = 'http://www.example.com/test123/';
         $post = (object)['url' => $url];
 
-        // Check the resource list is empty to begin with
+        // Check the resource list is empty to begin with.
         $result = $this->connect[2]->get_resource_list(event::RES_COURSELINK);
         $this->assertInstanceOf('\local_campusconnect\uri_list', $result);
         $this->assertEmpty($result->get_ids());
         $result = $this->connect[3]->get_resource_list(event::RES_COURSELINK);
         $this->assertEmpty($result->get_ids());
 
-        // Add a resource (only shared with 'unittest2')
+        // Add a resource (only shared with 'unittest2').
         $eid = $this->connect[1]->add_resource(event::RES_COURSELINK, $post, null, $this->mid[2]);
 
-        // Check 'unittest2' can see the new resource, but not 'unittest3'
+        // Check 'unittest2' can see the new resource, but not 'unittest3'.
         $result = $this->connect[2]->get_resource_list(event::RES_COURSELINK);
         $ids = $result->get_ids();
         $this->assertEquals(1, count($ids));
@@ -270,10 +281,10 @@ class local_campusconnect_connect_test extends advanced_testcase {
         $result = $this->connect[3]->get_resource_list(event::RES_COURSELINK);
         $this->assertEmpty($result->get_ids());
 
-        // Delete the resource
+        // Delete the resource.
         $this->connect[1]->delete_resource($eid, event::RES_COURSELINK);
 
-        // Check 'unittest2' can no longer see the resource
+        // Check 'unittest2' can no longer see the resource.
         $result = $this->connect[2]->get_resource_list(event::RES_COURSELINK);
         $this->assertEmpty($result->get_ids());
     }
@@ -286,29 +297,29 @@ class local_campusconnect_connect_test extends advanced_testcase {
         $url2 = 'http://www.example.com/updatetesting/';
         $post2 = (object)['url' => $url2];
 
-        // Add a resource
+        // Add a resource.
         $eid = $this->connect[1]->add_resource(event::RES_COURSELINK, $post, $community);
 
-        // Get the resource - should match the details specified at the top of this function
+        // Get the resource - should match the details specified at the top of this function.
         $result = $this->connect[2]->get_resource($eid, event::RES_COURSELINK,
                                                   connect::CONTENT);
         $this->assertInstanceOf('stdClass', $result);
         $this->assertEquals($url, $result->url);
 
-        // Update the resource
+        // Update the resource.
         $this->connect[1]->update_resource($eid, event::RES_COURSELINK, $post2, $community);
 
-        // Get the resource - should match the second set of details
+        // Get the resource - should match the second set of details.
         $result = $this->connect[2]->get_resource($eid, event::RES_COURSELINK,
                                                   connect::CONTENT);
         $this->assertInstanceOf('stdClass', $result);
         $this->assertEquals($url2, $result->url);
 
-        // Double-check 'unittest2' cannot update the resource
-        $this->setExpectedException('\local_campusconnect\connect_exception');
+        // Double-check 'unittest2' cannot update the resource.
+        $this->expectException('\local_campusconnect\connect_exception');
         $this->connect[2]->update_resource($eid, event::RES_COURSELINK, $post2, $community);
 
-        // Delete the resource
+        // Delete the resource.
         $this->connect[1]->delete_resource($eid, event::RES_COURSELINK);
     }
 }

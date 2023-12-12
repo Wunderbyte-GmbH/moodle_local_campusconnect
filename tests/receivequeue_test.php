@@ -22,20 +22,31 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_campusconnect;
+
 use local_campusconnect\event;
 use local_campusconnect\receivequeue;
+use local_campusconnect\campusconnect_base_testcase;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
-
-class local_campusconnect_receivequeue_test extends campusconnect_base_testcase {
+/**
+ * Class local_campusconnect_receivequeue_test
+ *
+ * @package   local_campusconnect
+ * @copyright 2016 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\receivequeue
+ */
+class receivequeue_test extends campusconnect_base_testcase {
     protected $resources = [];
     /** @var receivequeue */
     protected $queue = null;
 
 
-    public function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
         // Data for test resources to create.
@@ -56,7 +67,7 @@ class local_campusconnect_receivequeue_test extends campusconnect_base_testcase 
         $this->queue = new receivequeue();
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         $this->clear_ecs_resources(event::RES_COURSELINK);
         $this->connect = [];
         $this->mid = [];
@@ -186,8 +197,9 @@ class local_campusconnect_receivequeue_test extends campusconnect_base_testcase 
         $DB->setReturnValueAt(0, 'get_records', array()); // Default metadata mappings.
         $DB->setReturnValueAt(0, 'get_records_select', array($eventdata)); // Get event.
         $DB->setReturnValueAt(1, 'get_record', false); // Check if courselink exists.
+        // Load participant settings.
         $DB->setReturnValueAt(0, 'get_record', (object)array('id' => 1, 'import' => 1, 'export' => 1,
-                                                              'importtype' => participantsettings::IMPORT_LINK)); // Load participant settings.
+                                                              'importtype' => participantsettings::IMPORT_LINK));
         $DB->setReturnValue('mock_create_course', 5); // Create course.
         $DB->setReturnValue('insert_record', 1); // Create course link.
 
@@ -230,8 +242,9 @@ class local_campusconnect_receivequeue_test extends campusconnect_base_testcase 
         $DB->setReturnValue('get_records', array()); // Category mapping
         $DB->setReturnValueAt(0, 'get_records_select', array($eventdata)); // Get event.
         $DB->setReturnValueAt(1, 'get_record', false); // Check if courselink exists.
+        // Load participant settings.
         $DB->setReturnValueAt(0, 'get_record', (object)array('id' => 1, 'import' => 0, 'export' => 1,
-                                                             'importtype' => participantsettings::IMPORT_LINK)); // Load participant settings.
+                                                             'importtype' => participantsettings::IMPORT_LINK));
 
         $DB->expectNever('mock_create_course', 'Import disabled - did not expect a course to be created');
         $DB->expectNever('insert_record', 'Import disabled - did not expect a course link to be created');
@@ -267,8 +280,9 @@ class local_campusconnect_receivequeue_test extends campusconnect_base_testcase 
         $DB->setReturnValueAt(0, 'get_records', array()); // Default metadata mappings.
         $DB->setReturnValueAt(0, 'get_records_select', array($eventdata)); // Get event.
         $DB->setReturnValueAt(1, 'get_record', $linkdata); // Retrieve courselink.
+        // Load participant settings.
         $DB->setReturnValueAt(0, 'get_record', (object)array('id' => 1, 'import' => 1, 'export' => 1,
-                                                             'importtype' => participantsettings::IMPORT_LINK)); // Load participant settings.
+                                                             'importtype' => participantsettings::IMPORT_LINK));
         $DB->setReturnValue('record_exists', true); // Check the course (that holds the link) still exists.
 
         // Using the map_remote_to_course function to generate the comparison meta data
@@ -346,8 +360,9 @@ class local_campusconnect_receivequeue_test extends campusconnect_base_testcase 
         $DB->setReturnValueAt(0, 'get_records', array()); // Default metadata mappings.
         $DB->setReturnValueAt(0, 'get_records_select', array($eventdata)); // Get event.
         $DB->setReturnValueAt(1, 'get_record', $linkdata); // Retrieve courselink.
+        // Load participant settings.
         $DB->setReturnValueAt(0, 'get_record', (object)array('id' => 1, 'import' => 1, 'export' => 1,
-                                                             'importtype' => participantsettings::IMPORT_LINK)); // Load participant settings.
+                                                             'importtype' => participantsettings::IMPORT_LINK));
         $DB->setReturnValue('record_exists', false); // Check the course (that holds the link) still exists.
         $DB->setReturnValue('mock_create_course', 6); // Create the course (as the old course has been deleted).
 

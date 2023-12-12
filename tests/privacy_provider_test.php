@@ -22,12 +22,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_campusconnect;
+
 use local_campusconnect\privacy\provider;
 use core_privacy\local\metadata\collection;
+use \core_privacy\tests\provider_testcase;
 
-defined('MOODLE_INTERNAL') || die();
-
-class local_campusconnect_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+/**
+ * Class local_campusconnect_privacy_provider_test
+ * @package    local_campusconnect
+ * @copyright  2019 Davo Smith, Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\privacy_provider
+ */
+class privacy_provider_test extends provider_testcase {
     protected $userwithrecord;
     protected $userwithrecord2;
     protected $userwithoutrecord;
@@ -36,7 +45,7 @@ class local_campusconnect_privacy_provider_testcase extends \core_privacy\tests\
     /**
      * {@inheritdoc}
      */
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -134,7 +143,7 @@ class local_campusconnect_privacy_provider_testcase extends \core_privacy\tests\
      */
     public function test_get_contexts_for_userid() {
         $contexts = [
-            context_course::instance($this->course->id)->id,
+            \context_course::instance($this->course->id)->id,
         ];
         $contextlist = provider::get_contexts_for_userid($this->userwithrecord->id);
         $this->assertEquals($contexts, $contextlist->get_contextids());
@@ -147,7 +156,7 @@ class local_campusconnect_privacy_provider_testcase extends \core_privacy\tests\
      * Test for provider::export_user_data().
      */
     public function test_export_for_context() {
-        $ctx = context_course::instance($this->course->id);
+        $ctx = \context_course::instance($this->course->id);
 
         // Export all of the data for the context.
         $this->export_context_data_for_user($this->userwithrecord->id, $ctx, 'local_campusconnect');
@@ -166,10 +175,10 @@ class local_campusconnect_privacy_provider_testcase extends \core_privacy\tests\
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
 
-        provider::delete_data_for_all_users_in_context(context_system::instance());
+        provider::delete_data_for_all_users_in_context(\context_system::instance());
         $this->assertTrue($DB->record_exists('local_campusconnect_mbr', []));
 
-        provider::delete_data_for_all_users_in_context(context_course::instance($this->course->id));
+        provider::delete_data_for_all_users_in_context(\context_course::instance($this->course->id));
         $this->assertFalse($DB->record_exists('local_campusconnect_mbr', []));
     }
 
@@ -179,7 +188,7 @@ class local_campusconnect_privacy_provider_testcase extends \core_privacy\tests\
     public function test_delete_data_for_user() {
         global $DB;
 
-        $ctx = context_course::instance($this->course->id);
+        $ctx = \context_course::instance($this->course->id);
         $contextlist = new \core_privacy\local\request\approved_contextlist($this->userwithrecord, 'local_campusconnect',
                                                                             [$ctx->id]);
         provider::delete_data_for_user($contextlist);
@@ -193,15 +202,15 @@ class local_campusconnect_privacy_provider_testcase extends \core_privacy\tests\
     }
 
     public function test_get_users_in_context() {
-        $ctx = context_course::instance($this->course->id);
+        $ctx = \context_course::instance($this->course->id);
 
         $userlist = new \core_privacy\local\request\userlist($ctx, 'local_campusconnect');
         provider::get_users_in_context($userlist);
-        $this->assertEquals([$this->userwithrecord->id, $this->userwithrecord2->id], $userlist->get_userids(), '', 0.0, 10, true);
+        $this->assertEquals([$this->userwithrecord->id, $this->userwithrecord2->id], $userlist->get_userids());
     }
 
     public function test_delete_data_for_users() {
-        $ctx = context_course::instance($this->course->id);
+        $ctx = \context_course::instance($this->course->id);
 
         $approvedlist = new \core_privacy\local\request\approved_userlist($ctx, 'local_campusconnect', [$this->userwithrecord->id]);
         provider::delete_data_for_users($approvedlist);

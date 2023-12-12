@@ -21,12 +21,21 @@
  * @copyright  2014 Davo Smith, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace local_campusconnect;
+
+use advanced_testcase;
 use local_campusconnect\connect;
 use local_campusconnect\courselink;
 use local_campusconnect\ecssettings;
 use local_campusconnect\event;
 use local_campusconnect\export;
 use local_campusconnect\participantsettings;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot.'/auth/campusconnect/auth.php');
 
 /**
  * These tests assume the following set up is already in place with
@@ -37,14 +46,15 @@ use local_campusconnect\participantsettings;
  * - all 3 participants have been added to a community called 'unittest'
  * - none of the participants are members of any other community
  */
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class local_campusconnect_courselink_test
- * @group local_campusconnect
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\courselink
  */
-class local_campusconnect_courselink_test extends advanced_testcase {
+class courselink_test extends advanced_testcase {
     /**
      * @var connect[]
      */
@@ -54,7 +64,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
      */
     protected $mid = [];
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $CFG;
 
         require_once($CFG->dirroot.'/auth/campusconnect/auth.php');
@@ -93,7 +103,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         participantsettings::reset_custom_fields();
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         // Delete all resources (just in case).
         foreach ($this->connect as $connect) {
             $courselinks = $connect->get_resource_list(event::RES_COURSELINK);
@@ -174,7 +184,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $this->assertNotEquals(false, $url); // Make sure this is correctly identified as a course link.
 
         // Authenticate the URL on 'unittest1'.
-        $userdetails = auth_plugin_campusconnect::authenticate_from_url($url);
+        $userdetails = \auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails); // Check the user has authenticated correctly.
         foreach (['firstname', 'lastname', 'email'] as $fieldname) { // Make sure all user details transferred as expected.
             $this->assertEquals($authuser->$fieldname, $userdetails->$fieldname);
@@ -188,7 +198,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $this->assertNotEquals(false, $url); // Make sure this is correctly identified as a course link.
 
         // Authenticate this URL and check that the same username is retrieved and the details have been updated correctly.
-        $userdetails2 = auth_plugin_campusconnect::authenticate_from_url($url);
+        $userdetails2 = \auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails2);
         $this->assertEquals($userdetails->username, $userdetails2->username); // Should be matched up to the same username.
         foreach (['firstname', 'lastname', 'email'] as $fieldname) { // Make sure all user details updated.
@@ -216,7 +226,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         parse_str(parse_url($url, PHP_URL_QUERY), $params);
         $this->assertArrayHasKey('ecs_hash', $params); // Make sure the 'ecs_hash' has been added.
 
-        $userdetails = auth_plugin_campusconnect::authenticate_from_url($url);
+        $userdetails = \auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNull($userdetails); // Check that the authentication is ignored.
 
         // Make sure the token data is not generated when disabled on the sending site.
@@ -231,8 +241,8 @@ class local_campusconnect_courselink_test extends advanced_testcase {
     }
 
     public function test_courselink_authentication_default_mappings() {
-        list($dstcourseid, $part1, $part2) = $this->setup_courselink();
         /** @var participantsettings $part2 */
+        list($dstcourseid, $part1, $part2) = $this->setup_courselink();
 
         // Generate a URL on 'unittest2'.
         $authuser = $this->getDataGenerator()->create_user(
@@ -256,7 +266,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $this->assertNotRegExp('|ecs_PersonalUniqueCode=|', $url);
 
         // Authenticate the URL on 'unittest1'.
-        $userdetails = auth_plugin_campusconnect::authenticate_from_url($url);
+        $userdetails = \auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails); // Check the user has authenticated correctly.
         foreach (['firstname', 'lastname', 'email'] as $fieldname) { // Make sure all user details transferred as expected.
             $this->assertEquals($authuser->$fieldname, $userdetails->$fieldname);
@@ -270,7 +280,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $this->assertNotEquals(false, $url); // Make sure this is correctly identified as a course link.
 
         // Authenticate this URL and check that the same username is retrieved and the details have been updated correctly.
-        $userdetails2 = auth_plugin_campusconnect::authenticate_from_url($url);
+        $userdetails2 = \auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails2);
         $this->assertEquals($userdetails->username, $userdetails2->username); // Should be matched up to the same username.
         foreach (['firstname', 'lastname', 'email'] as $fieldname) { // Make sure all user details updated.
@@ -297,7 +307,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
             'param2' => 2048,
             'param3' => 0,
         ];
-        $formfield = new profile_define_text();
+        $formfield = new \profile_define_text();
         $formfield->define_save($data);
     }
 
@@ -329,6 +339,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         participantsettings::reset_custom_fields();
 
         // Override the default export mappings.
+        // phpcs:ignore
         /** @var participantsettings $part2 */
         $mapping = $part2->get_export_mappings();
         $mapping[courselink::PERSON_EPPN] = 'custom_eppn';
@@ -339,6 +350,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $part2->save_settings(['exportfieldmapping' => $mapping, 'exportfields' => $exportfields]);
 
         // Override the default import mappings.
+        // phpcs:ignore
         /** @var participantsettings $part1 */
         $mapping = $part1->get_import_mappings();
         $mapping[courselink::PERSON_EPPN] = 'custom_eppn2';
@@ -372,13 +384,13 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $this->assertRegExp('|ecs_PersonalUniqueCode=department1|', $url);
 
         // Authenticate the URL on 'unittest1'.
-        $userdetails = auth_plugin_campusconnect::authenticate_from_url($url);
+        $userdetails = \auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails); // Check the user has authenticated correctly.
         $this->assertEquals('firstname1', $userdetails->firstname);
         $this->assertEquals('lastname1', $userdetails->lastname);
-        $this->assertEquals('testuser1@example.com', $userdetails->idnumber); // email => PERSON_EMAIL => idnumber.
-        $this->assertEquals('department1', $userdetails->address); // department => PERSON_UNIQUECODE => address.
-        $this->assertEquals('myeppn', $userdetails->custom_eppn2); // custom_eppn => PERSON_EPPN => custom_eppn2.
+        $this->assertEquals('testuser1@example.com', $userdetails->idnumber); // Email => PERSON_EMAIL => idnumber.
+        $this->assertEquals('department1', $userdetails->address); // Department => PERSON_UNIQUECODE => address.
+        $this->assertEquals('myeppn', $userdetails->custom_eppn2); // Custom_eppn => PERSON_EPPN => custom_eppn2.
 
         // Generate a second URL on 'unittest2'.
         $this->set_profile_field($authuser, 'eppn', 'myeppn2');
@@ -391,14 +403,14 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $this->assertNotEquals(false, $url); // Make sure this is correctly identified as a course link.
 
         // Authenticate this URL and check that the same username is retrieved and the details have been updated correctly.
-        $userdetails2 = auth_plugin_campusconnect::authenticate_from_url($url);
+        $userdetails2 = \auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails2);
         $this->assertEquals($userdetails->username, $userdetails2->username); // Should be matched up to the same username.
         $this->assertEquals('firstname2', $userdetails2->firstname);
         $this->assertEquals('lastname2', $userdetails2->lastname);
-        $this->assertEquals('testuser2@example.com', $userdetails2->idnumber); // email => PERSON_EMAIL => idnumber.
-        $this->assertEquals('department2', $userdetails2->address); // department => PERSON_UNIQUECODE => address.
-        $this->assertEquals('myeppn2', $userdetails2->custom_eppn2); // custom_eppn => PERSON_EPPN => custom_eppn2.
+        $this->assertEquals('testuser2@example.com', $userdetails2->idnumber); // Email => PERSON_EMAIL => idnumber.
+        $this->assertEquals('department2', $userdetails2->address); // Department => PERSON_UNIQUECODE => address.
+        $this->assertEquals('myeppn2', $userdetails2->custom_eppn2); // Custom_eppn => PERSON_EPPN => custom_eppn2.
     }
 
     public function test_courselink_authentication_existing_user() {
@@ -434,7 +446,7 @@ class local_campusconnect_courselink_test extends advanced_testcase {
         $this->assertNotEquals(false, $url); // Make sure this is correctly identified as a course link.
 
         // Authenticate the URL on 'unittest1'.
-        $userdetails = auth_plugin_campusconnect::authenticate_from_url($url);
+        $userdetails = \auth_plugin_campusconnect::authenticate_from_url($url);
         $this->assertNotNull($userdetails); // Check the user has authenticated correctly.
         $this->assertEquals('firstname1.lastname1', $userdetails->username); // Check they are matched up to the existing user.
     }

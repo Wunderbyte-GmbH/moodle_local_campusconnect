@@ -22,21 +22,28 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_campusconnect;
+
 use local_campusconnect\event;
 use local_campusconnect\export;
 use local_campusconnect\participantsettings;
+use local_campusconnect\campusconnect_base_testcase;
 
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
-
-class local_campusconnect_export_test extends campusconnect_base_testcase {
+/**
+ * Class local_campusconnect_connect_test
+ * @package    local_campusconnect
+ * @copyright  2016 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\export
+ */
+class export_test extends campusconnect_base_testcase {
     protected $resources = [];
 
-    public function setUp() {
+    protected function setUp(): void {
         parent::setUp();
 
-        // Data for test resources to create
+        // Data for test resources to create.
         $this->resources[1] = (object)['url' => 'http://www.example.com/test123',
                                             'title' => 'Course from ECS',
                                             'organization' => 'Synergy Learning',
@@ -57,7 +64,7 @@ class local_campusconnect_export_test extends campusconnect_base_testcase {
         }
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->clear_ecs_resources(event::RES_COURSELINK);
 
         $this->connect = [];
@@ -117,7 +124,7 @@ class local_campusconnect_export_test extends campusconnect_base_testcase {
             }
         }
 
-        // Check that re-loading the export settings works
+        // Check that re-loading the export settings works.
         $export = new export(-10);
         $this->assertTrue($export->is_exported(), 'Course should now be marked as exported');
         $exports = $export->list_current_exports();

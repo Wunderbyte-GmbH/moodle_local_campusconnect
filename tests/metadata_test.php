@@ -22,13 +22,21 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_campusconnect;
+
+use coding_exception;
 use local_campusconnect\metadata;
+use local_campusconnect\campusconnect_base_testcase;
 
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
-require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
-
-class local_campusconnect_metadata_test extends campusconnect_base_testcase {
+/**
+ * Class local_campusconnect_metadata_test
+ * @package    local_campusconnect
+ * @copyright 2016 Davo Smith, Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\metadata
+ */
+class metadata_test extends campusconnect_base_testcase {
 
     public function test_set_import_mapping() {
         $defaultmappings = [

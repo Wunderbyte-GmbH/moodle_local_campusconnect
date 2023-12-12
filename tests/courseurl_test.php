@@ -21,6 +21,11 @@
  * @copyright  2014 Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace local_campusconnect;
+
+use advanced_testcase;
+use moodle_url;
 use local_campusconnect\connect;
 use local_campusconnect\course_url;
 use local_campusconnect\ecssettings;
@@ -36,14 +41,15 @@ use local_campusconnect\participantsettings;
  * - all 3 participants have been added to a community called 'unittest'
  * - none of the participants are members of any other community
  */
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class local_campusconnect_course_url_test
- * @group local_campusconnect
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \local_campusconnect\courseurl
  */
-class local_campusconnect_courseurl_test extends advanced_testcase {
+class courseurl_test extends advanced_testcase {
     /**
      * @var connect[]
      */
@@ -102,7 +108,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         }
     }
 
-    protected function tearDown() {
+    protected function tearDown(): void {
         // Delete all course urls created by 'unittest1'.
         $courselinks = $this->connect[1]->get_resource_list(event::RES_COURSE_URL, connect::SENT);
         foreach ($courselinks->get_ids() as $eid) {
@@ -129,7 +135,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
             'ecsid' => $this->connect[1]->get_ecs_id(),
-            'mid' => $this->mid[2], // 'unittest2'.
+            'mid' => $this->mid[2], // Equal to 'unittest2'.
             'internallink' => 0,
             'urlresourceid' => 0,
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
@@ -168,7 +174,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
             'ecsid' => $this->connect[1]->get_ecs_id(),
-            'mid' => $this->mid[2], // 'unittest2'.
+            'mid' => $this->mid[2], // Equal to 'unittest2'.
             'internallink' => 0,
             'urlresourceid' => 0,
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
@@ -225,7 +231,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
             'ecsid' => $this->connect[1]->get_ecs_id(),
-            'mid' => $this->mid[2], // 'unittest2'.
+            'mid' => $this->mid[2], // Equal to 'unittest2'.
             'internallink' => 0,
             'urlresourceid' => 0,
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
@@ -264,7 +270,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
             'ecsid' => $this->connect[1]->get_ecs_id(),
-            'mid' => $this->mid[2], // 'unittest2'.
+            'mid' => $this->mid[2], // Equal to 'unittest2'.
             'internallink' => 0,
             'urlresourceid' => 0,
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
@@ -296,7 +302,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'resourceid' => '56', // Made-up resourceid.
             'cmsid' => 'anothertest456',
             'ecsid' => $this->connect[1]->get_ecs_id(),
-            'mid' => $this->mid[2], // 'unittest2'.
+            'mid' => $this->mid[2], // Equal to 'unittest2'.
             'internallink' => 0,
             'urlresourceid' => '44', // Made-up resourceid - should not be found on the server.
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
@@ -370,7 +376,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
             'ecsid' => $this->connect[1]->get_ecs_id(),
-            'mid' => $this->mid[2], // 'unittest2'.
+            'mid' => $this->mid[2], // Equal to 'unittest2'.
             'internallink' => 0,
             'urlresourceid' => 0,
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
@@ -406,7 +412,8 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
         $courseurlres = $this->connect[2]->get_resource($courseurlid, event::RES_COURSE_URL);
 
         $this->assertEquals($ins->cmsid, $courseurlres->cms_course_id);
-        $this->assertCount(2, $courseurlres->lms_course_urls); // 2 parallel groups => 2 course urls exptected (but not the internal link).
+        $this->assertCount(2, $courseurlres->lms_course_urls);
+        // 2 parallel groups => 2 course urls exptected (but not the internal link).
 
         $expectedurl1 = new moodle_url('/course/view.php', ['id' => $ins->courseid]);
         $expectedurl2 = new moodle_url('/course/view.php', ['id' => $ins2->courseid]);
@@ -443,7 +450,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'resourceid' => '25', // Made-up resourceid.
             'cmsid' => 'testing123',
             'ecsid' => $this->connect[1]->get_ecs_id(),
-            'mid' => $this->mid[2], // 'unittest2'.
+            'mid' => $this->mid[2], // Equal to 'unittest2'.
             'internallink' => 0,
             'urlresourceid' => 0,
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
@@ -487,7 +494,7 @@ class local_campusconnect_courseurl_test extends advanced_testcase {
             'resourceid' => '56', // Made-up resourceid.
             'cmsid' => 'anothertest456',
             'ecsid' => $this->connect[1]->get_ecs_id(),
-            'mid' => $this->mid[2], // 'unittest2'.
+            'mid' => $this->mid[2], // Equal to 'unittest2'.
             'internallink' => 0,
             'urlresourceid' => '44', // Made-up resourceid - should not be found on the server.
             'urlstatus' => course_url::STATUS_UPTODATE, // Initial status.
