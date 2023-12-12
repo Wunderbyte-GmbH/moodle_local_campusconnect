@@ -86,6 +86,7 @@ if (optional_param('saveparticipants', false, PARAM_TEXT)) {
     foreach ($allcommunities as $communities) {
         foreach ($communities as $community) {
             foreach ($community->participants as $identifier => $participant) {
+                // phpcs:ignore
                 /** @var $participant participantsettings */
                 if (!in_array($identifier, $updateparticipants)) {
                     continue; // This participant was not in the list being updated.

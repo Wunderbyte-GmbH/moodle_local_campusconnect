@@ -45,12 +45,12 @@ class campusconnect_rolemapping_form extends moodleform {
         }
     }
 
-    function set_data($defaultvalues) {
+    public function set_data($defaultvalues) {
         $this->mappings = $defaultvalues;
         parent::set_data($defaultvalues);
     }
 
-    function definition_after_data() {
+    public function definition_after_data() {
         $mform = $this->_form;
 
         if (!isset($this->mappings)) {

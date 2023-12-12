@@ -36,8 +36,6 @@ use local_campusconnect\notification;
 use local_campusconnect\participantsettings;
 use local_campusconnect\receivequeue;
 
-defined('MOODLE_INTERNAL') || die();
-
 function local_campusconnect_cron() {
     // Get updates from all ECS.
     $ecslist = ecssettings::list_ecs();

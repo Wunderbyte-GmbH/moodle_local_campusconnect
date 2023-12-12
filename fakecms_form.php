@@ -104,7 +104,6 @@ class fakecms_form extends moodleform {
         $mform->addElement('text', 'crsmaxpart', 'Max participants', ['size' => 10]);
         $mform->setType('crsmaxpart', PARAM_TEXT);
 
-        // phpcs:disable
         /*
         for ($i=1; $i<=2; $i++) {
             $grp = array(
@@ -116,7 +115,6 @@ class fakecms_form extends moodleform {
             $mform->addGroup($grp, "crslecturer[$i]", "Lecturer $i (first, last)", ' ', false);
         }
         */
-        // phpcs:enable
 
         for ($i = 1; $i <= 3; $i++) {
             $grp = [

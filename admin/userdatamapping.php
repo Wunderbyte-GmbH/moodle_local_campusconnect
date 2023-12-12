@@ -89,6 +89,7 @@ if (!$part) {
         $struserdata = get_string('edituserdatamapping', 'local_campusconnect');
         foreach ($allcommunities as $ecsname => $communities) {
             foreach ($communities as $community) {
+                // phpcs:ignore
                 /** @var community $community */
                 foreach ($community->participants as $participant) {
                     $url = new moodle_url($PAGE->url, [

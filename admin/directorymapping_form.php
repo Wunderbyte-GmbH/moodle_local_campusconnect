@@ -32,6 +32,7 @@ require_once($CFG->libdir.'/formslib.php');
 class campusconnect_directorymapping_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
+        // phpcs:ignore
         /** @var $dirtree directorytree */
         $dirtree = $this->_customdata['dirtree'];
 

@@ -56,9 +56,11 @@ class campusconnect_category_form extends moodleform {
         ]);
 
         $radioarray = [];
-        $radioarray[] = $mform->createElement('radio', 'cc_mapping', '', get_string('fixedvalue', 'local_campusconnect'), 'mapping_fixed', 'onclick=cc_switch_mapping_fixed()');
-        $radioarray[] = $mform->createElement('radio', 'cc_mapping', '', get_string('daterange', 'local_campusconnect'), 'mapping_date', 'onclick=cc_switch_mapping_date()');
-        $mform->addGroup($radioarray, 'radioar', get_string('mappingtype', 'local_campusconnect'), [' '], false);
+        $radioarray[] = $mform->createElement('radio', 'cc_mapping', '', get_string('fixedvalue', 'local_campusconnect'),
+                                                'mapping_fixed', 'onclick=cc_switch_mapping_fixed()');
+        $radioarray[] = $mform->createElement('radio', 'cc_mapping', '', get_string('daterange', 'local_campusconnect'),
+                                                'mapping_date', 'onclick=cc_switch_mapping_date()');
+        $mform->addGroup($radioarray, 'radioar', get_string('mappingtype', 'local_campusconnect'), ' ', false);
         $mform->setDefault('cc_mapping', 'mapping_fixed');
 
         $mform->addElement('text', 'attribute', get_string('attribute', 'local_campusconnect'));

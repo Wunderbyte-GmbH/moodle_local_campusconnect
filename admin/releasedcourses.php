@@ -86,6 +86,7 @@ $strstatus = [
 // Gather details for each exported course.
 $table->data = [];
 foreach ($exports as $export) {
+    // phpcs:ignore
     /** @var $export export */
     $coursename = format_string($courses[$export->get_courseid()]->fullname);
     $courseurl = new moodle_url('/course/view.php', ['id' => $export->get_courseid()]);
@@ -97,6 +98,7 @@ foreach ($exports as $export) {
         continue;
     }
     foreach ($participants as $identifier => $participant) {
+        // phpcs:ignore
         /** @var $participant participantsettings */
         $partname = $participant->get_displayname();
         $status = $export->get_status($identifier);
