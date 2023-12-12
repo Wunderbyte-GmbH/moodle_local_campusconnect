@@ -59,7 +59,7 @@ class courseurl_test extends advanced_testcase {
      */
     protected $mid = [];
 
-    protected function setUp() {
+    protected function setUp(): void {
         global $DB;
 
         $this->resetAfterTest();

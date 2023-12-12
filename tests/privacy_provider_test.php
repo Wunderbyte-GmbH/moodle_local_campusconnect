@@ -26,7 +26,7 @@ namespace local_campusconnect;
 
 use local_campusconnect\privacy\provider;
 use core_privacy\local\metadata\collection;
-use \core_privacy\tests\provider_testcase;
+use core_privacy\tests\provider_testcase;
 
 /**
  * Class local_campusconnect_privacy_provider_test

@@ -111,7 +111,8 @@ class export_test extends campusconnect_base_testcase {
         $this->assertTrue($export->is_exported(), 'Course should now be marked as exported');
         $exports = $export->list_current_exports();
         $this->assertCount(1, $exports, 'Course should be exported to one participant only');
-        $this->assertTrue(isset($exports[$potential[0]->get_identifier()]), 'Expected the export to match the participant we exported to');
+        $this->assertTrue(isset($exports[$potential[0]->get_identifier()]),
+            'Expected the export to match the participant we exported to');
         $potentialexports = $export->list_participants();
         foreach ($potentialexports as $part) {
             // Ignore any potential exports that are not part of the unit-testing environment.
@@ -129,7 +130,8 @@ class export_test extends campusconnect_base_testcase {
         $this->assertTrue($export->is_exported(), 'Course should now be marked as exported');
         $exports = $export->list_current_exports();
         $this->assertCount(1, $exports, 'Course should be exported to one participant only');
-        $this->assertTrue(isset($exports[$potential[0]->get_identifier()]), 'Expected the export to match the participant we exported to');
+        $this->assertTrue(isset($exports[$potential[0]->get_identifier()]),
+            'Expected the export to match the participant we exported to');
         $potentialexports = $export->list_participants();
         foreach ($potentialexports as $part) {
             // Ignore any potential exports that are not part of the unit-testing environment.
@@ -147,15 +149,18 @@ class export_test extends campusconnect_base_testcase {
         $this->assertTrue($export->is_exported(), 'Course should now be marked as exported');
         $exports = $export->list_current_exports();
         $this->assertCount(2, $exports, 'Course should be exported to two participants');
-        $this->assertTrue(isset($exports[$potential[0]->get_identifier()]), 'Expected the export to match the participant we exported to');
-        $this->assertTrue(isset($exports[$potential[1]->get_identifier()]), 'Expected the export to match the participant we exported to');
+        $this->assertTrue(isset($exports[$potential[0]->get_identifier()]),
+            'Expected the export to match the participant we exported to');
+        $this->assertTrue(isset($exports[$potential[1]->get_identifier()]),
+            'Expected the export to match the participant we exported to');
 
         // Check that clearing a setting works.
         $export->set_export($potential[0]->get_identifier(), false);
         $this->assertTrue($export->is_exported(), 'Course should now be marked as exported');
         $exports = $export->list_current_exports();
         $this->assertCount(1, $exports, 'Course should be exported to two participants');
-        $this->assertTrue(isset($exports[$potential[1]->get_identifier()]), 'Expected the export to match the participant we exported to');
+        $this->assertTrue(isset($exports[$potential[1]->get_identifier()]),
+            'Expected the export to match the participant we exported to');
 
         // Check that clearing both settings works.
         $export->set_export($potential[1]->get_identifier(), false);
@@ -252,9 +257,11 @@ class export_test extends campusconnect_base_testcase {
         $result = $this->connect[2]->get_resource($ids[0], event::RES_COURSELINK);
 
         $this->assertInstanceOf('stdClass', $result);
-        $this->assertEquals($CFG->wwwroot.'/local/campusconnect/viewcourse.php?id=-10', $result->url, "Unexpected URL: {$result->url}");
+        $this->assertEquals($CFG->wwwroot.'/local/campusconnect/viewcourse.php?id=-10',
+            $result->url, "Unexpected URL: {$result->url}");
         $this->assertEquals($exportcourse->fullname, $result->title, 'Exported title does not match the course fullname');
-        $this->assertEquals('2012-04-01T12:00:00+0800', $result->firstDate, "Exported firstDate timestamp ({$result->firstDate}) does not match");
+        $this->assertEquals('2012-04-01T12:00:00+0800', $result->firstDate,
+            "Exported firstDate timestamp ({$result->firstDate}) does not match");
 
         // Check that removing the course from export works.
         $export = new export(-10); // Need to create a new object, otherwise changes from 'update_ecs' not recorded.
