@@ -150,6 +150,7 @@ class campusconnect_coursefilteringcategory_form extends moodleform {
                     }
                 }
             }
+            // phpcs:disable
             /*
             foreach ($allsettings as $categoryid => $attributesettings) {
                 if ($categoryid == $data['categoryid']) {
@@ -180,6 +181,7 @@ class campusconnect_coursefilteringcategory_form extends moodleform {
                 }
             }
             */
+            // phpcs:enable
         }
 
         return $errors;
