@@ -24,7 +24,23 @@
 
 namespace local_campusconnect;
 
-class event_exception extends \moodle_exception {
+use moodle_exception;
+
+/**
+ * Class to event handling exception
+ *
+ * @package   local_campusconnect
+ * @copyright 2016 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class event_exception extends moodle_exception {
+
+    /**
+     * Constructor
+     *
+     * @param string $msg
+     *
+     */
     public function __construct($msg) {
         parent::__construct('error', 'local_campusconnect', '', $msg);
     }

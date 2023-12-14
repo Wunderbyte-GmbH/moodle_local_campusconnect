@@ -26,12 +26,34 @@ namespace local_campusconnect;
 
 use moodle_exception;
 
+/**
+ * Class to handle connection exception
+ *
+ * @package   local_campusconnect
+ * @copyright 2016 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class connect_exception extends moodle_exception {
+
+    /**
+     * Constructor
+     *
+     * @param string $msg
+     *
+     */
     public function __construct($msg) {
         parent::__construct('error', 'local_campusconnect', '', $msg);
         $this->email_admin($msg);
     }
 
+    /**
+     * Email admin
+     *
+     * @param string $msg
+     *
+     * @return void
+     *
+     */
     protected function email_admin($msg) {
         // TODO - implement this function
         // May need to consider gathering the errors into a log and only sending emails at most once an hour?

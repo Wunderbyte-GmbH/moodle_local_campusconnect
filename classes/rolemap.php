@@ -24,10 +24,22 @@
 
 namespace local_campusconnect;
 
+/**
+ * Class to handle role mapping
+ *
+ * @package   local_campusconnect
+ * @copyright 2016 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class rolemap {
-    /*
+
+    /**
      * For a given CampusConnect role, return the id of its role mapping (or false when not found)
+     *
      * @param string $role
+     *
+     * @return mixed
+     *
      */
     public static function get_roleid($role) {
         // Cache entire mapping.

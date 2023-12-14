@@ -55,18 +55,29 @@ use local_campusconnect\participantsettings;
  * @covers \local_campusconnect\coursemembers
  */
 class coursemembers_test extends advanced_testcase {
+
     /** @var ecssettings[] $settings */
     protected $settings = [];
+
+    /** @var int[] $mid */
     protected $mid = [];
+
     /** @var directory[] $directory */
     protected $directory = [];
+
     /** @var details $transferdetails */
     protected $transferdetails = null;
+
+    /** @var array $users */
     protected $users = [];
 
+    /** @var string[] $usernames */
     protected $usernames = ['user1', 'user2', 'user3', 'user4', 'user5'];
 
+    /** @var array $directorydata */
     protected $directorydata = [1001 => 'dir1', 1002 => 'dir2', 1003 => 'dir3'];
+
+    /** @var string $coursedata */
     protected $coursedata = '
     {
         "lectureID": "abc_1234",
@@ -174,6 +185,7 @@ class coursemembers_test extends advanced_testcase {
     ';
 
     // Reminder: role values are - 0 = lecturer (editingteacher); 1 = learner/student (student); 2 = assistant (teacher).
+    /** @var string $coursemembers */
     protected $coursemembers = '
     {
         "lectureID": "abc_1234",
@@ -332,7 +344,14 @@ class coursemembers_test extends advanced_testcase {
     }
 
     // Helper functions.
-
+    /**
+     * Create text profile field
+     *
+     * @param string $fieldname
+     *
+     * @return void
+     *
+     */
     protected function create_text_profile_field($fieldname) {
         global $CFG;
         require_once($CFG->dirroot.'/user/profile/definelib.php');
@@ -356,6 +375,16 @@ class coursemembers_test extends advanced_testcase {
         $formfield->define_save($data);
     }
 
+    /**
+     * Set profile field
+     *
+     * @param mixed $user
+     * @param mixed $field
+     * @param mixed $value
+     *
+     * @return void
+     *
+     */
     protected function set_profile_field($user, $field, $value) {
         global $DB;
         $fieldid = $DB->get_field('user_info_field', 'id', ['shortname' => $field]);
@@ -375,6 +404,15 @@ class coursemembers_test extends advanced_testcase {
         }
     }
 
+    /**
+     * Get course enrolments
+     *
+     * @param int $courseid
+     * @param int[] $userids
+     *
+     * @return array
+     *
+     */
     protected static function get_course_enrolments($courseid, $userids) {
         global $DB;
 
@@ -389,6 +427,15 @@ class coursemembers_test extends advanced_testcase {
         return $DB->get_records_sql($sql, $params);
     }
 
+    /**
+     * Get groups
+     *
+     * @param int $courseid
+     * @param int[] $userid
+     *
+     * @return array
+     *
+     */
     protected static function get_groups($courseid, $userid) {
         global $DB;
 

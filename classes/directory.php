@@ -25,43 +25,130 @@
 namespace local_campusconnect;
 
 use coding_exception;
-use coursecat;
+use core_course_category;
 use html_writer;
 use stdClass;
 
+/**
+ * Class directory. Main connection class for CampusConnect
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class directory {
 
+    /**
+     * MAPPING_AUTOMATIC
+     *
+     * @var int
+     */
     const MAPPING_AUTOMATIC = 0;
+
+    /**
+     * MAPPING_MANUAL_PENDING
+     *
+     * @var int
+     */
     const MAPPING_MANUAL_PENDING = 1; // No courses within it yet.
+
+    /**
+     * MAPPING_MANUAL
+     *
+     * @var int
+     */
     const MAPPING_MANUAL = 3; // Courses now exist within it.
+
+    /**
+     * MAPPING_DELETED
+     *
+     * @var int
+     */
     const MAPPING_DELETED = 2;
 
+    /**
+     * STATUS_PENDING_UNMAPPED
+     *
+     * @var int
+     */
     const STATUS_PENDING_UNMAPPED = 1000;
+
+    /**
+     * STATUS_PENDING_MANUAL
+     *
+     * @var int
+     */
     const STATUS_PENDING_MANUAL = 1001;
+
+    /**
+     * STATUS_PENDING_AUTOMATIC
+     *
+     * @var int
+     */
     const STATUS_PENDING_AUTOMATIC = 1002;
+
+    /**
+     * STATUS_MAPPED_MANUAL
+     *
+     * @var int
+     */
     const STATUS_MAPPED_MANUAL = 1003;
+
+    /**
+     * STATUS_MAPPED_AUTOMATIC
+     *
+     * @var int
+     */
     const STATUS_MAPPED_AUTOMATIC = 1004;
+
+    /**
+     * STATUS_DELETED
+     *
+     * @var int
+     */
     const STATUS_DELETED = 1005;
 
+    /** @var $recordid int */
     protected $recordid = null;
+
+    /** @var $resourceid int */
     protected $resourceid = null;
+
     /** @var $rootid int */
     protected $rootid = null;
+
+    /** @var $directoryid int */
     protected $directoryid = null;
+
+    /** @var $title string */
     protected $title = null;
+
+    /** @var $parentid int */
     protected $parentid = null;
+
+    /** @var $sortorder mixed|null */
     protected $sortorder = null;
+
+    /** @var $categoryid int */
     protected $categoryid = null;
+
+    /** @var $mapping int */
     protected $mapping = self::MAPPING_AUTOMATIC;
 
+    /** @var $stillexists bool */
     protected $stillexists = false; // Flag used during updates from ECS.
+
+    /** @var $parent mixed|null */
     protected $parent = null;
 
+    /** @var $dbfields array */
     protected static $dbfields = [
         'resourceid', 'rootid', 'directoryid', 'title', 'parentid', 'sortorder', 'categoryid', 'mapping',
     ];
 
+    /** @var $dirs array */
     protected static $dirs = [];
+
     /** @var directory[] $newdirs */
     protected static $newdirs = [];
 
@@ -75,6 +162,14 @@ class directory {
         }
     }
 
+    /**
+     * Set data.
+     *
+     * @param mixed $data
+     *
+     * @return void
+     *
+     */
     protected function set_data($data) {
         $this->recordid = $data->id;
         foreach (self::$dbfields as $field) {
@@ -84,32 +179,74 @@ class directory {
         }
     }
 
+    /**
+     * Get root id.
+     *
+     * @return int
+     *
+     */
     public function get_root_id() {
         return $this->rootid;
     }
 
+    /**
+     * Get directory id
+     *
+     * @return mixed
+     *
+     */
     public function get_directory_id() {
         return $this->directoryid;
     }
 
+    /**
+     * Get title.
+     *
+     * @return void
+     *
+     */
     public function get_title() {
         return $this->title;
     }
 
+    /**
+     * Get category id.
+     *
+     * @return void
+     *
+     */
     public function get_category_id() {
         return $this->categoryid;
     }
 
+    /**
+     * Get directory tree.
+     *
+     * @return directorytree
+     *
+     */
     public function get_directory_tree() {
         return directorytree::get_by_root_id($this->rootid);
     }
 
-    public function can_unmap() {
+    /**
+     * Can unmap.
+     *
+     * @return bool
+     *
+     */
+    public function can_unmap(): bool {
         // Only pending-manual mappings can be remapped if the category id exists.
         return ($this->mapping == self::MAPPING_MANUAL_PENDING);
     }
 
-    public function can_map() {
+    /**
+     * Can map.
+     *
+     * @return bool
+     *
+     */
+    public function can_map(): bool {
         // Can only map if not already automatically mapped.
         if ($this->categoryid) {
             return ($this->mapping != self::MAPPING_AUTOMATIC);
@@ -158,7 +295,15 @@ class directory {
         return $children;
     }
 
-    public function check_categoryid_mapped_by_child($categoryid) {
+    /**
+     * Check categoryid mapped by child.
+     *
+     * @param int $categoryid
+     *
+     * @return bool
+     *
+     */
+    public function check_categoryid_mapped_by_child(int $categoryid): bool {
         if ($this->categoryid == $categoryid) {
             return true;
         }
@@ -316,10 +461,25 @@ class directory {
         self::add_to_dirs($this->rootid, $this->recordid, $this);
     }
 
+    /**
+     * Delete.
+     *
+     * @return void
+     *
+     */
     public function delete() {
         $this->set_field('mapping', self::MAPPING_DELETED);
     }
 
+    /**
+     * Set field.
+     *
+     * @param mixed $field
+     * @param mixed $value
+     *
+     * @return void
+     *
+     */
     protected function set_field($field, $value) {
         global $DB;
 
@@ -327,6 +487,14 @@ class directory {
         $this->$field = $value;
     }
 
+    /**
+     * Set title.
+     *
+     * @param string $title
+     *
+     * @return void
+     *
+     */
     public function set_title($title) {
         global $DB;
 
@@ -340,18 +508,26 @@ class directory {
         }
     }
 
+    /**
+     * Set order.
+     *
+     * @param mixed $sortorder
+     *
+     * @return void
+     *
+     */
     public function set_order($sortorder) {
-        if ($sortorder == $this->sortorder) {
-            return; // No update needed.
+        if ($sortorder != $this->sortorder) {
+            $this->set_field('sortorder', $sortorder);
         }
-
-        $this->set_field('sortorder', $sortorder);
-
         // Sortorder is automatically checked as part of the cron process, so any category moving will happen then.
     }
 
     /**
      * Mark as still existing on the ECS server, after the current update
+     *
+     * @return void
+     *
      */
     public function set_still_exists() {
         $this->stillexists = true;
@@ -363,7 +539,9 @@ class directory {
 
     /**
      * Map this directory onto a course category
+     *
      * @param int $categoryid
+     *
      * @return null|string - error message to display
      */
     public function map_category($categoryid) {
@@ -409,6 +587,8 @@ class directory {
 
     /**
      * Unmap this directory from the category.
+     *
+     * @return void
      */
     public function unmap_category() {
         if (!$this->can_unmap()) {
@@ -567,6 +747,12 @@ class directory {
         return self::$dirs[$rootid];
     }
 
+    /**
+     * Clear directory cache.
+     *
+     * @return void
+     *
+     */
     public static function clear_directory_cache() {
         self::$dirs = [];
     }
@@ -628,10 +814,19 @@ class directory {
         return html_writer::tag('ul', html_writer::tag('li', $ret, $params));
     }
 
+    /**
+     * Output category tree.
+     *
+     * @param string $radioname
+     * @param mixed|null $selectedcategory
+     *
+     * @return string
+     *
+     */
     public static function output_category_tree($radioname, $selectedcategory = null) {
         $ret = '';
 
-        $basecat = coursecat::get(0);
+        $basecat = core_course_category::get(0);
         $cats = $basecat->get_children();
         foreach ($cats as $cat) {
             $ret .= self::output_category_and_children($cat, $radioname, $selectedcategory);
@@ -641,10 +836,14 @@ class directory {
     }
 
     /**
-     * @param coursecat $category
-     * @param $radioname
+     * Output category and children.
+     *
+     * @param core_course_category $category
+     * @param string $radioname
      * @param mixed|null $selectedcategory
+     *
      * @return string
+     *
      * @throws coding_exception
      */
     public static function output_category_and_children($category, $radioname, $selectedcategory = null) {

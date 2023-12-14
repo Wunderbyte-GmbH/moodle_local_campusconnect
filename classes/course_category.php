@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Handle 'course' creation requests from the ECS server
+ * Stores details about the Moodle category in which to create a course
  *
  * @package   local_campusconnect
  * @copyright 2012 Davo Smith, Synergy Learning
@@ -25,13 +25,14 @@
 namespace local_campusconnect;
 
 /**
- * Stores details about the Moodle category in which to create a course
+ * Class to handle details about the Moodle category in which to create a course
  *
  * @package   local_campusconnect
  * @copyright 2012 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_category {
+
     /** @var int $categorid */
     protected $categoryid;
     /** @var int $order */
@@ -40,6 +41,8 @@ class course_category {
     protected $directoryid;
 
     /**
+     * Constructor.
+     *
      * @param int $categoryid
      * @param int $order
      * @param int $directoryid

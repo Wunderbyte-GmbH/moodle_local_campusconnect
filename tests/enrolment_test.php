@@ -51,10 +51,14 @@ use local_campusconnect\receivequeue;
  * @covers \local_campusconnect\enrolment
  */
 class enrolment_test extends advanced_testcase {
+
     /** @var connect[] */
     protected $connect = [];
+
     /** @var integer[] */
     protected $mid = [];
+
+    /** @var integer[] */
     protected $pid = [];
 
     protected function setUp(): void {

@@ -32,12 +32,22 @@ use core_privacy\local\request\helper;
 use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 
+/**
+ * Class privacy provider - user information stored
+ *
+ * @package   local_campusconnect
+ * @copyright 2019 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class provider implements \core_privacy\local\metadata\provider,
                           \core_privacy\local\request\plugin\provider,
                           \core_privacy\local\request\core_userlist_provider {
 
     /**
+     * Get metadata
+     *
      * @param collection $collection
+     *
      * @return collection
      */
     public static function get_metadata(collection $collection): collection {
@@ -58,7 +68,10 @@ class provider implements \core_privacy\local\metadata\provider,
     }
 
     /**
+     * Get contexts for userid
+     *
      * @param int $userid
+     *
      * @return contextlist
      */
     public static function get_contexts_for_userid(int $userid): contextlist {
@@ -80,6 +93,8 @@ class provider implements \core_privacy\local\metadata\provider,
     }
 
     /**
+     * Export user data
+     *
      * @param approved_contextlist $contextlist
      */
     public static function export_user_data(approved_contextlist $contextlist) {
@@ -134,6 +149,7 @@ class provider implements \core_privacy\local\metadata\provider,
 
     /**
      * This will break CampusConnect logins for all users on the site.
+     *
      * @param \context $context
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
@@ -151,6 +167,8 @@ class provider implements \core_privacy\local\metadata\provider,
     }
 
     /**
+     * Delete data for user
+     *
      * @param approved_contextlist $contextlist
      */
     public static function delete_data_for_user(approved_contextlist $contextlist) {
@@ -179,6 +197,8 @@ class provider implements \core_privacy\local\metadata\provider,
     }
 
     /**
+     * Get users in context
+     *
      * @param userlist $userlist
      */
     public static function get_users_in_context(userlist $userlist) {
@@ -201,6 +221,8 @@ class provider implements \core_privacy\local\metadata\provider,
     }
 
     /**
+     * Delete data for users
+     *
      * @param approved_userlist $userlist
      */
     public static function delete_data_for_users(approved_userlist $userlist) {

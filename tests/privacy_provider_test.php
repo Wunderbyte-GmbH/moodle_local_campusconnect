@@ -37,9 +37,17 @@ use core_privacy\tests\provider_testcase;
  * @covers \local_campusconnect\privacy_provider
  */
 class privacy_provider_test extends provider_testcase {
+
+    /** @var \stdClass $userwithrecord */
     protected $userwithrecord;
+
+    /** @var \stdClass $userwithrecord2 */
     protected $userwithrecord2;
+
+    /** @var \stdClass $userwithoutrecord */
     protected $userwithoutrecord;
+
+    /** @var \stdClass $course */
     protected $course;
 
     /**

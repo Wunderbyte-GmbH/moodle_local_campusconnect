@@ -27,6 +27,13 @@ namespace local_campusconnect;
 use moodle_exception;
 use stdClass;
 
+/**
+ * Class to retrieve and queue up all incoming messages from the ECS server
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class receivequeue {
 
     /**

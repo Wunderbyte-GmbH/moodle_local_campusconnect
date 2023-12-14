@@ -55,13 +55,20 @@ use local_campusconnect\participantsettings;
 class parallelgroups_test extends advanced_testcase {
     /** @var ecssettings[] $settings */
     protected $settings = [];
+
+    /** @var int[] $mid */
     protected $mid = [];
+
     /** @var directory[] $directory */
     protected $directory = [];
+
     /** @var details $transferdetails */
     protected $transferdetails = null;
 
+    /** @var array $directorydata */
     protected $directorydata = [1001 => 'dir1', 1002 => 'dir2', 1003 => 'dir3'];
+
+    /** @var string $coursedata */
     protected $coursedata = '
     {
         "lectureID": "abc_1234",
@@ -170,6 +177,7 @@ class parallelgroups_test extends advanced_testcase {
     }
     ';
 
+    /** @var string $altgroupdata */
     protected $altgroupdata = '
         [
             {

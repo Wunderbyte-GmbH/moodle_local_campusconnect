@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Retrieve and queue up all incoming messages from the ECS server
+ * Handle receivequeue exception
  *
  * @package    local_campusconnect
  * @copyright  2012 Synergy Learning
@@ -26,7 +26,21 @@ namespace local_campusconnect;
 
 use moodle_exception;
 
+/**
+ * class to handle receivequeue exception
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class receivequeue_exception extends moodle_exception {
+
+    /**
+     * Constructor.
+     *
+     * @param string $msg
+     *
+     */
     public function __construct($msg) {
         parent::__construct('error', 'local_campusconnect', '', $msg);
     }

@@ -22,6 +22,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Function xmldb_local_campusconnect_upgrade.
+ *
+ * @param mixed $oldversion
+ *
+ * @return mixed
+ *
+ */
 function xmldb_local_campusconnect_upgrade($oldversion) {
     global $DB;
 

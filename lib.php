@@ -36,6 +36,12 @@ use local_campusconnect\notification;
 use local_campusconnect\participantsettings;
 use local_campusconnect\receivequeue;
 
+/**
+ * Configire cron
+ *
+ * @return void
+ *
+ */
 function local_campusconnect_cron() {
     // Get updates from all ECS.
     $ecslist = ecssettings::list_ecs();

@@ -41,7 +41,10 @@ require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
  * @covers \local_campusconnect\receivequeue
  */
 class receivequeue_test extends campusconnect_base_testcase {
+
+    /** @var array $resources */
     protected $resources = [];
+
     /** @var receivequeue */
     protected $queue = null;
 

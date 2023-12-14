@@ -27,7 +27,21 @@ global $CFG;
 
 require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * Class to handle coursefiltering form for the 'course filtering' page
+ *
+ * @package   local_campusconnect
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class campusconnect_coursefiltering_form extends moodleform {
+
+    /**
+     * Form definition
+     *
+     * @return void
+     *
+     */
     protected function definition() {
         global $CFG;
 
@@ -68,7 +82,16 @@ class campusconnect_coursefiltering_form extends moodleform {
         $mform->disabledIf('attributes', 'enabled', 'eq', 0);
     }
 
-    public function validation($data, $files) {
+    /**
+     * Form validation
+     *
+     * @param array $data
+     * @param array $files
+     *
+     * @return array
+     *
+     */
+    public function validation($data, $files): array {
         // Check that each course attribute is only listed once.
         $errors = parent::validation($data, $files);
         $usedattrib = [];
@@ -93,7 +116,21 @@ class campusconnect_coursefiltering_form extends moodleform {
     }
 }
 
+/**
+ * Class to handle coursefilteringcategory form for the 'course filtering' page
+ *
+ * @package   local_campusconnect
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class campusconnect_coursefilteringcategory_form extends moodleform {
+
+    /**
+     * Form definition
+     *
+     * @return void
+     *
+     */
     protected function definition() {
         $mform = $this->_form;
         $attributes = $this->_customdata['attributes'];
@@ -132,7 +169,16 @@ class campusconnect_coursefilteringcategory_form extends moodleform {
         $this->add_action_buttons();
     }
 
-    public function validation($data, $files) {
+    /**
+     * Form validation
+     *
+     * @param array $data
+     * @param array $files
+     *
+     * @return array
+     *
+     */
+    public function validation($data, $files): array {
         $errors = parent::validation($data, $files);
 
         $allsettings = $this->_customdata['allsettings'];

@@ -28,7 +28,21 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * Class to handle form for mapping personidtypes onto Moodle user fields, for course_members imports.
+ *
+ * @package   local_campusconnect
+ * @copyright 2014 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class campusconnect_personidmapping_form extends moodleform {
+
+    /**
+     * Form definition
+     *
+     * @return void
+     *
+     */
     protected function definition() {
         $mform = $this->_form;
 

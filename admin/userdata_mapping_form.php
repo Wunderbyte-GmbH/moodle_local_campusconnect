@@ -29,8 +29,21 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * Class to handle form for mapping user data to/from courselink authentication.
+ *
+ * @package   local_campusconnect
+ * @copyright 2014 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class campusconnect_userdata_mapping_form extends moodleform {
 
+    /**
+     * Form definition
+     *
+     * @return void
+     *
+     */
     protected function definition() {
         $mform = $this->_form;
 

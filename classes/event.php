@@ -25,32 +25,159 @@
 namespace local_campusconnect;
 
 use coding_exception;
+
+/**
+ * Class represents an incoming event
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class event {
+
+    /**
+     * STATUS_CREATED
+     *
+     * @var string
+     */
     const STATUS_CREATED = 'created';
+
+    /**
+     * STATUS_UPDATED
+     *
+     * @var string
+     */
     const STATUS_UPDATED = 'updated';
+
+    /**
+     * STATUS_DESTROYED
+     *
+     * @var string
+     */
     const STATUS_DESTROYED = 'destroyed';
+
+    /**
+     * STATUS_NEW_EXPORT
+     *
+     * @var string
+     */
     const STATUS_NEW_EXPORT = 'new_export'; // Not quite sure when this is sent.
 
+    /**
+     * RES_COURSELINK
+     *
+     * @var string
+     */
     const RES_COURSELINK = 'campusconnect/courselinks';
+
+    /**
+     * RES_DIRECTORYTREE
+     *
+     * @var string
+     */
     const RES_DIRECTORYTREE = 'campusconnect/directory_trees';
+
+    /**
+     * RES_COURSE
+     *
+     * @var string
+     */
     const RES_COURSE = 'campusconnect/courses';
+
+    /**
+     * RES_COURSE_MEMBERS
+     *
+     * @var string
+     */
     const RES_COURSE_MEMBERS = 'campusconnect/course_members';
+
+    /**
+     * RES_COURSE_URL
+     *
+     * @var string
+     */
     const RES_COURSE_URL = 'campusconnect/course_urls';
+
+    /**
+     * RES_ENROLMENT
+     *
+     * @var string
+     */
     const RES_ENROLMENT = 'campusconnect/member_status';
 
+    /**
+     * $validstatus
+     *
+     * @var array
+     */
     protected static $validstatus = [self::STATUS_CREATED, self::STATUS_UPDATED, self::STATUS_DESTROYED];
+
+    /**
+     * $validresources
+     *
+     * @var array
+     */
     protected static $validresources = [
         self::RES_COURSELINK, self::RES_DIRECTORYTREE, self::RES_COURSE,
         self::RES_COURSE_MEMBERS, self::RES_COURSE_URL, self::RES_ENROLMENT,
     ];
+
+    /**
+     * $resource
+     *
+     * @var mixed
+     */
     protected $resource;
+
+    /**
+     * $resourceid
+     *
+     * @var int
+     */
     protected $resourceid;
+
+    /**
+     * $resourcetype
+     *
+     * @var mixed
+     */
     protected $resourcetype;
+
+    /**
+     * $ecsid
+     *
+     * @var int
+     */
     protected $ecsid;
+
+    /**
+     * $status
+     *
+     * @var mixed
+     */
     protected $status;
+
+    /**
+     * $id
+     *
+     * @var int|null
+     */
     protected $id = null;
+
+    /**
+     * $failcount
+     *
+     * @var int
+     */
     protected $failcount = 0;
 
+    /**
+     * Constructor
+     *
+     * @param mixed $eventdata
+     * @param int|null $ecsid
+     *
+     */
     public function __construct($eventdata, $ecsid = null) {
         if (isset($eventdata->id)) {
             // Constructing from a database record.
@@ -81,6 +208,12 @@ class event {
         }
     }
 
+    /**
+     * Get id
+     *
+     * @return int
+     *
+     */
     public function get_id() {
         if (is_null($this->id)) {
             throw new coding_exception("Can only call 'get_id' on events loaded from the database");
@@ -88,22 +221,52 @@ class event {
         return $this->id;
     }
 
+    /**
+     * Get ecs id
+     *
+     * @return int
+     *
+     */
     public function get_ecs_id() {
         return $this->ecsid;
     }
 
+    /**
+     * Get resource id
+     *
+     * @return int
+     *
+     */
     public function get_resource_id() {
         return $this->resourceid;
     }
 
+    /**
+     * Get resource type
+     *
+     * @return mixed
+     *
+     */
     public function get_resource_type() {
         return $this->resourcetype;
     }
 
+    /**
+     * Get status
+     *
+     * @return mixed
+     *
+     */
     public function get_status() {
         return $this->status;
     }
 
+    /**
+     * Get failcount
+     *
+     * @return mixed
+     *
+     */
     public function get_failcount() {
         return $this->failcount;
     }
@@ -111,17 +274,34 @@ class event {
     /**
      * Create / destroy status should override duplicate events,
      * update status should not override
+     *
      * @return bool true if any duplicate event should be updated
      */
-    public function should_update_duplicate() {
+    public function should_update_duplicate(): bool {
         return $this->get_status() == self::STATUS_CREATED || $this->get_status() == self::STATUS_DESTROYED;
     }
 
-    public static function is_valid_resource($type) {
+    /**
+     * Is valid resource
+     *
+     * @param mixed $type
+     *
+     * @return bool
+     *
+     */
+    public static function is_valid_resource($type): bool {
         return in_array($type, self::$validresources);
     }
 
-    public static function is_valid_status($status) {
+    /**
+     * Is valid status
+     *
+     * @param mixed $status
+     *
+     * @return bool
+     *
+     */
+    public static function is_valid_status($status): bool {
         return in_array($status, self::$validstatus);
     }
 }

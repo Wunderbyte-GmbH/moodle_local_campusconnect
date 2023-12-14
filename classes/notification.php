@@ -35,22 +35,85 @@ use moodle_url;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class notification {
+
+    /**
+     * MESSAGE_IMPORT_COURSELINK
+     *
+     * @var int
+     */
     const MESSAGE_IMPORT_COURSELINK = 1;
+
+    /**
+     * MESSAGE_EXPORT_COURSELINK
+     *
+     * @var int
+     */
     const MESSAGE_EXPORT_COURSELINK = 2;
+
+    /**
+     * MESSAGE_USER
+     *
+     * @var int
+     */
     const MESSAGE_USER = 3;
+
+    /**
+     * MESSAGE_COURSE
+     *
+     * @var int
+     */
     const MESSAGE_COURSE = 4;
+
+    /**
+     * MESSAGE_DIRTREE
+     *
+     * @var int
+     */
     const MESSAGE_DIRTREE = 5;
 
+    /**
+     * TYPE_CREATE
+     *
+     * @var int
+     */
     const TYPE_CREATE = 0;
+
+    /**
+     * TYPE_UPDATE
+     *
+     * @var int
+     */
     const TYPE_UPDATE = 1;
+
+    /**
+     * TYPE_DELETE
+     *
+     * @var int
+     */
     const TYPE_DELETE = 2;
+
+    /**
+     * TYPE_ERROR
+     *
+     * @var int
+     */
     const TYPE_ERROR = 3;
 
+    /**
+     * $messagetypes
+     *
+     * @var array
+     */
     public static $messagetypes = [
         self::MESSAGE_IMPORT_COURSELINK, self::MESSAGE_EXPORT_COURSELINK,
         self::MESSAGE_USER, self::MESSAGE_COURSE, self::MESSAGE_DIRTREE,
     ];
 
+    /**
+     * $messagesubtypes
+     *
+     * @var array
+     */
     public static $messagesubtypes = [self::TYPE_CREATE, self::TYPE_UPDATE, self::TYPE_DELETE, self::TYPE_ERROR];
 
     /**

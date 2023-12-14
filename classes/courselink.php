@@ -35,50 +35,187 @@ require_once($CFG->dirroot.'/course/lib.php');
 
 /**
  * Holds and updates courselinks created that link fake local courses to real courses on an external server.
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class courselink {
 
+    /**
+     * PERSON_UNIQUECODE
+     *
+     * @var string
+     */
     const PERSON_UNIQUECODE = 'ecs_PersonalUniqueCode';
+
+    /**
+     * PERSON_LOGIN
+     *
+     * @var string
+     */
     const PERSON_LOGIN = 'ecs_login';
+
+    /**
+     * PERSON_UID
+     *
+     * @var string
+     */
     const PERSON_UID = 'ecs_uid';
+
+    /**
+     * PERSON_LOGINUID
+     *
+     * @var string
+     */
     const PERSON_LOGINUID = 'ecs_loginUID';
+
+    /**
+     * PERSON_EMAIL
+     *
+     * @var string
+     */
     const PERSON_EMAIL = 'ecs_email';
+
+    /**
+     * PERSON_EPPN
+     *
+     * @var string
+     */
     const PERSON_EPPN = 'ecs_eppn';
+
+    /**
+     * PERSON_CUSTOM
+     *
+     * @var string
+     */
     const PERSON_CUSTOM = 'ecs_custom';
 
+    /**
+     * Validpersontypes
+     *
+     * @var array
+     */
     public static $validpersontypes = [
         self::PERSON_UNIQUECODE, self::PERSON_LOGIN, self::PERSON_UID,
         self::PERSON_LOGINUID, self::PERSON_EMAIL, self::PERSON_EPPN, self::PERSON_CUSTOM,
     ];
 
+    /**
+     * PERSON_ID_TYPE
+     *
+     * @var string
+     */
     const PERSON_ID_TYPE = 'ecs_person_id_type'; // Param that stores the type to use.
 
+    /**
+     * USERFIELD_LEARNINGPROGRESS
+     *
+     * @var string
+     */
     const USERFIELD_LEARNINGPROGRESS = 'learningProgress';
-    const USERFIELD_GRADE = 'grade';
 
+    /**
+     * USERFIELD_GRADE
+     *
+     * @var string
+     */
+    const USERFIELD_GRADE = 'grade';
+    /**
+     * Validexportmappingfields
+     *
+     * @var array
+     */
     public static $validexportmappingfields = [
         self::PERSON_EPPN, self::PERSON_LOGINUID, self::PERSON_LOGIN, self::PERSON_UID,
         self::PERSON_EMAIL, self::PERSON_UNIQUECODE, self::PERSON_CUSTOM,
         self::USERFIELD_LEARNINGPROGRESS, self::USERFIELD_GRADE,
     ];
+
+    /**
+     * Validimportmappingfields
+     *
+     * @var array
+     */
     public static $validimportmappingfields = [
         self::PERSON_EPPN, self::PERSON_LOGINUID, self::PERSON_LOGIN, self::PERSON_UID,
         self::PERSON_EMAIL, self::PERSON_UNIQUECODE, self::PERSON_CUSTOM,
     ];
 
+    /**
+     * INCLUDE_LEGACY_PARAMS
+     *
+     * @var bool
+     */
     const INCLUDE_LEGACY_PARAMS = false; // Include the legacy 'ecs_hash' and 'ecs_uid_hash' params in the courselink url.
 
+    /**
+     * recordid
+     *
+     * @var int
+     */
     protected $recordid;
+    /**
+     * courseid
+     *
+     * @var int
+     */
     protected $courseid;
+    /**
+     * url
+     *
+     * @var mixed
+     */
     protected $url;
+    /**
+     * Resourceid
+     *
+     * @var int
+     */
     protected $resourceid;
+    /**
+     * Ecsid
+     *
+     * @var int
+     */
     protected $ecsid;
+    /**
+     * Mid
+     *
+     * @var int
+     */
     protected $mid;
+    /**
+     * Title
+     *
+     * @var string
+     */
     protected $title;
+    /**
+     * Participantname
+     *
+     * @var string
+     */
     protected $participantname;
+    /**
+     * Summary
+     *
+     * @var string
+     */
     protected $summary;
+    /**
+     * Timemodified
+     *
+     * @var mixed
+     */
     protected $timemodified;
 
+    /**
+     * Constructor.
+     *
+     * @param mixed $data
+     *
+     */
     public function __construct($data) {
         $this->recordid = $data->id;
         $this->courseid = $data->courseid;
@@ -92,26 +229,62 @@ class courselink {
         $this->timemodified = $data->timemodified;
     }
 
+    /**
+     * Get title.
+     *
+     * @return string
+     *
+     */
     public function get_title() {
         return $this->title;
     }
 
+    /**
+     * Get url.
+     *
+     * @return mixed
+     *
+     */
     public function get_url() {
         return $this->url;
     }
 
+    /**
+     * Get link.
+     *
+     * @return mixed
+     *
+     */
     public function get_link() {
         return html_writer::link($this->url, $this->url);
     }
 
+    /**
+     * Get participantname.
+     *
+     * @return string
+     *
+     */
     public function get_participantname() {
         return $this->participantname." ({$this->ecsid}_{$this->mid})";
     }
 
+    /**
+     * Get summary.
+     *
+     * @return string
+     *
+     */
     public function get_summary() {
         return $this->summary;
     }
 
+    /**
+     * Get timemodified.
+     *
+     * @return mixed
+     *
+     */
     public function get_timemodified() {
         return $this->timemodified;
     }
@@ -427,7 +600,7 @@ class courselink {
     /**
      * Check if the courseid provided refers to a remote course and return the URL if it does
      * @param int $courseid the ID of the course being viewed
-     * @param null $user
+     * @param mixed|null $user
      * @return mixed string | false - the URL to redirect to
      */
     public static function check_redirect($courseid, $user = null) {
@@ -482,7 +655,8 @@ class courselink {
      * Check if authentication tokens should be included when visiting the
      * participant that this course link is from.
      *
-     * @param $courselink
+     * @param mixed $courselink
+     *
      * @return bool
      */
     protected static function should_include_token($courselink) {
@@ -583,7 +757,7 @@ class courselink {
 
     /**
      * Get the courselink db record from the courseid
-     * @param $courseid
+     * @param int $courseid
      * @return mixed false | object
      */
     public static function get_by_courseid($courseid) {
@@ -678,6 +852,14 @@ class courselink {
         return $ret;
     }
 
+    /**
+     * Custom logging.
+     *
+     * @param string $msg
+     *
+     * @return void
+     *
+     */
     protected static function log($msg) {
         log::add($msg, true, false, false);
     }

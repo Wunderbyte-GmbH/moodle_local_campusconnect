@@ -288,6 +288,14 @@ class courselink_test extends advanced_testcase {
         }
     }
 
+    /**
+     * reate text profile field
+     *
+     * @param string $fieldname
+     *
+     * @return void
+     *
+     */
     protected function create_text_profile_field($fieldname) {
         global $CFG;
         require_once($CFG->dirroot.'/user/profile/lib.php');
@@ -311,6 +319,16 @@ class courselink_test extends advanced_testcase {
         $formfield->define_save($data);
     }
 
+    /**
+     * Set profile field
+     *
+     * @param mixed $user
+     * @param mixed $field
+     * @param mixed $value
+     *
+     * @return void
+     *
+     */
     protected function set_profile_field($user, $field, $value) {
         global $DB;
         $fieldid = $DB->get_field('user_info_field', 'id', ['shortname' => $field]);

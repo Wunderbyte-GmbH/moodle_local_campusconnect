@@ -35,13 +35,53 @@ use coding_exception;
  */
 class enrolment {
 
+    /**
+     * STATUS_ACTIVE
+     *
+     * @var string
+     */
     const STATUS_ACTIVE = 'active';
+
+    /**
+     * STATUS_PENDING
+     *
+     * @var string
+     */
     const STATUS_PENDING = 'pendig';
+
+    /**
+     * STATUS_REJECTED
+     *
+     * @var string
+     */
     const STATUS_REJECTED = 'rejected';
+
+    /**
+     * STATUS_UNSUBSCRIBED
+     *
+     * @var string
+     */
     const STATUS_UNSUBSCRIBED = 'unsubscribed';
+
+    /**
+     * STATUS_DENIED
+     *
+     * @var string
+     */
     const STATUS_DENIED = 'denied';
+
+    /**
+     * STATUS_INACTIVE
+     *
+     * @var string
+     */
     const STATUS_INACTIVE = 'inactive_account';
 
+    /**
+     * $validstatuses
+     *
+     * @var array
+     */
     public static $validstatuses = [
         self::STATUS_ACTIVE,
         self::STATUS_PENDING,
@@ -159,6 +199,14 @@ class enrolment {
         }
     }
 
+    /**
+     * Get ecsids from pids
+     *
+     * @param string $pids
+     *
+     * @return array
+     *
+     */
     protected static function get_ecsids_from_pids($pids) {
         $ecsids = [];
         $pids = explode(',', $pids);

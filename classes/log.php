@@ -24,9 +24,33 @@
 
 namespace local_campusconnect;
 
+/**
+ * Class  to log and problems with incomming data from the ECS
+ *
+ * @package   local_campusconnect
+ * @copyright 2013 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class log {
+
+    /**
+     * LOGNAME
+     *
+     * @var string
+     */
     const LOGNAME = 'campusconnect.log';
 
+    /**
+     * Add
+     *
+     * @param mixed $msg
+     * @param bool $debugonly
+     * @param bool $output
+     * @param bool $serverlog
+     *
+     * @return void
+     *
+     */
     public static function add($msg, $debugonly = false, $output = true, $serverlog = true) {
         global $CFG;
 
@@ -51,13 +75,30 @@ class log {
         }
     }
 
+    /**
+     * Add object
+     *
+     * @param mixed $obj
+     * @param bool $debugonly
+     * @param bool $serverlog
+     *
+     * @return void
+     *
+     */
     public static function add_object($obj, $debugonly = false, $serverlog = true) {
         ob_start();
+        // phpcs:ignore
         print_r($obj);
         $out = ob_get_clean();
         self::add($out, $debugonly, false, $serverlog);
     }
 
+    /**
+     * Output log
+     *
+     * @return void
+     *
+     */
     public static function outputlog() {
         global $CFG;
         $filename = $CFG->dataroot.'/'.self::LOGNAME;
@@ -68,6 +109,12 @@ class log {
         }
     }
 
+    /**
+     * Clear log file
+     *
+     * @return void
+     *
+     */
     public static function clearlog() {
         global $CFG;
         @unlink($CFG->dataroot.'/'.self::LOGNAME);

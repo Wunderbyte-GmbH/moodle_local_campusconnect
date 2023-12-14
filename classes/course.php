@@ -29,14 +29,24 @@ use moodle_url;
 use stdClass;
 
 /**
- * Looks after the creation / update of courses based on requests from the CMS (via the ECS)
+ * Class to looks after the creation / update of courses based on requests from the CMS (via the ECS)
+ *
+ * @package   local_campusconnect
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course {
 
+    /**
+     * $enabled
+     *
+     * @var bool|int
+     */
     protected static $enabled = null;
 
     /**
      * Is course creation enabled?
+     *
      * @return bool
      */
     public static function enabled() {
@@ -51,7 +61,10 @@ class course {
 
     /**
      * Update the settings for course creation.
-     * @param $enabled
+     *
+     * @param bool $enabled
+     *
+     * @return void
      */
     public static function set_enabled($enabled) {
         $val = $enabled ? 1 : 0;
@@ -68,6 +81,7 @@ class course {
      * @param object $course - the resource data from ECS
      * @param details $transferdetails - the metadata for the resource on the ECS
      * @param participantsettings $cms - passed in when doing full refresh (to save a DB query)
+     *
      * @return bool true if successful
      */
     public static function create($resourceid, ecssettings $ecssettings, $course,

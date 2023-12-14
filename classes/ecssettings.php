@@ -27,41 +27,188 @@ namespace local_campusconnect;
 use coding_exception;
 use stdClass;
 
+/**
+ * Class to configure settings for connecting to an ECS
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class ecssettings {
 
-    const AUTH_NONE = 1; // Development only - direct connection to ECS server.
-    const AUTH_HTTP = 2; // Basic HTTP authentication.
-    const AUTH_CERTIFICATE = 3; // Certificate based authentication.
+    /**
+     * AUTH_NONE
+     * Development only - direct connection to ECS server.
+     *
+     * @var int
+     */
+    const AUTH_NONE = 1;
+
+    /**
+     * AUTH_HTTP
+     * Basic HTTP authentication.
+     *
+     * @var int
+     */
+    const AUTH_HTTP = 2;
+
+    /**
+     * AUTH_CERTIFICATE
+     * Certificate based authentication.
+     *
+     * @var int
+     */
+    const AUTH_CERTIFICATE = 3;
 
     // Connection settings.
+    /**
+     * $url
+     *
+     * @var string
+     */
     protected $url = '';
+
+    /**
+     * $auth
+     *
+     * @var int
+     */
     protected $auth = self::AUTH_CERTIFICATE;
+
+    /**
+     * $ecsauth
+     *
+     * @var string
+     */
     protected $ecsauth = '';
+
+    /**
+     * $httpuser
+     *
+     * @var string
+     */
     protected $httpuser = '';
+
+    /**
+     * $httppass
+     *
+     * @var string
+     */
     protected $httppass = '';
+
+    /**
+     * $cacertpath
+     *
+     * @var string
+     */
     protected $cacertpath = '';
+
+    /**
+     * $certpath
+     *
+     * @var string
+     */
     protected $certpath = '';
+
+    /**
+     * $keypath
+     *
+     * @var string
+     */
     protected $keypath = '';
+
+    /**
+     * $keypass
+     *
+     * @var string
+     */
     protected $keypass = '';
 
     // Settings for incoming data.
+    /**
+     * $crontime
+     *
+     * @var int
+     */
     protected $crontime = 60;
+
+    /**
+     * $lastcron
+     *
+     * @var int
+     */
     protected $lastcron = 0;
+
+    /**
+     * $importcategory
+     *
+     * @var mixed|null
+     */
     protected $importcategory = null;
+
+    /**
+     * $importrole
+     *
+     * @var string
+     */
     protected $importrole = '-1';
+
+    /**
+     * $importperiod
+     *
+     * @var int
+     */
     protected $importperiod = 6;
 
     // Notification details.
+    /**
+     * $notifyusers
+     *
+     * @var string
+     */
     protected $notifyusers = '';
+
+    /**
+     * $notifycontent
+     *
+     * @var string
+     */
     protected $notifycontent = '';
+
+    /**
+     * $notifycourses
+     *
+     * @var string
+     */
     protected $notifycourses = '';
 
     // Misc settings.
+    /**
+     * $recordid
+     *
+     * @var int
+     */
     protected $recordid = null;
+
+    /**
+     * $enabled
+     *
+     * @var bool
+     */
     protected $enabled = true;
+
+    /**
+     * $name
+     *
+     * @var string
+     */
     protected $name = '';
 
-    // Used to validate incoming settings.
+    /**
+     * Used to validate incoming settings.
+     *
+     * @var array
+     */
     protected $validsettings = [
         'recordid' => 'id',
         'enabled' => 'enabled',
@@ -84,10 +231,16 @@ class ecssettings {
         'notifycourses' => 'notifycourses',
     ];
 
+    /**
+     * $activeecs
+     *
+     * @var mixed|null
+     */
     protected static $activeecs = null;
 
     /**
      * Initialise a settings object
+     *
      * @param int $ecsid optional - the ID of the ECS to load settings for
      */
     public function __construct($ecsid = null) {
@@ -97,6 +250,14 @@ class ecssettings {
         }
     }
 
+    /**
+     * List ecs
+     *
+     * @param bool $onlyenabled
+     *
+     * @return array
+     *
+     */
     public static function list_ecs($onlyenabled = true) {
         global $DB;
         $params = [];
@@ -109,6 +270,7 @@ class ecssettings {
     /**
      * Check if the given ECS is currently active.
      * @param int $ecsid
+     *
      * @return bool
      */
     public static function is_active_ecs($ecsid) {
@@ -118,26 +280,62 @@ class ecssettings {
         return in_array($ecsid, self::$activeecs);
     }
 
+    /**
+     * Get id
+     *
+     * @return int
+     *
+     */
     public function get_id() {
         return $this->recordid;
     }
 
+    /**
+     * Is enabled
+     *
+     * @return bool
+     *
+     */
     public function is_enabled() {
         return $this->enabled;
     }
 
+    /**
+     * Get name
+     *
+     * @return string
+     *
+     */
     public function get_name() {
         return $this->name;
     }
 
+    /**
+     * Get url
+     *
+     * @return mixed
+     *
+     */
     public function get_url() {
         return $this->url;
     }
 
+    /**
+     * Get auth type
+     *
+     * @return int
+     *
+     */
     public function get_auth_type() {
         return $this->auth;
     }
 
+    /**
+     * Get ecs auth
+     *
+     * @return string
+     *
+     */
     public function get_ecs_auth() {
         if ($this->get_auth_type() != self::AUTH_NONE) {
             throw new coding_exception('get_ecs_auth only valid when using no authentication');
@@ -145,6 +343,12 @@ class ecssettings {
         return $this->ecsauth;
     }
 
+    /**
+     * Get http user
+     *
+     * @return string
+     *
+     */
     public function get_http_user() {
         if ($this->get_auth_type() != self::AUTH_HTTP) {
             throw new coding_exception('get_http_user only valid when using http authentication');
@@ -152,6 +356,12 @@ class ecssettings {
         return $this->httpuser;
     }
 
+    /**
+     * Get http password
+     *
+     * @return string
+     *
+     */
     public function get_http_password() {
         if ($this->get_auth_type() != self::AUTH_HTTP) {
             throw new coding_exception('get_http_password only valid when using http authentication');
@@ -159,6 +369,12 @@ class ecssettings {
         return $this->httppass;
     }
 
+    /**
+     * Get ca cert path
+     *
+     * @return string
+     *
+     */
     public function get_ca_cert_path() {
         if ($this->get_auth_type() != self::AUTH_CERTIFICATE) {
             throw new coding_exception('get_ca_cert_path only valid when using certificate authentication');
@@ -166,6 +382,12 @@ class ecssettings {
         return $this->cacertpath;
     }
 
+    /**
+     * Get client cert path
+     *
+     * @return string
+     *
+     */
     public function get_client_cert_path() {
         if ($this->get_auth_type() != self::AUTH_CERTIFICATE) {
             throw new coding_exception('get_client_cert_path only valid when using certificate authentication');
@@ -173,6 +395,12 @@ class ecssettings {
         return $this->certpath;
     }
 
+    /**
+     * Get key path
+     *
+     * @return string
+     *
+     */
     public function get_key_path() {
         if ($this->get_auth_type() != self::AUTH_CERTIFICATE) {
             throw new coding_exception('get_key_path only valid when using certificate authentication');
@@ -180,6 +408,12 @@ class ecssettings {
         return $this->keypath;
     }
 
+    /**
+     * Get key pass
+     *
+     * @return string
+     *
+     */
     public function get_key_pass() {
         if ($this->get_auth_type() != self::AUTH_CERTIFICATE) {
             throw new coding_exception('get_key_pass only valid when using certificate authentication');
@@ -187,30 +421,72 @@ class ecssettings {
         return $this->keypass;
     }
 
+    /**
+     * Get import category
+     *
+     * @return mixed
+     *
+     */
     public function get_import_category() {
         return $this->importcategory;
     }
 
+    /**
+     * Get import role
+     *
+     * @return string
+     *
+     */
     public function get_import_role() {
         return $this->importrole;
     }
 
+    /**
+     * Get import period
+     *
+     * @return int
+     *
+     */
     public function get_import_period() {
         return $this->importperiod;
     }
 
+    /**
+     * Get notify users
+     *
+     * @return array|bool
+     *
+     */
     public function get_notify_users() {
         return explode(',', $this->notifyusers);
     }
 
+    /**
+     * Get notify content
+     *
+     * @return array|bool
+     *
+     */
     public function get_notify_content() {
         return explode(',', $this->notifycontent);
     }
 
+    /**
+     * Get notify courses
+     *
+     * @return array|bool
+     *
+     */
     public function get_notify_courses() {
         return explode(',', $this->notifycourses);
     }
 
+    /**
+     * Get certificate expiry
+     *
+     * @return string
+     *
+     */
     public function get_certificate_expiry() {
         if ($this->auth != self::AUTH_CERTIFICATE) {
             return '';
@@ -222,6 +498,14 @@ class ecssettings {
         return userdate($certinfo['validTo_time_t'], get_string('strftimedate'));
     }
 
+    /**
+     * Load settings
+     *
+     * @param mixed $ecsid
+     *
+     * @return void
+     *
+     */
     protected function load_settings($ecsid) {
         global $DB;
 
@@ -229,6 +513,14 @@ class ecssettings {
         $this->set_settings($settings);
     }
 
+    /**
+     * Set settings
+     *
+     * @param mixed $settings
+     *
+     * @return void
+     *
+     */
     protected function set_settings($settings) {
         foreach ($this->validsettings as $localname => $dbname) {
             if (isset($settings->$dbname)) {
@@ -240,6 +532,14 @@ class ecssettings {
         }
     }
 
+    /**
+     * Save settings
+     *
+     * @param mixed $settings
+     *
+     * @return void
+     *
+     */
     public function save_settings($settings) {
         global $DB;
 
@@ -358,6 +658,12 @@ class ecssettings {
         $this->set_settings($settings);
     }
 
+    /**
+     * Get settings
+     *
+     * @return stdClass
+     *
+     */
     public function get_settings() {
         $ret = new stdClass();
         foreach ($this->validsettings as $localname => $dbname) {
@@ -366,6 +672,14 @@ class ecssettings {
         return $ret;
     }
 
+    /**
+     * Delete
+     *
+     * @param bool $force
+     *
+     * @return void
+     *
+     */
     public function delete($force = false) {
         global $DB;
 
@@ -381,6 +695,7 @@ class ecssettings {
 
     /**
      * Check if it is time to run a cron update for this ECS
+     *
      * @return bool true if time for cron script to run
      */
     public function time_for_cron() {
@@ -392,6 +707,8 @@ class ecssettings {
 
     /**
      * Save the current time as the lastcron time
+     *
+     * @return void
      */
     public function update_last_cron() {
         global $DB;

@@ -29,7 +29,21 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * Class to handle Form for general directory tree settings
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class campusconnect_directorymapping_form extends moodleform {
+
+    /**
+     * Form definition
+     *
+     * @return void
+     *
+     */
     public function definition() {
         $mform = $this->_form;
         // phpcs:ignore

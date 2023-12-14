@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Main connection class for CampusConnect
+ * Handle directorytree exception for CampusConnect
  *
  * @package    local_campusconnect
  * @copyright  2012 Synergy Learning
@@ -26,7 +26,21 @@ namespace local_campusconnect;
 
 use moodle_exception;
 
+/**
+ * Class to handle directorytree exception for CampusConnect
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class directorytree_exception extends moodle_exception {
+
+    /**
+     * Constructor
+     *
+     * @param string $msg
+     *
+     */
     public function __construct($msg) {
         parent::__construct('error', 'local_campusconnect', '', $msg);
     }

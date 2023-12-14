@@ -17,7 +17,7 @@
 /**
  * Settings page for campus connect
  *
- * @package    admin_campusconnect
+ * @package    local_campusconnect
  * @copyright  2012 Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,8 +37,21 @@ admin_externalpage_setup('campusconnectcategoryassignment');
 require_login();
 require_capability('moodle/site:config', context_system::instance());
 
+/**
+ * Class to handle category form on settings page for campus connect
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class campusconnect_category_form extends moodleform {
 
+    /**
+     * Form definition
+     *
+     * @return void
+     *
+     */
     public function definition() {
         $mform = $this->_form;
 

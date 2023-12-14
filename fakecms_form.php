@@ -30,6 +30,12 @@ require_once($CFG->libdir.'/formslib.php');
 /** Form for entering CMS data */
 class fakecms_form extends moodleform {
 
+    /**
+     * Form definition.
+     *
+     * @return mixed
+     *
+     */
     public function definition() {
         $mform = $this->_form;
 

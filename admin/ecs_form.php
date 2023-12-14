@@ -17,7 +17,7 @@
 /**
  * ECS settings page for campus connect
  *
- * @package    admin_campusconnect
+ * @package    local_campusconnect
  * @copyright  2012 Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,8 +30,21 @@ global $CFG;
 
 require_once($CFG->libdir."/formslib.php");
 
+/**
+ * Class to handle ECS settings form for campus connect settings page
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class campusconnect_ecs_form extends moodleform {
 
+    /**
+     * Form definition
+     *
+     * @return void
+     *
+     */
     public function definition() {
 
         $roles = role_fix_names(get_all_roles(), context_system::instance(), ROLENAME_ORIGINAL);
@@ -149,7 +162,16 @@ class campusconnect_ecs_form extends moodleform {
         $this->add_action_buttons();
     }
 
-    public function validation($data, $files) {
+    /**
+     * Form validation
+     *
+     * @param array $data
+     * @param array $files
+     *
+     * @return array
+     *
+     */
+    public function validation($data, $files): array {
         $errors = parent::validation($data, $files);
         if ($data['auth'] == ecssettings::AUTH_CERTIFICATE) {
             if (empty($data['certpath'])) {

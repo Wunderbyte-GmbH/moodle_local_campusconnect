@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Handle 'course' creation requests from the ECS server
+ * Handle 'parallelgroups' creation requests from the ECS server
  *
  * @package   local_campusconnect
  * @copyright 2012 Davo Smith, Synergy Learning
@@ -28,6 +28,8 @@ use coding_exception;
 use stdClass;
 
 /**
+ * Class to handle 'parallelgroups' creation requests from the ECS server
+ *
  * Looks after parallel groups - parsing them out of the data from the ECS, matching them up to existing parallel groups
  * and creating the right Moodle groups for them.
  *
@@ -56,6 +58,8 @@ class parallelgroups {
     protected $resourceid;
 
     /**
+     * Constructor.
+     *
      * @param ecssettings $ecssettings
      * @param int $resourceid
      */
@@ -66,6 +70,7 @@ class parallelgroups {
 
     /**
      * Extract the details of the courses/groups to create to satisfy the parallel groups scenario.
+     *
      * Note: Internal function - public to allow for unit testing.
      * @param stdClass $course the course details from the ECS
      * @return array [ $parallelgroups, $scenario] - where $parallelgroups is an array as follows:

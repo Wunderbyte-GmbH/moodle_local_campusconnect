@@ -29,18 +29,71 @@ use Exception;
 use moodle_url;
 use stdClass;
 
+/**
+ * Class for export courses to ECS server
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class export {
 
     // Holds the status of the exported course until the ECS has been updated.
+    /**
+     * STATUS_UPTODATE
+     *
+     * @var int
+     */
     const STATUS_UPTODATE = 0;
+
+    /**
+     * STATUS_CREATED
+     *
+     * @var int
+     */
     const STATUS_CREATED = 1;
+
+    /**
+     * STATUS_UPDATED
+     *
+     * @var int
+     */
     const STATUS_UPDATED = 2;
+
+    /**
+     * STATUS_DELETED
+     *
+     * @var int
+     */
     const STATUS_DELETED = 3;
 
+    /**
+     * $exportparticipants
+     *
+     * @var mixed|null
+     */
     protected $exportparticipants = null;
+
+    /**
+     * $exportsettings
+     *
+     * @var mixed|null
+     */
     protected $exportsettings = null;
+
+    /**
+     * $courseid
+     *
+     * @var int|null
+     */
     protected $courseid = null;
 
+    /**
+     * Constructor
+     *
+     * @param int $courseid
+     *
+     */
     public function __construct($courseid) {
         global $DB, $SITE;
 
@@ -68,6 +121,7 @@ class export {
 
     /**
      * Returns the courseid that this export object is for
+     *
      * @return int $courseid
      */
     public function get_courseid() {
@@ -76,6 +130,7 @@ class export {
 
     /**
      * Returns the update status of a particular participant
+     *
      * @param string $partidentifier
      */
     public function get_status($partidentifier) {
@@ -129,6 +184,15 @@ class export {
         return false;
     }
 
+    /**
+     * Get participant
+     *
+     * @param int $ecsid
+     * @param int|int[] $mid
+     *
+     * @return mixed
+     *
+     */
     public function get_participant($ecsid, $mid) {
         foreach ($this->exportparticipants as $part) {
             if ($part->get_ecs_id() == $ecsid && $part->get_mid() == $mid) {
@@ -138,11 +202,29 @@ class export {
         return null;
     }
 
+    /**
+     * Should handle auth token
+     *
+     * @param int $ecsid
+     * @param int|int[] $mid
+     *
+     * @return bool
+     *
+     */
     public function should_handle_auth_token($ecsid, $mid) {
         $part = $this->get_participant($ecsid, $mid);
         return ($part && $part->is_exported() && $part->is_export_token_enabled());
     }
 
+    /**
+     * Should send enrolment status
+     *
+     * @param int $ecsid
+     * @param int|int[] $mid
+     *
+     * @return bool
+     *
+     */
     public function should_send_enrolment_status($ecsid, $mid) {
         $part = $this->get_participant($ecsid, $mid);
         return ($part && $part->is_exported() && $part->is_export_enrolment_enabled());
@@ -150,6 +232,7 @@ class export {
 
     /**
      * List all the participants this course is currently exported to.
+     *
      * @return participantsettings[] ecsid_mid => \local_campusconnect\participantsettings
      */
     public function list_current_exports() {
@@ -650,8 +733,10 @@ class export {
 
     /**
      * Return the course url to use in the exported course_link + enrolment_status resources.
-     * @param $course
-     * @return \moodle_url
+     *
+     * @param object $course
+     *
+     * @return string
      */
     public static function get_course_url($course) {
         $url = new moodle_url('/local/campusconnect/viewcourse.php', ['id' => $course->id]);
@@ -660,7 +745,9 @@ class export {
 
     /**
      * Return the courseID for use in the enrolment_status resource.
+     *
      * @param object $course
+     *
      * @param connect $connect
      */
     public static function get_course_id($course, $connect) {
@@ -669,14 +756,29 @@ class export {
         return $data->id;
     }
 
+    /**
+     * Course updated
+     *
+     * @param \core\event\course_updated $event
+     *
+     * @return void
+     *
+     */
     public static function course_updated(\core\event\course_updated $event) {
         $export = new export($event->courseid);
         $export->updated();
     }
 
+    /**
+     * Course deleted
+     *
+     * @param \core\event\course_deleted $event
+     *
+     * @return void
+     *
+     */
     public static function course_deleted(\core\event\course_deleted $event) {
         $export = new export($event->courseid);
         $export->deleted();
     }
-
 }

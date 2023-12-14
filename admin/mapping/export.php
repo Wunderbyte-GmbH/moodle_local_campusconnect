@@ -17,7 +17,7 @@
 /**
  * Settings page for campus connect
  *
- * @package    admin_campusconnect
+ * @package    local_campusconnect
  * @copyright  2012 Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -97,8 +97,21 @@ echo html_writer::start_tag('span', ['class' => 'campusconnect_metadata']);
 $mform->display();
 echo html_writer::end_tag('span');
 
+/**
+ * Class to handle form for export settings page for campus connect
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class campusconnect_export_form extends moodleform {
 
+    /**
+     * Form definition
+     *
+     * @return void
+     *
+     */
     public function definition() {
         $ecslist = ecssettings::list_ecs();
 
@@ -156,6 +169,14 @@ class campusconnect_export_form extends moodleform {
 
     }
 
+    /**
+     * Set errors
+     *
+     * @param array $errors
+     *
+     * @return void
+     *
+     */
     public function set_errors($errors) {
         $form = $this->_form;
         foreach ($errors as $element => $message) {

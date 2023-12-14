@@ -30,9 +30,27 @@ use html_writer;
 use moodle_url;
 use stdClass;
 
+/**
+ * Class to controls the filtering of incomming courses into the correct category(s)
+ *
+ * @package   local_campusconnect
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class filtering {
 
+    /**
+     * [Description for $config
+     *
+     * @var mixed|null
+     */
     public static $config = null;
+
+    /**
+     * [Description for $globalsettings
+     *
+     * @var array
+     */
     public static $globalsettings = [
         'enabled' => 'bool', 'defaultcategory' => 'int', 'usesinglecategory' => 'bool',
         'singlecategory' => 'int', 'attributes' => 'array',
@@ -40,9 +58,11 @@ class filtering {
 
     // Using the course filtering.
     /**
+     * Get categories.
      *
-     * @param $coursedata
-     * @param $ecssettings
+     * @param mixed $coursedata
+     * @param mixed $ecssettings
+     *
      * @return array
      */
     public static function get_categories($coursedata, $ecssettings) {
@@ -145,7 +165,7 @@ class filtering {
                     $ins->parent = $categoryid;
                     $ins->name = $catname;
                     $ins->sortorder = 999;
-                    $newcat = coursecat::create($ins);
+                    $newcat = core_course_category::create($ins);
                     $subcatid = $newcat->id;
                 }
                 $catids = array_merge($catids, self::find_or_create_categories($coursedata, $attributes, $subcatid));
@@ -391,10 +411,13 @@ class filtering {
     }
 
     /**
-     * @param $category
-     * @param $baseurl
-     * @param $activecategories
+     * Output category and children.
+     *
+     * @param core_course_category $category
+     * @param mixed $baseurl
+     * @param mixed $activecategories
      * @param mixed|null $selectedcategory
+     *
      * @return string
      */
     protected static function output_category_and_children(core_course_category $category, $baseurl, $activecategories,
@@ -425,6 +448,7 @@ class filtering {
     // Internal functions.
     /**
      * Internal function to load all config settings
+     *
      * @return mixed|null
      */
     protected static function get_config() {

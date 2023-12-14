@@ -24,13 +24,56 @@
 
 namespace local_campusconnect;
 
+/**
+ * Class to manage the details linked to a received resource
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class details {
+
+    /**
+     * $url
+     *
+     * @var mixed
+     */
     protected $url;
+
+    /**
+     * $receivers
+     *
+     * @var mixed
+     */
     protected $receivers;
+
+    /**
+     * $senders
+     *
+     * @var mixed
+     */
     protected $senders;
+
+    /**
+     * $owner
+     *
+     * @var mixed
+     */
     protected $owner;
+
+    /**
+     * $contenttype
+     *
+     * @var mixed
+     */
     protected $contenttype;
 
+    /**
+     * Constructor
+     *
+     * @param mixed $details
+     *
+     */
     public function __construct($details) {
         $this->url = $details->url;
         $this->receivers = $details->receivers;
@@ -39,10 +82,22 @@ class details {
         $this->contenttype = $details->content_type;
     }
 
+    /**
+     * Is mine
+     *
+     * @return bool
+     *
+     */
     public function is_mine() {
         return $this->owner->itsyou;
     }
 
+    /**
+     * Get sender mid
+     *
+     * @return void
+     *
+     */
     public function get_sender_mid() {
         foreach ($this->receivers as $pos => $receiver) {
             if ($receiver->itsyou) {
@@ -56,10 +111,26 @@ class details {
         throw new connect_exception("This participant is not in the list of receivers");
     }
 
+    /**
+     * Sent by me
+     *
+     * @param array $mymids
+     *
+     * @return bool
+     *
+     */
     public function sent_by_me(array $mymids) {
         return in_array($this->senders[0]->mid, $mymids);
     }
 
+    /**
+     * Received by
+     *
+     * @param int $mid
+     *
+     * @return bool
+     *
+     */
     public function received_by($mid) {
         foreach ($this->receivers as $receiver) {
             if ($receiver->mid == $mid) {

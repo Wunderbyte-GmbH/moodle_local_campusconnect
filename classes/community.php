@@ -24,27 +24,83 @@
 
 namespace local_campusconnect;
 
+/**
+ * Clss represents a participant (VLE/CMS) in an ECS community.
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class community {
+
+    /**
+     * $name
+     *
+     * @var string
+     */
     public $name;
+
+    /**
+     * $desciption
+     *
+     * @var string
+     */
     public $desciption;
+
+    /**
+     * $ecsid
+     *
+     * @var int
+     */
     public $ecsid;
+
     /** @var participantsettings[] */
     public $participants = [];
 
+    /**
+     * Constructor
+     *
+     * @param int $ecsid
+     * @param string $name
+     * @param string $description
+     *
+     */
     public function __construct($ecsid, $name, $description) {
         $this->name = $name;
         $this->description = $description;
         $this->ecsid = $ecsid;
     }
 
+    /**
+     * Add participant
+     *
+     * @param participantsettings $part
+     *
+     * @return void
+     *
+     */
     public function add_participant(participantsettings $part) {
         $this->participants[$part->get_identifier()] = $part;
     }
 
+    /**
+     * Remove participant
+     *
+     * @param participantsettings $part
+     *
+     * @return void
+     *
+     */
     public function remove_participant(participantsettings $part) {
         unset($this->participants[$part->get_identifier()]);
     }
 
+    /**
+     * Has participants
+     *
+     * @return bool
+     *
+     */
     public function has_participants() {
         return !!($this->participants);
     }

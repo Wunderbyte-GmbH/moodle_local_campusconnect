@@ -24,18 +24,51 @@
 
 namespace local_campusconnect;
 
+/**
+ * Class uri_list to hold a list of URIs sent by the ECS server
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class uri_list {
+    /**
+     * Uris
+     *
+     * @var array
+     */
     protected $uris = [];
 
+    /**
+     * Add uri to array.
+     *
+     * @param mixed $uri
+     * @param int $id
+     *
+     * @return void
+     *
+     */
     public function add($uri, $id) {
         $this->uris[$id] = $uri;
     }
 
-    public function get_ids() {
+    /**
+     * Get ids.
+     *
+     * @return array
+     *
+     */
+    public function get_ids(): array {
         return array_keys($this->uris);
     }
 
-    public function get_uris() {
+    /**
+     * Get uris.
+     *
+     * @return array
+     *
+     */
+    public function get_uris(): array {
         return $this->uris;
     }
 }

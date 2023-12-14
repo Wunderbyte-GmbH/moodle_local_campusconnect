@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Main connection class for CampusConnect
+ * Main connection for CampusConnect
  *
  * @package    local_campusconnect
  * @copyright  2012 Synergy Learning
@@ -26,35 +26,113 @@ namespace local_campusconnect;
 
 use coding_exception;
 
+/**
+ * Main connection class for CampusConnect
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class connect {
 
     /** @var $curlresource resource - curl connection currently being prepared * */
     protected $curlresource = null;
-    /** The headers to send in the next request **/
+
+    /**
+     * The headers to send in the next request
+     *
+     * @var array
+     */
     protected $headers = [];
-    /** The settings for connecting to the server **/
+
+    /**
+     * The settings for connecting to the server
+     *
+     * @var null
+     */
     protected $settings = null;
-    /** The response headers from the last request **/
+
+    /**
+     * The response headers from the last request
+     *
+     * @var array
+     */
     protected $responseheaders = [];
-    /** Used to output debug information from the curl request */
+
+    /**
+     * Used to output debug information from the curl request
+     *
+     * @var bool
+     */
     protected $debug = false;
 
     /** HTTP response codes **/
+    /**
+     * HTTP_CODE_OK
+     *
+     * @var int
+     */
     const HTTP_CODE_OK = 200;
+
+    /**
+     * HTTP_CODE_CREATED
+     *
+     * @var int
+     */
     const HTTP_CODE_CREATED = 201;
+
+    /**
+     * HTTP_CODE_NOT_FOUND
+     *
+     * @var int
+     */
     const HTTP_CODE_NOT_FOUND = 404;
 
+    /**
+     * SENT
+     *
+     * @var string
+     */
     const SENT = 'sent';
+
+    /**
+     * RECEIVED
+     *
+     * @var string
+     */
     const RECEIVED = 'received';
 
+    /**
+     * CONTENT
+     *
+     * @var string
+     */
     const CONTENT = 'content';
+
+    /**
+     * TRANSFERDETAILS
+     *
+     * @var string
+     */
     const TRANSFERDETAILS = 'transferdetails';
 
+    /**
+     * $validsent
+     *
+     * @var array
+     */
     protected static $validsent = [self::SENT, self::RECEIVED];
+
+    /**
+     * $validtransferdetails
+     *
+     * @var array
+     */
     protected static $validtransferdetails = [self::CONTENT, self::TRANSFERDETAILS];
 
     /**
-     * Construct a new connection
+     * Construct a new connection.
+     *
      * @param ecssettings $settings - the settings for connecting to the ECS server
      */
     public function __construct(ecssettings $settings) {
@@ -796,9 +874,10 @@ class connect {
     }
 
     /**
-     * Given a list of URIs, download each of the resources from the URIs, JSON decode them and return as an
-     * array
-     * @param $urilist
+     * Given a list of URIs, download each of the resources from the URIs, JSON decode them and return as an array
+     *
+     * @param string $urilist
+     *
      * @return \stdClass|null
      */
     protected function get_from_uri_list($urilist) {
@@ -846,7 +925,10 @@ class connect {
 
     /**
      * If $CFG->campusconnect_log_connection is defined, output the msg to the log file.
-     * @param $msg
+     *
+     * @param string $msg
+     *
+     * @return void
      */
     protected function log($msg) {
         global $CFG;

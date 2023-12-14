@@ -41,6 +41,8 @@ require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
  * @covers \local_campusconnect\export
  */
 class export_test extends campusconnect_base_testcase {
+
+    /** @var array $resources */
     protected $resources = [];
 
     protected function setUp(): void {

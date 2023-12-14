@@ -30,20 +30,75 @@ use enrol_plugin;
 use stdClass;
 
 /**
- * Looks after membership update requests.
+ * Clas to looks after membership update requests.
+ *
+ * @package   local_campusconnect
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class membership {
 
+    /**
+     * STATUS_ASSIGNED
+     *
+     * @var int
+     */
     const STATUS_ASSIGNED = 0;
+
+    /**
+     * STATUS_CREATED
+     *
+     * @var int
+     */
     const STATUS_CREATED = 1;
+
+    /**
+     * STATUS_UPDATED
+     *
+     * @var int
+     */
     const STATUS_UPDATED = 2;
+
+    /**
+     * STATUS_DELETED
+     *
+     * @var int
+     */
     const STATUS_DELETED = 3;
 
+    /**
+     * ROLE_UNSPECIFIED
+     *
+     * @var mixed
+     */
     const ROLE_UNSPECIFIED = -1;
+
+    /**
+     * ROLE_LECTURER
+     *
+     * @var int
+     */
     const ROLE_LECTURER = 0;
+
+    /**
+     * ROLE_STUDENT
+     *
+     * @var int
+     */
     const ROLE_STUDENT = 1;
+
+    /**
+     * ROLE_ASSISTANT
+     *
+     * @var int
+     */
     const ROLE_ASSISTANT = 2;
 
+    /**
+     * $validroles
+     *
+     * @var array
+     */
     protected static $validroles = [self::ROLE_LECTURER, self::ROLE_STUDENT, self::ROLE_ASSISTANT];
 
     /**
@@ -241,7 +296,9 @@ class membership {
 
     /**
      * Extract the parallel group details from the database entry.
-     * @param $member
+     *
+     * @param object $member
+     *
      * @return array num => role
      */
     protected static function extract_parallel_groups($member) {
@@ -505,8 +562,10 @@ class membership {
 
     /**
      * Process the 'create course' event and see if any user memberships have already been sent for this course
+     *
      * @param int[] $courseids
-     * @param $cmscourseid
+     * @param int $cmscourseid
+     *
      * @return bool true if successful
      */
     public static function assign_course_users($courseids, $cmscourseid) {
@@ -580,8 +639,11 @@ class membership {
 
     /**
      * Process the 'create user' event and see if the new user already has an assigned role in the membership list
+     *
      * @param object $user
-     * @return bool true if successful
+     *
+     * @return bool
+     *
      */
     public static function assign_user_roles($user) {
         global $DB;
@@ -732,8 +794,10 @@ class membership {
 
     /**
      * Returns a list of requested role assignments for a given user
-     * @param $user
-     * @return object[] the local_campusconnect_mbr that relate to the given user
+     *
+     * @param object $user
+     *
+     * @return array object[] the local_campusconnect_mbr that relate to the given user
      */
     protected static function get_by_user($user) {
         global $DB, $CFG;
@@ -773,7 +837,9 @@ class membership {
 
     /**
      * Returns a list of role assignments for a given course
-     * @param $course
+     *
+     * @param object $course
+     *
      * @return object[] the local_campusconnect_mbr that relate to the given course
      */
     protected static function get_by_course($course) {
@@ -802,7 +868,9 @@ class membership {
 
     /**
      * Get the membership object from the resourceid
-     * @param $resourceid
+     *
+     * @param int $resourceid
+     *
      * @return array
      */
     protected static function get_by_resourceid($resourceid) {
@@ -860,6 +928,14 @@ class membership {
         return $defaultroleid;
     }
 
+    /**
+     * [Description for User created
+     *
+     * @param \core\event\user_created $event
+     *
+     * @return void
+     *
+     */
     public static function user_created(\core\event\user_created $event) {
         global $DB;
         $user = $DB->get_record('user', ['id' => $event->objectid]);

@@ -29,6 +29,10 @@ use stdClass;
 
 /**
  * Looks after passing the course URL back to the ECS when a course is created
+ *
+ * @package   local_campusconnect
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_url {
 
@@ -45,7 +49,10 @@ class course_url {
     protected $crs;
 
     /**
+     * Constructor.
+     *
      * @param int $crsid
+     *
      */
     public function __construct($crsid) {
         $this->crs = $this->get_record($crsid);
@@ -371,8 +378,11 @@ class course_url {
 
     /**
      * Load the crs record and check it is valid
-     * @param $crsid
+     *
+     * @param int $crsid
+     *
      * @return mixed
+     *
      * @throws course_exception
      */
     protected function get_record($crsid) {
@@ -388,7 +398,10 @@ class course_url {
 
     /**
      * Update the status of the course link
-     * @param $status
+     *
+     * @param int $status
+     *
+     * @return void
      */
     protected function set_status($status) {
         global $DB;

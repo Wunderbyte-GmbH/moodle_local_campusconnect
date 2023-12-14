@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class to support the mapping of course meta data
+ * Support the mapping of course meta data
  *
  * @package    local_campusconnect
  * @copyright  2012 Synergy Learning
@@ -28,13 +28,48 @@ use coding_exception;
 use html_writer;
 use stdClass;
 
+/**
+ * Class to support the mapping of course meta data
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class metadata {
 
+    /**
+     * TYPE_IMPORT_COURSE
+     *
+     * @var int
+     */
     const TYPE_IMPORT_COURSE = 1;
+
+    /**
+     * TYPE_IMPORT_EXTERNAL_COURSE
+     *
+     * @var int
+     */
     const TYPE_IMPORT_EXTERNAL_COURSE = 2;
+
+    /**
+     * TYPE_EXPORT_COURSE
+     *
+     * @var int
+     */
     const TYPE_EXPORT_COURSE = 3;
+
+    /**
+     * TYPE_EXPORT_EXTERNAL_COURSE
+     *
+     * @var int
+     */
     const TYPE_EXPORT_EXTERNAL_COURSE = 4;
 
+    /**
+     * $coursefields
+     *
+     * @var array
+     */
     protected static $coursefields = [
         'fullname' => 'string', 'shortname' => 'string',
         'idnumber' => 'string', 'summary' => 'string',
@@ -42,6 +77,11 @@ class metadata {
         'timecreated' => 'date', 'timemodified' => 'date',
     ];
 
+    /**
+     * $remotefieldcourselink
+     *
+     * @var array
+     */
     protected static $remotefieldcourselink = [
         'destinationForDisplay' => 'string',
         'lang' => 'lang',
@@ -71,6 +111,11 @@ class metadata {
         'lecturers' => 'personlist',
     ];
 
+    /**
+     * $remotefields
+     *
+     * @var array
+     */
     protected static $remotefields = [
         'lectureID' => 'string',
         'title' => 'string',
@@ -103,7 +148,11 @@ class metadata {
     // Note - leaving out fields 'allocations', 'organisationalUnit', 'groups', as there is no obvious place
     // to map these to in Moodle.
 
-    // Default import mappings.
+    /**
+     * Default import mappings.
+     *
+     * @var array
+     */
     protected $importmappings = [
         'fullname' => '{title}',
         'shortname' => '{lectureID}',
@@ -115,7 +164,11 @@ class metadata {
         'timemodified' => '',
     ];
 
-    // Default import mappings.
+    /**
+     * Default course import mappings.
+     *
+     * @var array
+     */
     protected $importmappingscourselink = [
         'fullname' => '{title}',
         'shortname' => '{id}',
@@ -127,7 +180,11 @@ class metadata {
         'timemodified' => '',
     ];
 
-    // Default export mappings.
+    /**
+     * Default export mappings.
+     *
+     * @var array
+     */
     protected $exportmappings = [
         'organisation' => '',
         'id' => '{shortname}',
@@ -154,7 +211,11 @@ class metadata {
         'modules' => '',
     ];
 
-    // Default external export mappings.
+    /**
+     * Default external export mappings.
+     *
+     * @var array
+     */
     protected $exportmappingscourselink = [
         'destinationForDisplay' => '',
         'lang' => 'lang',
@@ -180,9 +241,32 @@ class metadata {
         'lecturers' => '',
     ];
 
+    /**
+     * $lasterrormsg
+     *
+     * @var string
+     */
     protected $lasterrormsg = null;
+
+    /**
+     * $lasterrorfield
+     *
+     * @var mixed
+     */
     protected $lasterrorfield = null;
+
+    /**
+     * $courselink
+     *
+     * @var mixed
+     */
     protected $courselink = true;
+
+    /**
+     * $ecsid
+     *
+     * @var int
+     */
     protected $ecsid = null;
 
     /**
@@ -322,6 +406,8 @@ class metadata {
     }
 
     /**
+     * Constructor.
+     *
      * @param ecssettings $ecssettings the ECS this is the mapping for
      * @param bool $courselink - true if this is the mappings for 'external courses'
      */
@@ -697,6 +783,14 @@ class metadata {
         return $details;
     }
 
+    /**
+     * Get fullname
+     *
+     * @param mixed $user
+     *
+     * @return string
+     *
+     */
     protected static function fullname($user) {
         return "{$user->firstname} {$user->lastname}";
     }

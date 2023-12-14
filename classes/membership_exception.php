@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Handles the importing of membership lists from the ECS
+ * Handles the exception thrown by the \local_campusconnect\courselink object
  *
  * @package   local_campusconnect
  * @copyright 2012 Davo Smith, Synergy Learning
@@ -27,11 +27,17 @@ namespace local_campusconnect;
 use moodle_exception;
 
 /**
- * Exception thrown by the \local_campusconnect\courselink object
+ * class to handles the exception thrown by the \local_campusconnect\courselink object
+ *
+ * @package   local_campusconnect
+ * @copyright 2012 Davo Smith, Synergy Learning
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class membership_exception extends moodle_exception {
+
     /**
-     * Throw a new exception
+     * Constructor. Throw a new exception.
+     *
      * @param string $msg
      */
     public function __construct($msg) {

@@ -29,64 +29,272 @@ use html_writer;
 use moodle_url;
 use stdClass;
 
+/**
+ * Class to represents a participant (VLE/CMS) in an ECS community.
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class participantsettings {
 
+    /**
+     * IMPORT_LINK
+     *
+     * @var int
+     */
     const IMPORT_LINK = 1;
+
+    /**
+     * IMPORT_COURSE
+     *
+     * @var int
+     */
     const IMPORT_COURSE = 2;
+
+    /**
+     * IMPORT_CMS
+     *
+     * @var int
+     */
     const IMPORT_CMS = 3;
 
+    /**
+     * CUSTOM_FIELD_PREFIX
+     *
+     * @var string
+     */
     const CUSTOM_FIELD_PREFIX = 'custom_';
 
     // Settings saved locally in the database.
+    /**
+     * $recordid
+     *
+     * @var int|null
+     */
     protected $recordid = null;
+
+    /**
+     * $ecsid
+     *
+     * @var int|null
+     */
     protected $ecsid = null;
+
     /** @var int $mid */
     protected $mid = null;
+
+    /**
+     * $pid
+     *
+     * @var int|null
+     */
     protected $pid = null;
+
+    /**
+     * $export
+     *
+     * @var bool
+     */
     protected $export = false;
+
+    /**
+     * $exportenrolment
+     *
+     * @var bool
+     */
     protected $exportenrolment = true;
-    protected $exporttoken = true; // Use the token when a user from a remote site follows an exported course link.
+
+    /**
+     * Use the token when a user from a remote site follows an exported course link.
+     *
+     * @var bool
+     */
+    protected $exporttoken = true;
+
+    /**
+     * $import
+     *
+     * @var bool
+     */
     protected $import = false;
+
+    /**
+     * $importenrolment
+     *
+     * @var bool
+     */
     protected $importenrolment = true;
-    protected $importtoken = true; // Use the token when the user follows an imported course link.
+
+    /**
+     * Use the token when the user follows an imported course link.
+     *
+     * @var bool
+     */
+    protected $importtoken = true;
+
+    /**
+     * $importtype
+     *
+     * @var int
+     */
     protected $importtype = self::IMPORT_LINK;
+
+    /**
+     * $uselegacy
+     *
+     * @var bool
+     */
     protected $uselegacy = false;
+
+    /**
+     * $personuidtype
+     *
+     * @var string
+     */
     protected $personuidtype = courselink::PERSON_UID;
+
+    /**
+     * $exportfields
+     *
+     * @var mixed|null
+     */
     protected $exportfields = null;
+
+    /**
+     * $exportfieldmapping
+     *
+     * @var mixed|null
+     */
     protected $exportfieldmapping = null;
+
+    /**
+     * $importfieldmapping
+     *
+     * @var mixed|null
+     */
     protected $importfieldmapping = null;
+
+    /**
+     * $orgabbr
+     *
+     * @var mixed|null
+     */
     protected $orgabbr = null;
 
-    protected $displayname = null; // Constructed from the community name + part name.
+    /**
+     * Constructed from the community name + part name.
+     *
+     * @var string|null
+     */
+    protected $displayname = null;
+
+    /**
+     * $active
+     *
+     * @var int
+     */
     protected $active = 1;
 
     // Settings loaded from the ECS server.
+    /**
+     * $name
+     *
+     * @var string|null
+     */
     protected $name = null;
+
+    /**
+     * $communityname
+     *
+     * @var string|null
+     */
     protected $communityname = null;
+
+    /**
+     * $description
+     *
+     * @var string|null
+     */
     protected $description = null;
+
+    /**
+     * $dns
+     *
+     * @var mixed|null
+     */
     protected $dns = null;
+
+    /**
+     * $email
+     *
+     * @var mixed|null
+     */
     protected $email = null;
+
+    /**
+     * $org
+     *
+     * @var mixed|null
+     */
     protected $org = null;
+
+    /**
+     * $itsyou
+     *
+     * @var mixed|null
+     */
     protected $itsyou = null;
 
-    // Flagged as being exported in the current course.
+    /**
+     * Flagged as being exported in the current course.
+     *
+     * @var mixed|null
+     */
     protected $exported = null;
 
+    /**
+     * $validsettings
+     *
+     * @var array
+     */
     protected static $validsettings = [
         'export', 'exportenrolment', 'exporttoken',
         'import', 'importenrolment', 'importtoken', 'importtype',
         'uselegacy', 'personuidtype', 'exportfields', 'exportfieldmapping',
         'importfieldmapping',
     ];
+
+    /**
+     * $ecssettings
+     *
+     * @var array
+     */
     protected static $ecssettings = ['name', 'description', 'dns', 'email', 'org', 'orgabbr', 'communityname', 'itsyou'];
 
+    /**
+     * $pidtomid
+     *
+     * @var int|null
+     */
     protected static $pidtomid = null;
 
+    /**
+     * $defaultexportfields
+     *
+     * @var array
+     */
     protected static $defaultexportfields = [
         courselink::PERSON_UID,
         courselink::PERSON_LOGIN,
         courselink::PERSON_EMAIL,
     ];
+
+    /**
+     * $defaultexportmapping
+     *
+     * @var array
+     */
     protected static $defaultexportmapping = [
         courselink::PERSON_EPPN => null,
         courselink::PERSON_LOGINUID => null,
@@ -98,6 +306,12 @@ class participantsettings {
         courselink::USERFIELD_LEARNINGPROGRESS => null,
         courselink::USERFIELD_GRADE => null,
     ];
+
+    /**
+     * $defaultimportmapping
+     *
+     * @var array
+     */
     protected static $defaultimportmapping = [
         courselink::PERSON_EPPN => null,
         courselink::PERSON_LOGINUID => null,
@@ -110,23 +324,36 @@ class participantsettings {
         courselink::USERFIELD_GRADE => null,
     ];
 
+    /**
+     * $possibleexportfields
+     *
+     * @var array
+     */
     protected static $possibleexportfields = [
         'id', 'username', 'idnumber', 'firstname', 'lastname', 'email', 'icq', 'skype', 'yahoo', 'aim', 'msn', 'phone1', 'phone2',
         'institution', 'department', 'address', 'city', 'country',
     ];
 
-    // Not 'id', 'username', 'firstname', 'lastname', as these mappings are hard-coded.
+    /**
+     * $possibleimportfields
+     * Not 'id', 'username', 'firstname', 'lastname', as these mappings are hard-coded.
+     *
+     * @var array
+     */
     protected static $possibleimportfields = [
         'idnumber', 'email', 'icq', 'skype', 'yahoo', 'aim', 'msn', 'phone1', 'phone2',
         'institution', 'department', 'address', 'city', 'country',
     ];
 
     /**
+     * Constructor.
+     *
      * @param mixed $ecsidordata either the ID of the ECS or an object containing
      *                           the settings record loaded from the database
      * @param int $mid optional the participant ID (required if the ECS ID is provided)
      * @param object $extradetails details about the participant loaded from the ECS
      * @param int $strictness throw an exception if the participant is not found
+     *
      * @throws coding_exception
      */
     public function __construct($ecsidordata, $mid = null, $extradetails = null, $strictness = IGNORE_MISSING) {
@@ -171,82 +398,202 @@ class participantsettings {
         }
     }
 
+    /**
+     * Get ecs id
+     *
+     * @return int
+     *
+     */
     public function get_ecs_id() {
         return $this->ecsid;
     }
 
+    /**
+     * Get mid
+     *
+     * @return int
+     *
+     */
     public function get_mid() {
         return $this->mid;
     }
 
+    /**
+     * Get pid
+     *
+     * @return int
+     *
+     */
     public function get_pid() {
         return $this->pid;
     }
 
+    /**
+     * Get identifier
+     *
+     * @return string
+     *
+     */
     public function get_identifier() {
         return "{$this->ecsid}_{$this->mid}";
     }
 
+    /**
+     * Is export enabled
+     *
+     * @return bool
+     *
+     */
     public function is_export_enabled() {
-        return (bool)$this->export;
+        return (bool) $this->export;
     }
 
+    /**
+     * Is export token enabled
+     *
+     * @return bool
+     *
+     */
     public function is_export_token_enabled() {
         return ($this->export && $this->exporttoken);
     }
 
+    /**
+     * Is export enrolment enabled
+     *
+     * @return bool
+     *
+     */
     public function is_export_enrolment_enabled() {
         return ($this->export && $this->exportenrolment);
     }
 
+    /**
+     * Is legacy export
+     *
+     * @return bool
+     *
+     */
     public function is_legacy_export() {
-        return (bool)$this->uselegacy;
+        return (bool) $this->uselegacy;
     }
 
+    /**
+     * Is import enabled
+     *
+     * @return bool
+     *
+     */
     public function is_import_enabled() {
-        return (bool)$this->import;
+        return (bool) $this->import;
     }
 
+    /**
+     * Is import token enabled
+     *
+     * @return bool
+     *
+     */
     public function is_import_token_enabled() {
         return ($this->import && $this->importtoken);
     }
 
+    /**
+     * Is import enrolment enabled
+     *
+     * @return bool
+     *
+     */
     public function is_import_enrolment_enabled() {
         return ($this->import && $this->importenrolment);
     }
 
+    /**
+     * Get import type
+     *
+     * @return int
+     *
+     */
     public function get_import_type() {
         return $this->importtype;
     }
 
+    /**
+     * Get displayname
+     *
+     * @return string
+     *
+     */
     public function get_displayname() {
         return $this->displayname;
     }
 
+    /**
+     * Get name
+     *
+     * @return string
+     *
+     */
     public function get_name() {
         return $this->name;
     }
 
+    /**
+     * Get description
+     *
+     * @return string
+     *
+     */
     public function get_description() {
         return $this->description;
     }
 
+    /**
+     * Get domain
+     *
+     * @return mixed
+     *
+     */
     public function get_domain() {
         return $this->dns;
     }
 
+    /**
+     * Get email
+     *
+     * @return mixed
+     *
+     */
     public function get_email() {
         return $this->email;
     }
 
+    /**
+     * Get organisation
+     *
+     * @return mixed
+     *
+     */
     public function get_organisation() {
         return $this->org;
     }
 
+    /**
+     * Get organisation abbr
+     *
+     * @return mixed
+     *
+     */
     public function get_organisation_abbr() {
         return $this->orgabbr;
     }
 
+    /**
+     * Get export fields
+     *
+     * @return mixed
+     *
+     */
     public function get_export_fields() {
         if ($this->exportfields !== null) {
             return $this->exportfields;
@@ -267,10 +614,22 @@ class participantsettings {
         return self::$defaultexportmapping;
     }
 
+    /**
+     * Get personuidtype
+     *
+     * @return string
+     *
+     */
     public function get_personuidtype() {
         return $this->personuidtype;
     }
 
+    /**
+     * Get import mappings
+     *
+     * @return mixed
+     *
+     */
     public function get_import_mappings() {
         if ($this->importfieldmapping !== null) {
             return $this->importfieldmapping;
@@ -280,11 +639,22 @@ class participantsettings {
 
     /**
      * Used in unit tests to reset the known list of custom fields.
+     *
+     * @return void
+     *
      */
     public static function reset_custom_fields() {
         self::get_custom_fields(true);
     }
 
+    /**
+     * Get custom fields
+     *
+     * @param bool $reset
+     *
+     * @return mixed
+     *
+     */
     protected static function get_custom_fields($reset = false) {
         global $DB;
         static $customfields = null;
@@ -298,20 +668,39 @@ class participantsettings {
         return $customfields;
     }
 
+    /**
+     * Get possible export fields
+     *
+     * @return array
+     *
+     */
     public static function get_possible_export_fields() {
         return array_merge(self::$possibleexportfields, self::get_custom_fields());
     }
 
+    /**
+     * Get possible import fields
+     *
+     * @return array
+     *
+     */
     public static function get_possible_import_fields() {
         return array_merge(self::$possibleimportfields, self::get_custom_fields());
     }
 
+    /**
+     * Is me
+     *
+     * @return bool
+     *
+     */
     public function is_me() {
         return ($this->itsyou == true);
     }
 
     /**
      * Check if the participant is currently exported.
+     *
      * @return bool
      */
     public function is_exported() {
@@ -322,10 +711,28 @@ class participantsettings {
         return $this->exported;
     }
 
+    /**
+     * Show exported
+     *
+     * @param mixed $exported
+     *
+     * @return mixed
+     *
+     */
     public function show_exported($exported) {
         $this->exported = $exported;
     }
 
+    /**
+     * Load settings
+     *
+     * @param int $ecsid
+     * @param int $mid
+     * @param int $strictness
+     *
+     * @return void
+     *
+     */
     protected function load_settings($ecsid, $mid, $strictness = IGNORE_MISSING) {
         global $DB;
 
@@ -351,6 +758,8 @@ class participantsettings {
      * Set the display name for this participant (and save it in
      * the database, so it can be shown later, without needing to
      * connect to the ECS)
+     *
+     * @return void
      */
     protected function set_display_name() {
         if (empty($this->name)) {
@@ -370,6 +779,14 @@ class participantsettings {
         }
     }
 
+    /**
+     * Save settings
+     *
+     * @param mixed $settings
+     *
+     * @return void
+     *
+     */
     public function save_settings($settings) {
         global $CFG;
 
@@ -515,7 +932,9 @@ class participantsettings {
     /**
      * Check to see if there are any problems with the settings that are about to be saved and return an
      * error message if that is the case
-     * @param $settings
+     *
+     * @param mixed $settings
+     *
      * @return string
      */
     public function check_settings($settings) {
@@ -539,7 +958,9 @@ class participantsettings {
     /**
      * Check to see if any of the settings changes will result in data loss and return an html fragment
      * to notify the user. If no data loss will occur, returns null.
-     * @param $settings
+     *
+     * @param mixed $settings
+     *
      * @return mixed string | null
      */
     public function get_confirm_message($settings) {
@@ -592,6 +1013,14 @@ class participantsettings {
         return implode('<br/>', $ret);
     }
 
+    /**
+     * Set settings
+     *
+     * @param mixed $settings
+     *
+     * @return void
+     *
+     */
     protected function set_settings($settings) {
         foreach (self::$validsettings as $setting) {
             if (isset($settings->$setting)) {
@@ -631,6 +1060,14 @@ class participantsettings {
         }
     }
 
+    /**
+     * Save to database
+     *
+     * @param mixed $settings
+     *
+     * @return bool|int
+     *
+     */
     protected function save_to_database($settings) {
         global $DB;
         $ins = clone $settings;
@@ -651,6 +1088,12 @@ class participantsettings {
         return $DB->insert_record('local_campusconnect_part', $ins);
     }
 
+    /**
+     * Get settings
+     *
+     * @return stdClass
+     *
+     */
     public function get_settings() {
         $ret = new stdClass();
         foreach (self::$validsettings as $setting) {
@@ -662,6 +1105,12 @@ class participantsettings {
         return $ret;
     }
 
+    /**
+     * Delete settings
+     *
+     * @return void
+     *
+     */
     public function delete_settings() {
         global $DB;
 
@@ -671,6 +1120,7 @@ class participantsettings {
 
     /**
      * Check the participant is part of an active ECS.
+     *
      * @return bool
      */
     public function is_active() {
@@ -679,6 +1129,8 @@ class participantsettings {
 
     /**
      * Participant found during the last check of the ECS server, so mark as currently active (if not already).
+     *
+     * @return void
      */
     public function set_active() {
         global $DB;
@@ -692,6 +1144,8 @@ class participantsettings {
 
     /**
      * Participant was NOT found during the last check of the ECS server, so mark as inactive.
+     *
+     * @return void
      */
     public function set_inactive() {
         global $DB;
@@ -703,6 +1157,14 @@ class participantsettings {
         }
     }
 
+    /**
+     * Is custom field
+     *
+     * @param mixed $fieldname
+     *
+     * @return string|bool
+     *
+     */
     public static function is_custom_field($fieldname) {
         $len = strlen(self::CUSTOM_FIELD_PREFIX);
         if (substr($fieldname, 0, $len) == self::CUSTOM_FIELD_PREFIX) {
@@ -711,6 +1173,14 @@ class participantsettings {
         return false;
     }
 
+    /**
+     * Map export data
+     *
+     * @param mixed $user
+     *
+     * @return array
+     *
+     */
     public function map_export_data($user) {
         global $SITE;
 
@@ -764,20 +1234,42 @@ class participantsettings {
         return $ret;
     }
 
+    /**
+     * Get uid prefix
+     *
+     * @return string
+     *
+     */
     public static function get_uid_prefix() {
         global $CFG;
         $siteid = substr(sha1($CFG->wwwroot), 0, 8);
         return 'moodle_'.$siteid.'_usr_';
     }
 
+    /**
+     * Is legacy
+     *
+     * @param mixed $ecsdata
+     *
+     * @return bool
+     *
+     */
     public static function is_legacy($ecsdata) {
         return !isset($ecsdata[courselink::PERSON_ID_TYPE]);
     }
 
+    /**
+     * Map import data
+     *
+     * @param mixed $ecsdata
+     *
+     * @return object
+     *
+     */
     public function map_import_data($ecsdata) {
 
         // Some mappings are hard-coded.
-        $ret = (object)[
+        $ret = (object) [
             'firstname' => $ecsdata['ecs_firstname'],
             'lastname' => $ecsdata['ecs_lastname'],
         ];
@@ -809,6 +1301,7 @@ class participantsettings {
     /**
      * Get a list of all the participants in all the ECS that we are able to
      * export courses to
+     *
      * @return participantsettings[] indexed by ecsid_mid
      */
     public static function list_potential_export_participants() {
@@ -828,6 +1321,7 @@ class participantsettings {
      * Load all the communities we are a member of (including participant lists) from
      * the given ECS
      * @param ecssettings $ecssettings - the ECS to connect to
+     *
      * @return community[] details of the communities
      */
     public static function load_communities(ecssettings $ecssettings) {
@@ -865,7 +1359,10 @@ class participantsettings {
     /**
      * Delete the settings for the participants in this ECS (also deletes
      * and course links created by these participants)
+     *
      * @param int $ecsid
+     *
+     * @return void
      */
     public static function delete_ecs_participant_settings($ecsid) {
         global $DB;
@@ -879,7 +1376,9 @@ class participantsettings {
 
     /**
      * Returns the participant that has import type CMS
+     *
      * @param bool $skipcache do not use the cached value (useful when updating settings)
+     *
      * @throws coding_exception
      * @return mixed participantsettings | false
      */
@@ -908,6 +1407,12 @@ class participantsettings {
         return $participant;
     }
 
+    /**
+     * Update pidtomid
+     *
+     * @return void
+     *
+     */
     protected static function update_pidtomid() {
         global $DB;
         self::$pidtomid = [];
@@ -930,6 +1435,7 @@ class participantsettings {
      *
      * @param int $ecsid
      * @param int $pid
+     *
      * @return int[]
      */
     public static function get_mids_from_pid($ecsid, $pid) {
@@ -942,6 +1448,15 @@ class participantsettings {
         return [];
     }
 
+    /**
+     * Get mids from pids
+     *
+     * @param int $ecsid
+     * @param int $pids
+     *
+     * @return int[]
+     *
+     */
     public static function get_mids_from_pids($ecsid, $pids) {
         if (self::$pidtomid === null) {
             self::update_pidtomid();
@@ -961,9 +1476,12 @@ class participantsettings {
     }
 
     /**
-     * @param $ecsid
-     * @param $pid
-     * @return int|false
+     * Get org abbr
+     *
+     * @param int $ecsid
+     * @param int $pid
+     *
+     * @return mixed
      */
     public static function get_org_abbr($ecsid, $pid) {
         global $DB;

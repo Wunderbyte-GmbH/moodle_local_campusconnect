@@ -17,7 +17,7 @@
 /**
  * ECS settings page for campus connect
  *
- * @package    admin_campusconnect
+ * @package    local_campusconnect
  * @copyright  2012 Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,11 +29,34 @@ global $CFG;
 require_once($CFG->libdir."/formslib.php");
 require_once($CFG->libdir."/form/group.php");
 
+/**
+ * Class to handle rolemapping form on ECS settings page for campus connect
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class campusconnect_rolemapping_form extends moodleform {
 
+    /**
+     * $roles
+     *
+     * @var mixed
+     */
     protected $roles;
+    /**
+     * $mappings
+     *
+     * @var mixed
+     */
     protected $mappings;
 
+    /**
+     * Form definition
+     *
+     * @return void
+     *
+     */
     public function definition() {
         $this->roles = [];
         $roles = role_fix_names(get_all_roles(), context_system::instance(), ROLENAME_ORIGINAL);
@@ -45,11 +68,25 @@ class campusconnect_rolemapping_form extends moodleform {
         }
     }
 
+    /**
+     * Set data
+     *
+     * @param array|stdClass $defaultvalues
+     *
+     * @return void
+     *
+     */
     public function set_data($defaultvalues) {
         $this->mappings = $defaultvalues;
         parent::set_data($defaultvalues);
     }
 
+    /**
+     * Definition after data
+     *
+     * @return void
+     *
+     */
     public function definition_after_data() {
         $mform = $this->_form;
 

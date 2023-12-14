@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Main connection class for CampusConnect
+ * Manage directory tree for CampusConnect
  *
  * @package    local_campusconnect
  * @copyright  2012 Synergy Learning
@@ -27,36 +27,153 @@ namespace local_campusconnect;
 use coding_exception;
 use stdClass;
 
+/**
+ * Class to manage directory tree for CampusConnect
+ *
+ * @package    local_campusconnect
+ * @copyright  2012 Synergy Learning
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class directorytree {
 
+    /**
+     * MODE_PENDING
+     *
+     * @var int
+     */
     const MODE_PENDING = 0;
+
+    /**
+     * MODE_WHOLE
+     *
+     * @var int
+     */
     const MODE_WHOLE = 1;
+
+    /**
+     * MODE_MANUAL
+     *
+     * @var int
+     */
     const MODE_MANUAL = 2;
+
+    /**
+     * MODE_DELETED
+     *
+     * @var int
+     */
     const MODE_DELETED = 3;
 
     /** @var int $recordid */
     protected $recordid = null;
+
+    /**
+     * $resourceid
+     *
+     * @var int
+     */
     protected $resourceid = null;
+
+    /**
+     * $rootid
+     *
+     * @var int
+     */
     protected $rootid = null;
+
+    /**
+     * $title
+     *
+     * @var string
+     */
     protected $title = null;
+
+    /**
+     * $ecsid
+     *
+     * @var int
+     */
     protected $ecsid = null;
+
+    /**
+     * $mid
+     *
+     * @var int
+     */
     protected $mid = null;
+
+    /**
+     * $categoryid
+     *
+     * @var int
+     */
     protected $categoryid = null;
+
+    /**
+     * $mappingmode
+     *
+     * @var mixed
+     */
     protected $mappingmode = null;
 
+    /**
+     * $takeovertitle
+     *
+     * @var string
+     */
     protected $takeovertitle = null;
+
+    /**
+     * $takeoverposition
+     *
+     * @var mixed
+     */
     protected $takeoverposition = null;
+
+    /**
+     * $takeoverallocation
+     *
+     * @var mixed
+     */
     protected $takeoverallocation = null;
 
+    /**
+     * $stillexists
+     *
+     * @var bool
+     */
     protected $stillexists = false;
 
+    /**
+     * $dbfields
+     *
+     * @var array
+     */
     protected static $dbfields = [
         'resourceid', 'rootid', 'title', 'ecsid', 'mid', 'categoryid', 'mappingmode',
         'takeovertitle', 'takeoverposition', 'takeoverallocation',
     ];
+
+    /**
+     * $createemptycategories
+     *
+     * @var mixed|null
+     */
     protected static $createemptycategories = null;
+
+    /**
+     * $enabled
+     *
+     * @var bool|int
+     */
     protected static $enabled = null;
 
+    /**
+     * Constructor
+     *
+     * @param mixed|null $data
+     *
+     */
     public function __construct($data = null) {
         if ($data) {
             // Local_campusconnect_dirroot record loaded from DB.
@@ -64,38 +181,94 @@ class directorytree {
         }
     }
 
+    /**
+     * Get root id
+     *
+     * @return void
+     *
+     */
     public function get_root_id() {
         return $this->rootid;
     }
 
+    /**
+     * Get mode
+     *
+     * @return void
+     *
+     */
     public function get_mode() {
         return $this->mappingmode;
     }
 
+    /**
+     * Is deleted
+     *
+     * @return bool
+     *
+     */
     public function is_deleted() {
         return ($this->mappingmode == self::MODE_DELETED);
     }
 
+    /**
+     * Get title
+     *
+     * @return string
+     *
+     */
     public function get_title() {
         return $this->title;
     }
 
+    /**
+     * Get category id
+     *
+     * @return int
+     *
+     */
     public function get_category_id() {
         return $this->categoryid;
     }
 
+    /**
+     * Should take over title
+     *
+     * @return string
+     *
+     */
     public function should_take_over_title() {
         return $this->takeovertitle;
     }
 
+    /**
+     * Should take over position
+     *
+     * @return mixed
+     *
+     */
     public function should_take_over_position() {
         return $this->takeoverposition;
     }
 
+    /**
+     * Should take over allocation
+     *
+     * @return mixed
+     *
+     */
     public function should_take_over_allocation() {
         return $this->takeoverallocation;
     }
 
+    /**
+     * Update settings
+     *
+     * @param mixed $newsettings
+     *
+     * @return void
+     *
+     */
     public function update_settings($newsettings) {
         global $DB;
 
@@ -119,8 +292,8 @@ class directorytree {
     }
 
     /**
-     * Used during ECS updates to track any trees that no longer
-     * exist on the ECS server
+     * Used during ECS updates to track any trees that no longer exist on the ECS server
+     *
      * @return bool - true if still exists
      */
     public function still_exists() {
@@ -129,6 +302,7 @@ class directorytree {
 
     /**
      * Internal function to set the data loaded from the DB
+     *
      * @param object $data - record from the database
      */
     protected function set_data($data) {
@@ -367,6 +541,12 @@ class directorytree {
         directory::create_all_categories($this->rootid, $this->categoryid);
     }
 
+    /**
+     * Should create empty categories
+     *
+     * @return mixed
+     *
+     */
     public static function should_create_empty_categories() {
         if (is_null(self::$createemptycategories)) {
             self::$createemptycategories = get_config('local_campusconnect', 'createemptycategories');
@@ -374,6 +554,12 @@ class directorytree {
         return self::$createemptycategories;
     }
 
+    /**
+     * Enabled
+     *
+     * @return bool
+     *
+     */
     public static function enabled() {
         if (is_null(self::$enabled)) {
             self::$enabled = get_config('local_campusconnect', 'directorymappingenabled');
@@ -381,11 +567,27 @@ class directorytree {
         return self::$enabled;
     }
 
+    /**
+     * Set enabled
+     *
+     * @param bool|int $enabled
+     *
+     * @return void
+     *
+     */
     public static function set_enabled($enabled) {
         set_config('directorymappingenabled', $enabled, 'local_campusconnect');
         self::$enabled = $enabled;
     }
 
+    /**
+     * Set create empty categories
+     *
+     * @param bool|int $enabled
+     *
+     * @return void
+     *
+     */
     public static function set_create_empty_categories($enabled) {
         set_config('createemptycategories', $enabled, 'local_campusconnect');
         self::$createemptycategories = $enabled;
@@ -401,7 +603,9 @@ class directorytree {
     /**
      * Get a list of all directory trees loaded from ECS servers (only one ECS server
      * and one mid should be providing these, so no parameters needed)
+     *
      * @param bool $includedeleted set to true to include deleted trees
+     *
      * @return directorytree[]
      */
     public static function list_directory_trees($includedeleted = false) {
@@ -420,7 +624,9 @@ class directorytree {
 
     /**
      * Get a single directory tree, identified by its rootid
+     *
      * @param int $rootid
+     *
      * @return directorytree
      */
     public static function get_by_root_id($rootid) {
@@ -432,7 +638,10 @@ class directorytree {
 
     /**
      * If the directory tree format matches the old schema, then update it to the new schema
-     * @param $directories
+     *
+     * @param object $directories
+     *
+     * @return void
      */
     public static function convert_from_old_schema($directories) {
         if (isset($directories->nodes)) {
@@ -476,7 +685,9 @@ class directorytree {
 
     /**
      * Full update of all directory trees from ECS
+     *
      * @param ecssettings $ecssettings
+     *
      * @return object an object containing: ->created = array of resourceids created
      *                            ->updated = array of resourceids updated
      *                            ->deleted = array of resourceids deleted
@@ -732,6 +943,12 @@ class directorytree {
         }
     }
 
+    /**
+     * Check all mappings
+     *
+     * @return void
+     *
+     */
     public static function check_all_mappings() {
         global $DB;
 

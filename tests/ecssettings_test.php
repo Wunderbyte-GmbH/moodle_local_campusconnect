@@ -43,6 +43,7 @@ require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
  */
 /**
  * Class local_campusconnect_ecssettings_test
+ *
  * @package    local_campusconnect
  * @copyright 2016 Davo Smith, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -50,6 +51,8 @@ require_once($CFG->dirroot.'/local/campusconnect/tests/testbase.php');
  * @covers \local_campusconnect\ecssettings
  */
 class ecssettings_test extends campusconnect_base_testcase {
+
+    /** @var array $testdata */
     protected $testdata = [
         'name' => 'test1name',
         'url' => 'http://www.example.com',

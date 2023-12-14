@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Base class for CampusConnect tests - sets up standard ECS connections
+ * Base of CampusConnect tests - sets up standard ECS connections
  *
  * @package   local_campusconnect
  * @copyright 2015 Davo Smith, Synergy Learning
@@ -40,16 +40,29 @@ use local_campusconnect\participantsettings;
  * - none of the participants are members of any other community
  */
 /**
+ * Base class for CampusConnect tests - sets up standard ECS connections
+ *
  * @package    local_campusconnect
  * @copyright 2015 Davo Smith, Synergy Learning
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class campusconnect_base_testcase extends advanced_testcase {
-    /** @var connect[] */
-    protected $connect = [];
+
+    /** @var connect[] $connect */
+    protected $connect  = [];
+
+    /** @var int[] $mid */
     protected $mid = [];
+
+    /** @var string $community */
     protected $community = 'unittest';
 
+    /**
+     * SetUp
+     *
+     * @return void
+     *
+     */
     protected function setUp(): void {
         global $DB;
 
@@ -92,6 +105,12 @@ class campusconnect_base_testcase extends advanced_testcase {
         participantsettings::get_cms_participant(true); // Reset the cached 'cms participant' value.
     }
 
+    /**
+     * TearDown
+     *
+     * @return void
+     *
+     */
     protected function tearDown(): void {
         $this->clear_ecs_resources(event::RES_DIRECTORYTREE);
 
@@ -99,6 +118,14 @@ class campusconnect_base_testcase extends advanced_testcase {
         $this->mid = [];
     }
 
+    /**
+     * Clear ecs resources
+     *
+     * @param string $type
+     *
+     * @return void
+     *
+     */
     protected function clear_ecs_resources($type) {
         foreach ($this->connect as $connect) {
             // Delete all resources sent by each connection.
