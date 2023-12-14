@@ -101,12 +101,8 @@ class ecssettings_test extends campusconnect_base_testcase {
         $settings->delete();
 
         // Check the settings do not exist any more.
-        try {
-            new ecssettings($id);
-            $this->fail('Expected exception was not triggered');
-        } catch (dml_missing_record_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(dml_missing_record_exception::class);
+        new ecssettings($id);
     }
 
     public function test_connect_setting_validation() {
@@ -115,31 +111,19 @@ class ecssettings_test extends campusconnect_base_testcase {
 
         $data = $testdata;
         unset($data['url']);
-        try {
-            $settings->save_settings($data);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($data);
 
         $data = $testdata;
         unset($data['auth']);
-        try {
-            $settings->save_settings($data);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($data);
 
         // Test the AUTH_NONE settings.
         $data = $testdata;
         unset($data['ecsauth']);
-        try {
-            $settings->save_settings($data);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($data);
 
         $data = $testdata;
         $settings->save_settings($data);
@@ -149,21 +133,13 @@ class ecssettings_test extends campusconnect_base_testcase {
         // Test the AUTH_HTTP settings.
         $testdata['auth'] = ecssettings::AUTH_HTTP;
         $testdata['httppass'] = 'pass';
-        try {
-            $settings->save_settings($testdata);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($testdata);
 
         unset($testdata['httppass']);
         $testdata['httpuser'] = 'user';
-        try {
-            $settings->save_settings($testdata);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($testdata);
 
         $testdata['httppass'] = 'pass';
         $settings->save_settings($testdata);
@@ -179,39 +155,23 @@ class ecssettings_test extends campusconnect_base_testcase {
 
         $data = $testdata;
         unset($data['cacertpath']);
-        try {
-            $settings->save_settings($data);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($data);
 
         $data = $testdata;
         unset($data['certpath']);
-        try {
-            $settings->save_settings($data);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($data);
 
         $data = $testdata;
         unset($data['keypath']);
-        try {
-            $settings->save_settings($data);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($data);
 
         $data = $testdata;
         unset($data['keypass']);
-        try {
-            $settings->save_settings($data);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($data);
 
         $data = $testdata;
         $settings->save_settings($data);
@@ -284,27 +244,19 @@ class ecssettings_test extends campusconnect_base_testcase {
         $settings->update_last_cron();
         $this->assertFalse($settings->time_for_cron(), 'Last cron not correctly updated');
 
-        // Check importcategory validation.
+        // Check importcategory validation. Expected coding exception.
         $data = $this->testdata;
         $lastcategory = $DB->get_records('course_categories', [], 'id DESC', 'id', 0, 1);
         $lastcategory = reset($lastcategory);
         $data['importcategory'] = $lastcategory->id + 1;
-        try {
-            $settings->save_settings($data);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($data);
 
-        // Check importrole validation.
+        // Check importrole validation. Expected coding exception.
         $data = $this->testdata;
         $data['importrole'] = 'thisroledoesnotexist';
-        try {
-            $settings->save_settings($data);
-            $this->fail('Expected coding exception');
-        } catch (coding_exception $e) {
-            // Exception expected.
-        }
+        $this->expectException(coding_exception::class);
+        $settings->save_settings($data);
     }
 
     public function test_notify_setting() {

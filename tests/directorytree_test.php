@@ -201,30 +201,21 @@ class directorytree_test extends campusconnect_base_testcase {
         $dirtree->set_mode(directorytree::MODE_MANUAL);
         $this->assertEquals(directorytree::MODE_MANUAL, $dirtree->get_mode());
 
-        try {
-            $dirtree->set_mode(directorytree::MODE_WHOLE);
-            $this->fail('Should not be able to change tree mode from MANUAL => WHOLE');
-        } catch (coding_exception $e) {
-            // Exception occurred as expected.
-        }
+        // Should not be able to change tree mode from MANUAL => WHOLE.
+        $this->expectException(\coding_exception::class);
+        $dirtree->set_mode(directorytree::MODE_WHOLE);
 
-        try {
-            $dirtree->set_mode(directorytree::MODE_PENDING);
-            $this->fail('Should not be able to change tree mode from MANUAL => PENDING');
-        } catch (coding_exception $e) {
-            // Exception occurred as expected.
-        }
+        // Should not be able to change tree mode from MANUAL => PENDING.
+        $this->expectException(\coding_exception::class);
+        $dirtree->set_mode(directorytree::MODE_PENDING);
 
         $data->rootid = 9;
         $dirtree = new directorytree();
         $dirtree->create($data->resourceid, $data->rootid, $data->title, $data->ecsid, $data->mid);
         $dirtree->set_mode(directorytree::MODE_WHOLE);
-        try {
-            $dirtree->set_mode(directorytree::MODE_PENDING);
-            $this->fail('Should not be able to change tree mode from WHOLE => PENDING');
-        } catch (coding_exception $e) {
-            // Exception occurred as expected.
-        }
+        // Should not be able to change tree mode from WHOLE => PENDING.
+        $this->expectException(\coding_exception::class);
+        $dirtree->set_mode(directorytree::MODE_PENDING);
     }
 
     public function test_directorytree_delete() {
@@ -241,20 +232,12 @@ class directorytree_test extends campusconnect_base_testcase {
         $dirtree->delete();
 
         $this->assertEquals(directorytree::MODE_DELETED, $dirtree->get_mode());
-
-        try {
-            $dirtree->set_mode(directorytree::MODE_WHOLE);
-            $this->fail('Should not be able to change tree mode from DELETED => WHOLE');
-        } catch (coding_exception $e) {
-            // Exception occurred as expected.
-        }
-
-        try {
-            $dirtree->set_mode(directorytree::MODE_MANUAL);
-            $this->fail('Should not be able to change tree mode from DELETED => MANUAL');
-        } catch (coding_exception $e) {
-            // Exception occurred as expected.
-        }
+        // Should not be able to change tree mode from DELETED => WHOLE.
+        $this->expectException(\coding_exception::class);
+        $dirtree->set_mode(directorytree::MODE_WHOLE);
+        // Should not be able to change tree mode from DELETED => MANUAL.
+        $this->expectException(\coding_exception::class);
+        $dirtree->set_mode(directorytree::MODE_MANUAL);
     }
 
     public function test_list_directory_trees() {

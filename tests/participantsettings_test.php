@@ -130,13 +130,9 @@ class participantsettings_test extends campusconnect_base_testcase {
         $participant->save_settings($settings);
         $settings['importtype'] = participantsettings::IMPORT_CMS;
         $participant->save_settings($settings);
-        // Check validation of invalid settings.
+        // Check validation of invalid settings. Expected coding_exception.
         $settings['importtype'] = 500;
-        try {
-            $participant->save_settings($settings);
-            $this->fail('Expected coding_exception');
-        } catch (coding_exception $e) {
-            // Expected exception.
-        }
+        $this->expectException(\coding_exception::class);
+        $participant->save_settings($settings);
     }
 }

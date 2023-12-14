@@ -79,12 +79,10 @@ class metadata_test extends campusconnect_base_testcase {
         $this->assertEquals($testmappings, $mappings, 'Expected get_import_mappings to return the mappings previously set');
 
         // Test setting invalid mapping.
-        try {
-            $meta->set_import_mapping('startdate', 'title');
-            $this->fail("Should not be able to map the remote 'title' field onto the local 'startdate' field");
-        } catch (coding_exception $e) {
-            // Expected exception.
-        }
+        // Should not be able to map the remote 'title' field onto the local 'startdate' field.
+        $this->expectException(\coding_exception::class);
+        $meta->set_import_mapping('startdate', 'title');
+
         $mappings = $meta->get_import_mappings();
         $this->assertEquals($testmappings, $mappings, "Able to set an invalid mapping 'startdate' = 'title'");
 
@@ -144,12 +142,10 @@ class metadata_test extends campusconnect_base_testcase {
         $this->assertEquals($testmappings, $mappings, 'Expected get_export_mappings to return the mappings previously set');
 
         // Test setting invalid mapping.
-        try {
-            $meta->set_export_mapping('firstDate', 'fullname');
-            $this->fail("Should not be able to map the local 'fullname' field onto the remote 'firstname' field");
-        } catch (coding_exception $e) {
-            // Expected exception.
-        }
+        // Should not be able to map the local 'fullname' field onto the remote 'firstname' field.
+        $this->expectException(\coding_exception::class);
+        $meta->set_export_mapping('firstDate', 'fullname');
+
         $mappings = $meta->get_export_mappings();
         $this->assertEquals($testmappings, $mappings, "Able to set an invalid mapping 'begin' = 'fullname'");
 
