@@ -312,8 +312,6 @@ class filtering {
                         $ret[$catid] = [];
                     }
                     $ret[$catid][$validattrib] = $attribs[$validattrib];
-                } else {
-                    // Continue 2; // Once a valid attribute is missing, skip all the rest.
                 }
             }
         }
