@@ -229,7 +229,6 @@ class course {
         $currcourses = self::get_by_resourceid($resourceid, $ecsid);
         if (empty($currcourses)) {
             return self::create($resourceid, $ecssettings, $course, $transferdetails);
-            // throw new course_exception("Cannot update course resource $resourceid - it doesn't exist");
         }
 
         $currcourse = reset($currcourses);
