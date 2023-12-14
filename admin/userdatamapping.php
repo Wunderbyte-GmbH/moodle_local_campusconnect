@@ -68,7 +68,10 @@ if (!$part) {
                 $allcommunities[$ecsname] = $communities;
             }
         } catch (connect_exception $e) {
-            // Ignore any exceptions.
+            // Ignore exceptions if not in debugging.
+            if (debugging()) {
+                throw new connect_exception('Debug mode is ON, error: '.$e->getMessage());
+            }
         }
     }
 

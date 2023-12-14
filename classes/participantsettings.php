@@ -254,6 +254,12 @@ class participantsettings {
         return self::$defaultexportfields;
     }
 
+    /**
+     * Get export mappings
+     *
+     * @return mixed
+     *
+     */
     public function get_export_mappings() {
         if ($this->exportfieldmapping !== null) {
             return $this->exportfieldmapping;
@@ -498,11 +504,10 @@ class participantsettings {
             }
 
             if (isset($settings->export)) {
-                if ($settings->export) {
-                    // Nothing to do here - will be updated at next cron.
-                } else {
+                if (empty($settings->export)) {
                     export::delete_mid_exports($this);
                 }
+                // Nothing to do if not empty - will be updated at next cron.
             }
         }
     }
@@ -574,9 +579,11 @@ class participantsettings {
             }
         }
 
-        if ($disablecmsimport) {
-            // TODO davo - list the changes that would result from disabling the CMS import type.
-        }
+        // phpcs:disable
+        // TODO davo - list the changes that would result from disabling the CMS import type.
+        //if ($disablecmsimport) {
+        //}
+        // phpcs:enable
 
         if (empty($ret)) {
             return null;

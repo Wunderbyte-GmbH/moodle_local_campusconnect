@@ -133,7 +133,10 @@ class course_url {
                     $connect->delete_resource($courseurl->urlresourceid, event::RES_COURSE_URL);
                     $DB->delete_records('local_campusconnect_crs', ['id' => $courseurl->id]);
                 } catch (connect_exception $e) {
-                    // Ignore exceptions - resource may no longer exist.
+                    // Ignore exceptions if not in debugging (resource may no longer exist).
+                    if (debugging()) {
+                        throw new connect_exception('Debug mode is ON, error: '.$e->getMessage());
+                    }
                 }
                 continue;
             }
