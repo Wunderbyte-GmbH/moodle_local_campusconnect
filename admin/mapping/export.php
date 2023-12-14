@@ -52,30 +52,11 @@ if ($mform->is_cancelled()) {
                 $courselinkdata[$ecsid][$fieldname] = $post->{$fullfieldname};
             }
         }
-        /*
-        // No exporting of courses, just course links.
-        foreach (metadata::list_remote_fields(false) as $fieldname) {
-            $fullfieldname = $ecsid.'_'.$fieldname.'_course';
-            if (isset($post->{$fullfieldname})) {
-                $coursedata[$ecsid][$fieldname] = $post->{$fullfieldname};
-            }
-        }
-        */
     }
 
     foreach ($ecslist as $ecsid => $ecsname) {
         if (isset($coursedata[$ecsid]) || isset($courselinkdata[$ecsid])) {
             $ecssettings = new ecssettings($ecsid);
-            /*
-            // No exporting of courses, just course links.
-            if (isset($coursedata[$ecsid])) {
-                $metadata = new metadata($ecssettings, false);
-                if (!$metadata->set_export_mappings($coursedata[$ecsid])) {
-                    list ($errmsg, $errfield) = $metadata->get_last_error();
-                    $errors[$ecsid.'_'.$errfield.'_course'] = $errmsg;
-                }
-            }
-            */
             if (isset($courselinkdata[$ecsid])) {
                 $metadata = new metadata($ecssettings, true);
                 if (!$metadata->set_export_mappings($courselinkdata[$ecsid])) {
@@ -133,45 +114,6 @@ class campusconnect_export_form extends moodleform {
 
             $strunmapped = get_string('unmapped', 'local_campusconnect');
             $strnomappings = get_string('nomappings', 'local_campusconnect');
-
-            /*
-            // No exporting of courses, just course links.
-            $mform->addElement('html', "<h3>".get_string('course', 'local_campusconnect')."</h3>");
-
-            $ecssettings = new ecssettings($ecsid);
-            $metadata = new metadata($ecssettings, false);
-            $remotefields = $metadata->list_remote_fields(false);
-            $currentmappings = $metadata->get_export_mappings();
-
-            foreach ($remotefields as $remotemap) {
-                $elname = $ecsid.'_'.$remotemap.'_course';
-                if ($remotemap == 'summary') {
-                    $mform->addElement('editor', $elname, $remotemap);
-                    $mform->setType($elname, PARAM_RAW);
-                    $mform->setDefault($elname, array('text'=>$currentmappings[$remotemap], 'format'=>FORMAT_HTML));
-                } else if ($metadata->is_remote_text_field($remotemap, false)) {
-                    $mform->addElement('text', $elname, $remotemap);
-                    if (isset($currentmappings[$remotemap])) {
-                        $mform->setDefault($elname, $currentmappings[$remotemap]);
-                    }
-                    $mform->setType($elname, PARAM_RAW);
-                } else {
-                    $maparray = $metadata->list_local_to_remote_fields($remotemap, false);
-                    if ($maparray) {
-                        $maps = array('' => $strunmapped);
-                        foreach ($maparray as $i) {
-                            $maps[$i] = $i;
-                        }
-                    } else {
-                        $maps = array('' => $strnomappings);
-                    }
-                    $mform->addElement('select', $elname, $remotemap, $maps);
-                    if (isset($currentmappings[$remotemap])) {
-                        $mform->setDefault($elname, $currentmappings[$remotemap]);
-                    }
-                }
-            }
-            */
 
             $mform->addElement('html', "<h3>".get_string('externalcourse', 'local_campusconnect')."</h3>");
 
