@@ -48,7 +48,7 @@ class participantsettings_test extends campusconnect_base_testcase {
         $this->assertCount(1, $communities, 'Expected unittest1 to be part of just one community');
         $community = reset($communities);
         $this->assertEquals('unittest', $community->name, "Expected the community to be called 'unittest'");
-
+        // phpcs:ignore
         /** @var $parts participantsettings[] */
         $parts = $community->participants;
         $this->assertCount(3, $parts, "Expected 3 participants in the 'unittest' community");
@@ -108,6 +108,7 @@ class participantsettings_test extends campusconnect_base_testcase {
         // Get the first participant in the community.
         $communities = participantsettings::load_communities($this->connect[1]->get_settings());
         $community = reset($communities);
+        // phpcs:ignore
         /** @var $participant participantsettings */
         $participant = reset($community->participants);
 

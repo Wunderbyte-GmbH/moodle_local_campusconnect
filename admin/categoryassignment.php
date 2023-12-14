@@ -45,7 +45,7 @@ class campusconnect_category_form extends moodleform {
         $mform->addElement('header', 'categoryassignment', get_string('categoryassignment', 'local_campusconnect'));
 
         $cats = [];
-        $categories = coursecat::get(0)->get_children();
+        $categories = \core_course_category::get(0)->get_children();
         foreach ($categories as $category) {
             $cats[$category->id] = $category->name;
         }
@@ -64,6 +64,7 @@ class campusconnect_category_form extends moodleform {
         $mform->setDefault('cc_mapping', 'mapping_fixed');
 
         $mform->addElement('text', 'attribute', get_string('attribute', 'local_campusconnect'));
+        $mform->setType('crstitle', PARAM_TEXT);
 
         $mform->addElement('date_selector', 'daterangefrom', get_string('from'));
         $mform->addElement('date_selector', 'daterangeto', get_string('to'));

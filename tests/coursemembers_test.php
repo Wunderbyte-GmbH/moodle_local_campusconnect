@@ -1133,7 +1133,7 @@ class coursemembers_test extends advanced_testcase {
         $members->members[] = (object)[
             'personID' => 'user6@example.com', // Add an extra 'user6' (who does not yet exist on the system).
             'personIDtype' => 'ecs_email',
-            'role' => 2, // Assistant (Moodle: 'teacher').
+            'role' => 2, // This is 'Course creators' Moodle role.
             'groups' => [
                 (object)['num' => 1], // Enrol into 'Test Group2'.
             ],

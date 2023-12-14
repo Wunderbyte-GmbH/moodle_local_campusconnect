@@ -76,6 +76,7 @@ class export_test extends campusconnect_base_testcase {
 
     public function test_list_participants() {
         $export = new export(-10);
+        // phpcs:ignore
         /** @var $participants participantsettings[] */
         $participants = $export->list_participants();
 
@@ -100,8 +101,10 @@ class export_test extends campusconnect_base_testcase {
         $this->assertCount(0, $export->list_current_exports(), 'Course exported participants list should be empty');
 
         // Check exporting to one participant works as expected.
+        // phpcs:ignore
         /** @var $potentialexports participantsettings[] */
         $potentialexports = $export->list_participants();
+        // phpcs:ignore
         /** @var $potential participantsettings[] */
         $potential = [];
         foreach ($potentialexports as $part) {
@@ -174,9 +177,10 @@ class export_test extends campusconnect_base_testcase {
 
     public function test_clear_exports() {
         $export = new export(-10);
-
+        // phpcs:ignore
         /** @var $potentialexports participantsettings[] */
         $potentialexports = $export->list_participants();
+        // phpcs:ignore
         /** @var $potential participantsettings[] */
         $potential = [];
         foreach ($potentialexports as $part) {
@@ -226,9 +230,10 @@ class export_test extends campusconnect_base_testcase {
                                       'startdate' => mktime(12, 0, 0, 4, 1, 2012),
                                       'visible' => 1];
         $coursedata = [-10 => $exportcourse];
-
+        // phpcs:ignore
         /** @var $potentialexports participantsettings[] */
         $potentialexports = $export->list_participants();
+        // phpcs:ignore
         /** @var $potential participantsettings[] */
         $potential = [];
         foreach ($potentialexports as $part) {
