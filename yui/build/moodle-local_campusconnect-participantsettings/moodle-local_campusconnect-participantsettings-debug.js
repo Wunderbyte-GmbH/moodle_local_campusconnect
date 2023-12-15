@@ -23,7 +23,7 @@ YUI.add('moodle-local_campusconnect-participantsettings', function (Y, NAME) {
  * @copyright 2014 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+/* eslint-disable camelcase */
 M.local_campusconnect = M.local_campusconnect || {};
 M.local_campusconnect.participantsettings = {
     participantIdentifiers: [],
@@ -35,26 +35,35 @@ M.local_campusconnect.participantsettings = {
             this.participantIdentifiers.push(el.get('value'));
         }, this);
 
-        Y.one('body').delegate('click', function() { this.updateDisabled(); }, '.participantsettings input', this);
+        Y.one('body').delegate('click', function() {
+            this.updateDisabled();
+        }, '.participantsettings input', this);
 
         // Handle warnings about unsaved changes when navigating.
-        Y.one('body').delegate('click', function() { this.hasChanges = true; }, '.participantsettings input[type=checkbox]', this);
-        Y.one('body').delegate('change', function() { this.hasChanges = true; }, '.participantsettings select', this);
+        Y.one('body').delegate('click', function() {
+            this.hasChanges = true;
+        }, '.participantsettings input[type=checkbox]', this);
+        Y.one('body').delegate('change', function() {
+            this.hasChanges = true;
+        }, '.participantsettings select', this);
 
-        Y.all('form').on('submit', function() { this.hasChanges = false; }, this); // No warning if form saved.
+        Y.all('form').on('submit', function() {
+            this.hasChanges = false;
+        }, this); // No warning if form saved.
 
         var self = this;
         window.onbeforeunload = function(e) {
             if (self.hasChanges) {
                 var warningmessage = M.util.get_string('changesmadereallygoaway', 'moodle');
                 if (M.cfg.behatsiterunning) {
-                    return;
+                    return '';
                 }
                 if (e) {
                     e.returnValue = warningmessage;
                 }
                 return warningmessage;
             }
+            return '';
         };
 
         this.updateDisabled();
