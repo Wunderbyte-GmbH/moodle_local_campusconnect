@@ -109,6 +109,7 @@ class metadata {
         'lecturers_lastName' => 'personlist',
         'lecturers_firstName' => 'personlist',
         'lecturers' => 'personlist',
+        'abstract' => 'string',
     ];
 
     /**

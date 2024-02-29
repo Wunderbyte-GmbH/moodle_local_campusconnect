@@ -25,6 +25,7 @@
 namespace local_campusconnect;
 
 use coding_exception;
+use core_user;
 use html_writer;
 use moodle_url;
 
@@ -276,7 +277,14 @@ class notification {
             return;
         }
         $admin = get_admin();
-        $userobjs = $DB->get_records_list('user', 'username', $users, '', 'id, email, mailformat, '.get_all_user_name_fields(true));
+
+        $userfields = core_user\fields::for_name()->get_required_fields();
+        $userobjs = $DB->get_records_list(
+            'user',
+            'username',
+            $users,
+            '',
+            'id, email, mailformat, ' . implode(',', $userfields));
         foreach ($userobjs as $user) {
             email_to_user($user, $admin, $subject, $bodytext, $body);
         }

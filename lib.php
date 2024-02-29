@@ -37,53 +37,6 @@ use local_campusconnect\participantsettings;
 use local_campusconnect\receivequeue;
 
 /**
- * Configire cron
- *
- * @return void
- *
- */
-function local_campusconnect_cron() {
-    // Get updates from all ECS.
-    $ecslist = ecssettings::list_ecs();
-    foreach ($ecslist as $ecsid => $name) {
-        $ecssettings = new ecssettings($ecsid);
-
-        if ($ecssettings->time_for_cron()) {
-            mtrace("Checking for updates on ECS server '".$ecssettings->get_name()."'");
-            $connect = new connect($ecssettings);
-            $queue = new receivequeue();
-
-            try {
-                $queue->update_from_ecs($connect);
-                $queue->process_queue($ecssettings);
-            } catch (connect_exception $e) {
-                local_campusconnect_ecs_error_notification($ecssettings, $e->getMessage());
-            }
-
-            mtrace("Sending updates to ECS server '".$ecssettings->get_name()."'");
-            try {
-                export::update_ecs($connect);
-                course_url::update_ecs($connect);
-                enrolment::update_ecs($connect);
-            } catch (connect_exception $e) {
-                local_campusconnect_ecs_error_notification($ecssettings, $e->getMessage());
-            }
-
-            $cms = participantsettings::get_cms_participant();
-            if ($cms && $cms->get_ecs_id() == $ecssettings->get_id()) {
-                // If we are updating from the ECS with the CMS attached, then check the directory mappings (and sort order).
-                directorytree::check_all_mappings();
-            }
-
-            mtrace("Emailing any necessary notifications for '".$ecssettings->get_name()."'");
-            notification::send_notifications($ecssettings);
-
-            $ecssettings->update_last_cron();
-        }
-    }
-}
-
-/**
  * Sends a message out to all admin users if there is an ECS connection problem
  * (message is 'from' the first admin user)
  * @param ecssettings $ecssettings
