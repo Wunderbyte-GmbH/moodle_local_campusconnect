@@ -17,7 +17,7 @@
 /**
  * Scheduled task that removes relicts and unnecessary artifacts from the DB.
  *
- * @package mod_booking
+ * @package local_campusconnect
  * @copyright 2023 Wunderbyte GmbH <info@wunderbyte.at>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,7 +42,7 @@ require_once($CFG->dirroot.'/local/campusconnect/lib.php');
 /**
  * Class to handle scheduled task that removes relicts and unnecessary artifacts from the DB.
  *
- * @package mod_booking
+ * @package local_campusconnect
  * @copyright 2024 Wunderbyte GmbH <info@wunderbyte.at>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

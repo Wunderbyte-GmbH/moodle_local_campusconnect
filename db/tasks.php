@@ -17,7 +17,7 @@
 /**
  * Booking module scheduled tasks definition
  *
- * @package    mod_booking
+ * @package    local_campusconnect
  * @copyright  2009-2023 David Bogner
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
