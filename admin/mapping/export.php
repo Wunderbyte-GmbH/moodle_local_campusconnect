@@ -122,7 +122,7 @@ class campusconnect_export_form extends moodleform {
             $mform->addElement('hidden', 'type', 'export');
             $mform->setType('type', PARAM_ALPHA);
 
-            $mform->addElement('header');
+            $mform->addElement('header', '');
             $mform->addElement('html', "<h2>$ecsname</h2>");
 
             $strunmapped = get_string('unmapped', 'local_campusconnect');
