@@ -615,6 +615,7 @@ class export {
                     $course = $DB->get_record('course', ['id' => $courseid]);
                     $data = $metadata->map_course_to_remote($course);
                     $data->url = self::get_course_url($course);
+                    $data->courseID = $courseid;
 
                     if (!$preview) {
                         $connect->update_resource($resourceid, event::RES_COURSELINK, $data, null, $mids);
