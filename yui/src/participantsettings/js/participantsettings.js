@@ -77,6 +77,9 @@ M.local_campusconnect.participantsettings = {
     },
 
     updateDisabledForParticipant: function(partid) {
+
+        // eslint-disable-next-line no-console
+        console.log('updateDisabledForParticipant');
         var importEnabled, exportEnabled, tokenEnabled;
 
         importEnabled = Y.one('#import_' + partid).get('checked');
@@ -87,18 +90,26 @@ M.local_campusconnect.participantsettings = {
             this.enableCheckbox('importtoken_' + partid, true);
             tokenEnabled = Y.one('#importtoken_' + partid).get('checked');
             this.enableCheckbox('uselegacy_' + partid, tokenEnabled);
+            this.enableCheckbox('oauth2import_' + partid, true);
+            this.enableCheckbox('shibbolethimport_' + partid, true);
         } else {
             this.enableCheckbox('importenrolment_' + partid, false);
             this.enableCheckbox('importtoken_' + partid, false);
             this.enableCheckbox('uselegacy_' + partid, false);
+            this.enableCheckbox('oauth2import_' + partid, false);
+            this.enableCheckbox('shibbolethimport_' + partid, false);
         }
 
         if (exportEnabled) {
             this.enableCheckbox('exportenrolment_' + partid, true);
             this.enableCheckbox('exporttoken_' + partid, true);
+            this.enableCheckbox('oauth2export_' + partid, true);
+            this.enableCheckbox('shibbolethexport_' + partid, true);
         } else {
             this.enableCheckbox('exportenrolment_' + partid, false);
             this.enableCheckbox('exporttoken_' + partid, false);
+            this.enableCheckbox('oauth2export_' + partid, false);
+            this.enableCheckbox('shibbolethexport_' + partid, false);
         }
     },
 

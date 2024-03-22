@@ -25,6 +25,8 @@
 namespace local_campusconnect;
 
 use coding_exception;
+use core_course\analytics\target\course_enrolments;
+use enrol_plugin;
 use html_writer;
 use stdClass;
 
@@ -352,6 +354,29 @@ class courselink {
 
             $DB->insert_record('local_campusconnect_clink', $ins);
 
+            // We need to make sure guest access is enabled on all courses by default.
+            if ($plugin = enrol_get_plugin('guest')) {
+                $instance = null;
+                while ($instance === null) {
+                    // First, get all enrollement plugins.
+                    $instances = enrol_get_instances($course->id, false);
+                    // Now check if guest enrollement is present & enabled.
+                    $instances = array_filter($instances, fn($a) => $a->enrol === 'guest');
+
+                    // If there was no guest at all, we need to install it.
+                    if (count($instances) < 1) {
+                        $plugin->add_default_instance($course);
+                    } else {
+                        foreach ($instances as $instance) {
+                            if ($instance->status != 0) {
+                                // We need to enable it.
+                                $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
+                            }
+                        }
+                    }
+                }
+            }
+
             notification::queue_message($settings->get_id(),
                                         notification::MESSAGE_IMPORT_COURSELINK,
                                         notification::TYPE_CREATE,
@@ -442,6 +467,12 @@ class courselink {
                 // Course still exists - update it.
                 $coursedata->id = $currlink->courseid;
                 update_course($coursedata);
+
+                $course = $DB->get_record('course', ['id' => $coursedata->id]);
+
+                // TODO: Make sure guest account is activated.
+                $plugin = enrol_get_plugin('guest');
+                $plugin->add_default_instance($course);
 
                 notification::queue_message($settings->get_id(),
                                             notification::MESSAGE_IMPORT_COURSELINK,
@@ -624,7 +655,7 @@ class courselink {
         if (!isguestuser() && $participant->is_import_token_enabled()) {
 
             $userdata = $participant->map_export_data($user);
-            $userparams = http_build_query($userdata, null, '&');
+            $userparams = http_build_query($userdata, '', '&');
 
             // Add the auth token.
             if (strpos($url, '?') !== false) {

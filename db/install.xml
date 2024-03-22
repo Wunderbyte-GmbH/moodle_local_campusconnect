@@ -82,6 +82,10 @@
         <FIELD NAME="exportfieldmapping" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Mapping of ECS fields =&amp;gt; Moodle fields (serialised)"/>
         <FIELD NAME="importfieldmapping" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Mapping ecs field =&amp;gt; Moodle field (serialised)"/>
         <FIELD NAME="orgabbr" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The abbreviation for this organisation"/>
+        <FIELD NAME="oauth2export" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="shibbolethexport" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="oauth2import" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="shibbolethimport" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

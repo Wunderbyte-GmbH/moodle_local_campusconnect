@@ -72,11 +72,18 @@ if (optional_param('saveparticipants', false, PARAM_TEXT)) {
     $export = optional_param_array('export', [], PARAM_ALPHANUMEXT);
     $exportenrolment = optional_param_array('exportenrolment', [], PARAM_ALPHANUMEXT);
     $exporttoken = optional_param_array('exporttoken', [], PARAM_ALPHANUMEXT);
+
+    $oauth2export = optional_param_array('oauth2export', [], PARAM_ALPHANUMEXT);
+    $shibbolethexport = optional_param_array('shibbolethexport', [], PARAM_ALPHANUMEXT);
+
     $uselegacy = optional_param_array('uselegacy', [], PARAM_ALPHANUMEXT);
     // Array of participant identifiers to import from.
     $import = optional_param_array('import', [], PARAM_ALPHANUMEXT);
     $importenrolment = optional_param_array('importenrolment', [], PARAM_ALPHANUMEXT);
     $importtoken = optional_param_array('importtoken', [], PARAM_ALPHANUMEXT);
+    $oauth2import = optional_param_array('oauth2import', [], PARAM_ALPHANUMEXT);
+    $shibbolethimport = optional_param_array('shibbolethimport', [], PARAM_ALPHANUMEXT);
+
     // Array of import types (indexed by participant identifiers).
     $importtypes = required_param_array('importtype', PARAM_INT);
 
@@ -96,9 +103,13 @@ if (optional_param('saveparticipants', false, PARAM_TEXT)) {
                 $tosave->import = in_array($identifier, $import);
                 $tosave->importenrolment = in_array($identifier, $importenrolment);
                 $tosave->importtoken = in_array($identifier, $importtoken);
+                $tosave->oauth2import = in_array($identifier, $oauth2import);
+                $tosave->shibbolethimport = in_array($identifier, $shibbolethimport);
                 $tosave->export = in_array($identifier, $export);
                 $tosave->exportenrolment = in_array($identifier, $exportenrolment);
                 $tosave->exporttoken = in_array($identifier, $exporttoken);
+                $tosave->oauth2export = in_array($identifier, $oauth2export);
+                $tosave->shibbolethexport = in_array($identifier, $shibbolethexport);
                 $tosave->uselegacy = in_array($identifier, $uselegacy);
                 $tosave->importtype = $importtypes[$identifier];
 
@@ -301,6 +312,19 @@ foreach ($allcommunities as $ecsname => $communities) {
                                            $participant->is_export_token_enabled(),
                                            get_string('authenticationtoken', 'local_campusconnect'),
                                            ['id' => 'exporttoken_'.$partid]);
+
+                echo '<br/>';
+                echo html_writer::checkbox('oauth2export[]', $partid,
+                                            $participant->is_oauth2_export_enabled(),
+                                            get_string('oauth2export', 'local_campusconnect'),
+                                            ['id' => 'oauth2export_'.$partid]);
+
+                echo '<br/>';
+                echo html_writer::checkbox('shibbolethexport[]', $partid,
+                                            $participant->is_shibboleth_export_enabled(),
+                                            get_string('shibbolethexport', 'local_campusconnect'),
+                                            ['id' => 'shibbolethexport_'.$partid]);
+
                 if ($participant->is_export_token_enabled()) {
                     echo $userdatalink;
                 }
@@ -325,9 +349,22 @@ foreach ($allcommunities as $ecsname => $communities) {
                                            $participant->is_legacy_export(),
                                            get_string('uselegacytoken', 'local_campusconnect'),
                                            ['id' => 'uselegacy_'.$partid]);
+                echo '<br/>';
+                echo html_writer::checkbox('oauth2import[]', $partid,
+                                            $participant->is_oauth2_import_enabled(),
+                                            get_string('oauth2import', 'local_campusconnect'),
+                                            ['id' => 'oauth2import_'.$partid]);
+
+                echo '<br/>';
+                echo html_writer::checkbox('shibbolethimport[]', $partid,
+                                            $participant->is_shibboleth_import_enabled(),
+                                            get_string('shibbolethimport', 'local_campusconnect'),
+                                            ['id' => 'shibbolethimport_'.$partid]);
+
                 if ($participant->is_import_token_enabled()) {
                     echo $userdatalink;
                 }
+
                 echo '<br/>';
                 echo '</td>';
                 echo "<td style='text-align: center'>";

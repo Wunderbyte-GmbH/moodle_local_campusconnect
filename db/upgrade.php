@@ -958,5 +958,41 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2016111700, 'local', 'campusconnect');
     }
 
+    if ($oldversion < 2024032200) {
+
+        // Define field oauth2export to be added to local_campusconnect_part.
+        $table = new xmldb_table('local_campusconnect_part');
+        $field = new xmldb_field('oauth2export', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'orgabbr');
+
+        // Conditionally launch add field oauth2export.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('shibbolethexport', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'oauth2export');
+
+        // Conditionally launch add field shibbolethexport.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('oauth2import', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'shibbolethexport');
+
+        // Conditionally launch add field oauth2import.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('shibbolethimport', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'oauth2import');
+
+        // Conditionally launch add field shibbolethimport.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Campusconnect savepoint reached.
+        upgrade_plugin_savepoint(true, 2024032200, 'local', 'campusconnect');
+    }
+
     return true;
 }

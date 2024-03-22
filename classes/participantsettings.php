@@ -113,6 +113,20 @@ class participantsettings {
     protected $exporttoken = true;
 
     /**
+     * Use OAuth2 when a user from a remote site follows an exported course link.
+     *
+     * @var bool
+     */
+    protected $oauth2export = true;
+
+    /**
+     * Use Shibboleth when a user from a remote site follows an exported course link.
+     *
+     * @var bool
+     */
+    protected $shibbolethexport = true;
+
+    /**
      * $import
      *
      * @var bool
@@ -132,6 +146,20 @@ class participantsettings {
      * @var bool
      */
     protected $importtoken = true;
+
+    /**
+     * Use OAuth2when the user follows an imported course link.
+     *
+     * @var bool
+     */
+    protected $oauth2import = true;
+
+    /**
+     * Use Shibboleth when the user follows an imported course link.
+     *
+     * @var bool
+     */
+    protected $shibbolethimport = true;
 
     /**
      * $importtype
@@ -259,8 +287,8 @@ class participantsettings {
      * @var array
      */
     protected static $validsettings = [
-        'export', 'exportenrolment', 'exporttoken',
-        'import', 'importenrolment', 'importtoken', 'importtype',
+        'export', 'exportenrolment', 'exporttoken', 'oauth2export', 'shibbolethexport',
+        'import', 'importenrolment', 'importtoken', 'importtype', 'oauth2import', 'shibbolethimport',
         'uselegacy', 'personuidtype', 'exportfields', 'exportfieldmapping',
         'importfieldmapping',
     ];
@@ -459,6 +487,26 @@ class participantsettings {
     }
 
     /**
+     * Is OAuth2 export enabled
+     *
+     * @return bool
+     *
+     */
+    public function is_oauth2_export_enabled() {
+        return ($this->export && $this->oauth2export);
+    }
+
+    /**
+     * Is Shibboleth export enabled
+     *
+     * @return bool
+     *
+     */
+    public function is_shibboleth_export_enabled() {
+        return ($this->export && $this->shibbolethexport);
+    }
+
+    /**
      * Is export enrolment enabled
      *
      * @return bool
@@ -496,6 +544,26 @@ class participantsettings {
      */
     public function is_import_token_enabled() {
         return ($this->import && $this->importtoken);
+    }
+
+    /**
+     * Is OAuth2 import enabled
+     *
+     * @return bool
+     *
+     */
+    public function is_oauth2_import_enabled() {
+        return ($this->export && $this->oauth2import);
+    }
+
+    /**
+     * Is Shibboleth export enabled
+     *
+     * @return bool
+     *
+     */
+    public function is_shibboleth_import_enabled() {
+        return ($this->export && $this->shibbolethimport);
     }
 
     /**
@@ -794,7 +862,10 @@ class participantsettings {
         $settings = (object)$settings;
 
         // Check to see if anything has changed and all settings are valid.
-        $checksettings = ['export', 'exportenrolment', 'exporttoken', 'import', 'importenrolment', 'importtoken', 'uselegacy'];
+        $checksettings = [
+            'export', 'exportenrolment', 'exporttoken', 'oauth2export', 'shibbolethexport',
+            'import', 'importenrolment', 'importtoken', 'importtype', 'oauth2import', 'shibbolethimport',
+            'uselegacy'];
         foreach ($checksettings as $setting) {
             if ($this->$setting) {
                 if (isset($settings->$setting) && !$settings->$setting) {
