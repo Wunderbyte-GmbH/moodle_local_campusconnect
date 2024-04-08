@@ -217,6 +217,22 @@ class export {
     }
 
     /**
+     * Should handle auth token
+     *
+     * @param int $ecsid
+     * @param int|int[] $mid
+     *
+     * @return bool
+     *
+     */
+    public function should_use_sso($ecsid, $mid) {
+        $part = $this->get_participant($ecsid, $mid);
+        return ($part && $part->is_exported()
+            && ($part->is_oauth2_export_enabled()
+                || $part->is_shibboleth_export_enabled()));
+    }
+
+    /**
      * Should send enrolment status
      *
      * @param int $ecsid
