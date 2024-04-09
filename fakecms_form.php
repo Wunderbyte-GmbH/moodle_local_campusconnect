@@ -27,12 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir.'/formslib.php');
 
-/** Form for entering CMS data */
+/**
+ * Form for entering CMS data
+ * @package local_campusconnect
+ */
 class fakecms_form extends moodleform {
 
     /**
      * Form definition.
-     *
      * @return mixed
      *
      */

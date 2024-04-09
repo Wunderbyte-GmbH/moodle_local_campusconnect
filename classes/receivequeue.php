@@ -37,7 +37,7 @@ use stdClass;
 class receivequeue {
 
     /**
-     * @var integer[] IDs of events that were unsuccessful and should be tried again next update
+     * @var int[] IDs of events that were unsuccessful and should be tried again next update
      */
     protected static $skipevents = [];
 
