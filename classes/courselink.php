@@ -365,12 +365,28 @@ class courselink {
 
                     // If there was no guest at all, we need to install it.
                     if (count($instances) < 1) {
+
+                        // We need to add the guest enrolment method.
+                        mtrace('Need to add guest enrolement method.');
+
                         $plugin->add_default_instance($course);
                     } else {
+
+                        // We need to add the guest enrolment method.
+                        mtrace('No need to install guest enrolement method anymore.');
+
                         foreach ($instances as $instance) {
+
+                            // We need to add the guest enrolment method.
+                            mtrace('Iterate over installed guest instances');
+
                             if ($instance->status != 0) {
                                 // We need to enable it.
+                                mtrace('Enable guest enrolement');
                                 $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
+                            } else {
+                                // What is the status of $instance? For debugging.
+                                mtrace("No need to enable instance: $instance->status , json: " . json_encode($instance));
                             }
                         }
                     }
