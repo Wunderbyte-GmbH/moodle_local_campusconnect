@@ -28,6 +28,7 @@ use coding_exception;
 use core_course\analytics\target\course_enrolments;
 use enrol_plugin;
 use html_writer;
+use moodle_url;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -651,7 +652,9 @@ class courselink {
      * @return mixed string | false - the URL to redirect to
      */
     public static function check_redirect($courseid, $user = null) {
-        global $USER;
+        global $USER, $PAGE;
+
+        $privacywarning = optional_param('privacyread', 0, PARAM_INT);
 
         if ($user == null) {
             $user = $USER;
@@ -664,6 +667,22 @@ class courselink {
             return false;
         }
 
+        // If the Privacy Modal was not yet shown, show it now.
+        if (empty($privacywarning)) {
+
+            $returnurl = $PAGE->url;
+
+            // We want to introduce the privacy warning here. The only way to do that is to include a javascript.
+
+            $url = new moodle_url('/local/campusconnect/consent.php', [
+                'courseid' => $courseid,
+                'returnurl' => $returnurl->out(),
+            ]);
+
+            redirect($url);
+
+        }
+    
         $url = $courselink->url;
         self::log("Link to external url: {$url}");
 
