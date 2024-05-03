@@ -41,7 +41,7 @@ $returnurl = optional_param('returnurl', '', PARAM_TEXT);
 $data = [
     'courseid' => $courseid,
     'targeturl' => $targeturl,
-    'returnurl' => $returnurl
+    'returnurl' => $returnurl,
 ];
 
 $title = get_string('confirmprivacy', 'local_campusconnect');

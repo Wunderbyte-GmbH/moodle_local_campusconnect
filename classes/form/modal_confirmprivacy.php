@@ -17,8 +17,8 @@
 /**
  * Dynamic semester cancel confirm form
  *
- * @package mod_booking
- * @copyright 2021 Wunderbyte GmbH <info@wunderbyte.at>
+ * @package local_campusconnect
+ * @copyright 2024 Wunderbyte GmbH <info@wunderbyte.at>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -114,8 +114,7 @@ class modal_confirmprivacy extends dynamic_form {
 
         $mform->addElement('static', 'coursetitle',
             get_string('coursetitle', 'local_campusconnect'), html_writer::tag('b', $coursetitle));
-        // $mform->addElement('static', 'ecstargetplatform',
-        //     get_string('ecstargetplatform', 'local_campusconnect'), html_writer::tag('b', $coursetitle));
+
         $mform->addElement('static', 'ecsparticipant',
             get_string('ecsparticipant', 'local_campusconnect'), html_writer::tag('b', $participant->get_displayname()));
 

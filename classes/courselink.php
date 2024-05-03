@@ -672,13 +672,11 @@ class courselink {
 
             if (array_key_exists('HTTP_ORIGIN', $_SERVER)) {
                 $returnurl = $_SERVER['HTTP_ORIGIN'];
-            }
-            else if (array_key_exists('HTTP_REFERER', $_SERVER)) {
+            } else if (array_key_exists('HTTP_REFERER', $_SERVER)) {
                 $returnurl = $_SERVER['HTTP_REFERER'];
             } else {
                 $returnurl = $_SERVER['REMOTE_ADDR'];
             }
-
 
             $targeturl = $PAGE->url;
 

@@ -113,8 +113,8 @@ if ($mform->is_cancelled()) {
 
     $mform->display();
 
-    ?>
-    <script type="text/javascript">
+    echo "
+    <script type=\"text/javascript\">
 
         cc_switch_mapping_fixed();
 
@@ -129,9 +129,7 @@ if ($mform->is_cancelled()) {
             document.getElementById('fitem_id_daterangefrom').style.display = 'block';
             document.getElementById('fitem_id_daterangeto').style.display = 'block';
         }
-    </script>
-    <?php
+    </script>";
 
     echo $OUTPUT->footer();
-
 }
