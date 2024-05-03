@@ -38,10 +38,11 @@
 
 /**
  * @param {int} courseid
+ * @param {string} returnurl
  */
-export const init = (courseid) => {
+export const init = (courseid, returnurl) => {
 
-    confirmPrivacyModal(courseid);
+    confirmPrivacyModal(courseid, returnurl);
 };
 
 /**
@@ -62,16 +63,25 @@ function confirmPrivacyModal(courseid, returnurl) {
         },
         // Pass any configuration settings to the modal dialogue, for example, the title:
         modalConfig: {
-            title: getString('confirmprivacytitle', 'mod_booking'),
+            title: getString('confirmprivacytitle', 'local_campusconnect'),
         },
         // DOM element that should get the focus after the modal dialogue is closed:
         // returnFocus: element
     });
     // Listen to events if you want to execute something on form submit.
     // Event detail will contain everything the process() function returned:
-    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, () => {
+    modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e) => {
 
-        location.reload();
+        // eslint-disable-next-line no-console
+        console.log(e.detail);
+
+        if (e.detail.returnurl) {
+
+            var url = new URL(e.detail.returnurl);
+
+            url.searchParams.append('privacyread', 1);
+            window.location.href = url;
+        }
 
     });
 

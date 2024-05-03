@@ -27,6 +27,9 @@ namespace local_campusconnect\form;
 use context;
 use context_system;
 use core_form\dynamic_form;
+use html_writer;
+use local_campusconnect\courselink;
+use local_campusconnect\participantsettings;
 use moodle_url;
 use stdClass;
 
@@ -70,6 +73,7 @@ class modal_confirmprivacy extends dynamic_form {
     public function set_data_for_dynamic_submission(): void {
 
         $data = (object)$this->_ajaxformdata;
+
         $this->set_data($data);
 
     }
@@ -92,22 +96,40 @@ class modal_confirmprivacy extends dynamic_form {
      */
     public function definition(): void {
 
+        global $USER, $DB;
+
         $mform = $this->_form;
 
         $ajaxformdata = $this->_ajaxformdata;
 
+        $courselink = courselink::get_by_courseid($ajaxformdata['courseid']);
+
+        $coursetitle = $DB->get_field('course', 'fullname', ['id' => $ajaxformdata['courseid']]);
+
+        $url = $courselink->url;
+        $participant = new participantsettings($courselink->ecsid, $courselink->mid);
+
         $mform->addElement('hidden', 'courseid', $ajaxformdata['courseid']);
         $mform->addElement('hidden', 'returnurl', $ajaxformdata['returnurl']);
 
-        $mform->addElement('static', 'coursetitle', 
-            get_string('coursetitle', 'local_campusconnect') . ": " . $ajaxformdata['coursetitle']);
-        $mform->addElement('static', 'ecstargetplatform', 
-            get_string('ecstargetplatform', 'local_campusconnect') . ": " . $ajaxformdata['ecstargetplatform']);
-        $mform->addElement('static', 'ecsparticipant', 
-            get_string('ecsparticipant', 'local_campusconnect') . ": " . $ajaxformdata['ecsparticipant']);
-        $mform->addElement('checkbox', 'ecsformconsent', 
+        $mform->addElement('static', 'coursetitle',
+            get_string('coursetitle', 'local_campusconnect'), html_writer::tag('b', $coursetitle));
+        // $mform->addElement('static', 'ecstargetplatform',
+        //     get_string('ecstargetplatform', 'local_campusconnect'), html_writer::tag('b', $coursetitle));
+        $mform->addElement('static', 'ecsparticipant',
+            get_string('ecsparticipant', 'local_campusconnect'), html_writer::tag('b', $participant->get_displayname()));
+
+        $exportdata = $participant->map_export_data($USER);
+
+        $listelements = array_map(fn($a) => html_writer::tag('li', $a), $exportdata);
+
+        $html = html_writer::tag('ul', implode (PHP_EOL, $listelements));
+
+        $mform->addElement('static', 'userinformation', '', $html);
+
+        $mform->addElement('checkbox', 'ecsformconsent',
             get_string('ecsformconsent', 'local_campusconnect'));
-    
+
     }
 
     /**
@@ -119,9 +141,9 @@ class modal_confirmprivacy extends dynamic_form {
     public function validation($data, $files): array {
         $errors = [];
 
-        if ($data['confirm'] != 1) {
-            if (empty($data['confirm'])) {
-                $errors['confirm'] = get_string('confirm', 'local_campusconnect');
+        if ($data['ecsformconsent'] != 1) {
+            if (empty($data['ecsformconsent'])) {
+                $errors['ecsformconsent'] = get_string('confirm', 'local_campusconnect');
             }
         }
 

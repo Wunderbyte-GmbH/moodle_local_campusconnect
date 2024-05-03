@@ -35,16 +35,13 @@ if (empty($user)) {
 }
 
 $courseid = required_param('courseid', PARAM_INT);
+$targeturl = optional_param('targeturl', '', PARAM_TEXT);
 $returnurl = optional_param('returnurl', '', PARAM_TEXT);
-
-$courselink = courselink::get_by_courseid($courseid);
-
-$url = $courselink->url;
-$participant = new participantsettings($courselink->ecsid, $courselink->mid);
 
 $data = [
     'courseid' => $courseid,
-    'returnurl' => $returnurl,
+    'targeturl' => $targeturl,
+    'returnurl' => $returnurl
 ];
 
 $title = get_string('confirmprivacy', 'local_campusconnect');

@@ -670,19 +670,29 @@ class courselink {
         // If the Privacy Modal was not yet shown, show it now.
         if (empty($privacywarning)) {
 
-            $returnurl = $PAGE->url;
+            if (array_key_exists('HTTP_ORIGIN', $_SERVER)) {
+                $returnurl = $_SERVER['HTTP_ORIGIN'];
+            }
+            else if (array_key_exists('HTTP_REFERER', $_SERVER)) {
+                $returnurl = $_SERVER['HTTP_REFERER'];
+            } else {
+                $returnurl = $_SERVER['REMOTE_ADDR'];
+            }
+
+
+            $targeturl = $PAGE->url;
 
             // We want to introduce the privacy warning here. The only way to do that is to include a javascript.
-
             $url = new moodle_url('/local/campusconnect/consent.php', [
                 'courseid' => $courseid,
-                'returnurl' => $returnurl->out(),
+                'targeturl' => $targeturl->out(),
+                'returnurl' => $returnurl,
             ]);
 
             redirect($url);
 
         }
-    
+
         $url = $courselink->url;
         self::log("Link to external url: {$url}");
 

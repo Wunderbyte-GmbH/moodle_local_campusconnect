@@ -281,3 +281,12 @@ $string['warningimports'] = 'Warning - the following course(s) are currently imp
 $string['nosystemrole'] = 'No system role';
 
 $string['campusconnecttask'] = 'Run task via cron to execute sync with ECS server';
+
+// Privacy modal.
+$string['confirmprivacytitle'] = "Privacy information";
+$string['confirmprivacy'] = "Privacy information";
+$string['coursetitle'] = "Course title";
+$string['ecstargetplatform'] = "ESC platform";
+$string['ecsparticipant'] = "ESC participient";
+$string['ecsformconsent'] = "I accept this";
+$string['confirm'] = "Please confirm";
