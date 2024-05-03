@@ -45,8 +45,8 @@ class modal_confirmprivacy extends dynamic_form {
     /** @var int $courseid */
     private $courseid = 0;
 
-    /** @var int $returnurl */
-    private $returnurl = '';
+    /** @var int $targeturl */
+    private $targeturl = '';
 
     /**
      * Get context for dynamic submission.
@@ -110,7 +110,7 @@ class modal_confirmprivacy extends dynamic_form {
         $participant = new participantsettings($courselink->ecsid, $courselink->mid);
 
         $mform->addElement('hidden', 'courseid', $ajaxformdata['courseid']);
-        $mform->addElement('hidden', 'returnurl', $ajaxformdata['returnurl']);
+        $mform->addElement('hidden', 'targeturl', $ajaxformdata['targeturl']);
 
         $mform->addElement('static', 'coursetitle',
             get_string('coursetitle', 'local_campusconnect'), html_writer::tag('b', $coursetitle));

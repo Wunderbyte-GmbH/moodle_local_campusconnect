@@ -38,19 +38,21 @@
 
 /**
  * @param {int} courseid
+ * @param {string} targeturl
  * @param {string} returnurl
  */
-export const init = (courseid, returnurl) => {
+export const init = (courseid, targeturl, returnurl) => {
 
-    confirmPrivacyModal(courseid, returnurl);
+    confirmPrivacyModal(courseid, targeturl, returnurl);
 };
 
 /**
  * Confirm privacy modal.
  * @param {int} courseid
+ * @param {string} targeturl
  * @param {string} returnurl
  */
-function confirmPrivacyModal(courseid, returnurl) {
+function confirmPrivacyModal(courseid, targeturl, returnurl) {
 
     const modalForm = new ModalForm({
 
@@ -59,7 +61,7 @@ function confirmPrivacyModal(courseid, returnurl) {
         // Add as many arguments as you need, they will be passed to the form:
         args: {
             'courseid': courseid,
-            'returnurl': returnurl
+            'targeturl': targeturl
         },
         // Pass any configuration settings to the modal dialogue, for example, the title:
         modalConfig: {
@@ -75,13 +77,22 @@ function confirmPrivacyModal(courseid, returnurl) {
         // eslint-disable-next-line no-console
         console.log(e.detail);
 
-        if (e.detail.returnurl) {
+        if (e.detail.targeturl) {
 
-            var url = new URL(e.detail.returnurl);
+            var url = new URL(e.detail.targeturl);
 
             url.searchParams.append('privacyread', 1);
             window.location.href = url;
         }
+
+    });
+
+    modalForm.addEventListener(modalForm.events.CANCEL_BUTTON_PRESSED, (e) => {
+
+        // eslint-disable-next-line no-console
+        console.log('returnurl', e, returnurl);
+
+        window.location.href = returnurl;
 
     });
 
