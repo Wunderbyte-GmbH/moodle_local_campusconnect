@@ -38,24 +38,24 @@ class community {
      *
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * $desciption
      *
      * @var string
      */
-    public $desciption;
+    public string $description;
 
     /**
      * $ecsid
      *
      * @var int
      */
-    public $ecsid;
+    public int $ecsid;
 
     /** @var participantsettings[] */
-    public $participants = [];
+    public array $participants = [];
 
     /**
      * Constructor
@@ -65,7 +65,7 @@ class community {
      * @param string $description
      *
      */
-    public function __construct($ecsid, $name, $description) {
+    public function __construct(int $ecsid, string $name, string $description) {
         $this->name = $name;
         $this->description = $description;
         $this->ecsid = $ecsid;
@@ -79,7 +79,7 @@ class community {
      * @return void
      *
      */
-    public function add_participant(participantsettings $part) {
+    public function add_participant(participantsettings $part): void {
         $this->participants[$part->get_identifier()] = $part;
     }
 
@@ -91,7 +91,7 @@ class community {
      * @return void
      *
      */
-    public function remove_participant(participantsettings $part) {
+    public function remove_participant(participantsettings $part): void {
         unset($this->participants[$part->get_identifier()]);
     }
 
@@ -101,7 +101,7 @@ class community {
      * @return bool
      *
      */
-    public function has_participants() {
+    public function has_participants(): bool {
         return !!($this->participants);
     }
 }
