@@ -122,7 +122,7 @@ class campusconnect_import_form extends moodleform {
      * @param array $errors
      * @return void
      */
-    public function set_errors($errors) {
+    public function set_errors(array $errors): void {
         $form = $this->_form;
         foreach ($errors as $element => $message) {
             $form->setElementError($element, $message);

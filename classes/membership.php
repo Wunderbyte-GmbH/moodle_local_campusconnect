@@ -881,10 +881,10 @@ class membership {
     /**
      * Add a new instance of the CampusConnect enrol plugin to the given course and return the instance data
      * @param int $courseid the course to add the plugin to
-     * @param enrol_plugin $enrol optional - the enrol plugin object to use
+     * @param ?enrol_plugin $enrol optional - the enrol plugin object to use
      * @return mixed object|false
      */
-    protected static function add_enrol_instance($courseid, enrol_plugin $enrol = null) {
+    protected static function add_enrol_instance(int $courseid, ?enrol_plugin $enrol = null) {
         global $DB;
 
         if (is_null($enrol)) {

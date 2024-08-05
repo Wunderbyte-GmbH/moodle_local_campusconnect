@@ -95,10 +95,10 @@ class details {
     /**
      * Get sender mid
      *
-     * @return void
+     * @return int
      *
      */
-    public function get_sender_mid() {
+    public function get_sender_mid(): int {
         foreach ($this->receivers as $pos => $receiver) {
             if ($receiver->itsyou) {
                 return $this->senders[$pos]->mid;

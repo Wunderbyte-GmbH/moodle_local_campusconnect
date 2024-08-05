@@ -80,12 +80,12 @@ class course {
      * @param ecssettings $ecssettings - the ECS being connected to
      * @param object $course - the resource data from ECS
      * @param details $transferdetails - the metadata for the resource on the ECS
-     * @param participantsettings $cms - passed in when doing full refresh (to save a DB query)
+     * @param ?participantsettings $cms - passed in when doing full refresh (to save a DB query)
      *
      * @return bool true if successful
      */
-    public static function create($resourceid, ecssettings $ecssettings, $course,
-                                  details $transferdetails, participantsettings $cms = null) {
+    public static function create(int $resourceid, ecssettings $ecssettings, $course,
+                                  details $transferdetails, ?participantsettings $cms = null): bool {
         if (is_null($cms)) {
             $cms = participantsettings::get_cms_participant();
         }
@@ -211,11 +211,11 @@ class course {
      * @param ecssettings $ecssettings - the ECS being connected to
      * @param object $course - the resource data from ECS
      * @param details $transferdetails - the metadata for the resource on the ECS
-     * @param participantsettings $cms - the cms (already loaded if doing full refresh)
+     * @param ?participantsettings $cms - the cms (already loaded if doing full refresh)
      * @return bool true if successful
      */
     public static function update($resourceid, ecssettings $ecssettings, $course,
-                                  details $transferdetails, participantsettings $cms = null) {
+                                  details $transferdetails, ?participantsettings $cms = null) {
         global $DB;
 
         if (is_null($cms)) {

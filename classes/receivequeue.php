@@ -39,7 +39,7 @@ class receivequeue {
     /**
      * @var int[] IDs of events that were unsuccessful and should be tried again next update
      */
-    protected static $skipevents = [];
+    protected static array $skipevents = [];
 
     /**
      * Code for pulling events from the ECS server and adding them to
@@ -49,7 +49,7 @@ class receivequeue {
     /**
      * Retrieve events from all the ECS registered with this system
      */
-    public function update_from_all_ecs() {
+    public function update_from_all_ecs(): void {
         // Loop through each of the ECS.
         $ecslist = ecssettings::list_ecs();
         foreach ($ecslist as $ecsid => $ecsname) {
@@ -63,7 +63,7 @@ class receivequeue {
      * Retrieve all the events from the specified ECS and add to the event queue
      * @param connect $connect the connection to the ECS
      */
-    public function update_from_ecs(connect $connect) {
+    public function update_from_ecs(connect $connect): void {
         // Loop through all the events.
         while ($events = $connect->read_event_fifo()) {
             foreach ($events as $eventdata) {
@@ -82,7 +82,7 @@ class receivequeue {
      * Add the given incoming event to the queue to be processed
      * @param event $event the event to be added
      */
-    protected function add_to_queue(event $event) {
+    protected function add_to_queue(event $event): void {
         global $DB;
 
         // Check for existing event.
@@ -118,10 +118,10 @@ class receivequeue {
 
     /**
      * Retrieve the next event from the incoming event queue (without removing it)
-     * @param ecssettings $ecssettings optional is specified, only retrieve events from this ECS server
-     * @return mixed event | false
+     * @param ?ecssettings $ecssettings optional is specified, only retrieve events from this ECS server
+     * @return ?event event
      */
-    protected function get_event_from_queue(ecssettings $ecssettings = null) {
+    protected function get_event_from_queue(?ecssettings $ecssettings = null): ?event {
         global $DB;
 
         $params = [];
@@ -142,7 +142,7 @@ class receivequeue {
         }
         $ret = $DB->get_records_select('local_campusconnect_eventin', $select, $params, 'id', '*', 0, 1);
         if (empty($ret)) {
-            return false;
+            return null;
         }
         $ret = reset($ret);
         return new event($ret);
@@ -152,9 +152,8 @@ class receivequeue {
      * Remove the given event from the incoming queue
      * @param event $event the event to remove
      */
-    protected function remove_event_from_queue(event $event) {
+    protected function remove_event_from_queue(event $event): void {
         global $DB;
-
         $DB->delete_records('local_campusconnect_eventin', ['id' => $event->get_id()]);
     }
 
@@ -162,7 +161,7 @@ class receivequeue {
      * Skip over this event for now, but process it again on the next update
      * @param event $event
      */
-    protected function skip_event(event $event) {
+    protected function skip_event(event $event): void {
         global $DB;
         self::$skipevents[] = $event->get_id();
 
@@ -171,9 +170,10 @@ class receivequeue {
 
     /**
      * Process all the events in the queue and take the appropriate actions
-     * @param ecssettings $ecssettings optional - if provided, only process events from the specified ECS server
+     *
+     * @param ?ecssettings $ecssettings $ecssettings optional - if provided, only process events from the specified ECS server
      */
-    public function process_queue(ecssettings $ecssettings = null) {
+    public function process_queue(?ecssettings $ecssettings = null): void {
         $fixcourses = false;
         $enrolusers = false;
 
@@ -296,7 +296,7 @@ class receivequeue {
      * @param event $event the event to process
      * @return bool true if successful
      */
-    protected function process_directorytree_event(event $event) {
+    protected function process_directorytree_event(event $event): bool {
         if (!directorytree::enabled()) {
             return true; // Mapping disabled.
         }
@@ -341,7 +341,7 @@ class receivequeue {
      * @param event $event the event to process
      * @return bool true if successful
      */
-    protected function process_course_event(event $event) {
+    protected function process_course_event(event $event): bool {
         if (!course::enabled()) {
             return true; // Course creation disabled.
         }
@@ -435,7 +435,7 @@ class receivequeue {
      * @param event $event
      * @return bool true if successful
      */
-    protected function process_enrolment_event(event $event) {
+    protected function process_enrolment_event(event $event): bool {
         $settings = new ecssettings($event->get_ecs_id());
         $status = $event->get_status();
 
