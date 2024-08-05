@@ -23,10 +23,12 @@
  */
 
 use local_campusconnect\ecssettings;
+use local_campusconnect\form\campusconnect_import_form;
 use local_campusconnect\metadata;
 
 defined('MOODLE_INTERNAL') || die();
-global $CFG, $OUTPUT;
+
+global $CFG, $PAGE, $OUTPUT;
 require_once("$CFG->libdir/formslib.php");
 
 $mform = new campusconnect_import_form();
@@ -123,114 +125,3 @@ if (!empty($errors)) {
 }
 
 $mform->display();
-
-/**
- * Class to handle form for import settings page for campus connect
- *
- * @package    local_campusconnect
- * @copyright  2012 Synergy Learning
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class campusconnect_import_form extends moodleform {
-
-    /**
-     * Form definition
-     *
-     * @return void
-     *
-     */
-    public function definition() {
-        $ecslist = ecssettings::list_ecs();
-
-        foreach ($ecslist as $ecsid => $ecsname) {
-
-            $mform = $this->_form;
-
-            $mform->addElement('header');
-            $mform->addElement('html', "<h2>$ecsname</h2>");
-
-            $mform->addElement('html', "<h3>".get_string('course')."</h3>");
-
-            $ecssettings = new ecssettings($ecsid);
-            $metadata = new metadata($ecssettings, false);
-            $localfields = metadata::list_local_fields();
-            $currentmappings = $metadata->get_import_mappings();
-
-            $strunmapped = get_string('unmapped', 'local_campusconnect');
-            $strnomappings = get_string('nomappings', 'local_campusconnect');
-
-            foreach ($localfields as $localmap) {
-                $elname = $ecsid.'_'.$localmap.'_course';
-                if ($localmap == 'summary') {
-                    $mform->addElement('editor', $elname, $localmap);
-                    $mform->setType($elname, PARAM_RAW);
-                    $mform->setDefault($elname, ['text' => $currentmappings[$localmap], 'format' => FORMAT_HTML]);
-                } else if ($metadata->is_text_field($localmap)) {
-                    $mform->addElement('text', $elname, $localmap, $currentmappings[$localmap]);
-                    $mform->setDefault($elname, $currentmappings[$localmap]);
-                    $mform->setType($elname, PARAM_RAW);
-                } else {
-                    $maparray = $metadata->list_remote_to_local_fields($localmap, false);
-                    if ($maparray) {
-                        $maps = ['' => $strunmapped];
-                        foreach ($maparray as $i) {
-                            $maps[$i] = $i;
-                        }
-                    } else {
-                        $maps = ['' => $strnomappings];
-                    }
-                    $mform->addElement('select', $elname, $localmap, $maps, $currentmappings[$localmap]);
-                    $mform->setDefault($elname, $currentmappings[$localmap]);
-                }
-            }
-
-            $mform->addElement('html', "<h3>".get_string('externalcourse', 'local_campusconnect')."</h3>");
-
-            $metadata = new metadata($ecssettings, true);
-            $currentmappings = $metadata->get_import_mappings();
-
-            foreach ($localfields as $localmap) {
-                $elname = $ecsid.'_'.$localmap.'_courselink';
-                if ($localmap == 'summary') {
-                    $mform->addElement('editor', $elname, $localmap);
-                    $mform->setType($elname, PARAM_RAW);
-                    $mform->setDefault($elname, ['text' => $currentmappings[$localmap], 'format' => FORMAT_HTML]);
-                } else if ($metadata->is_text_field($localmap)) {
-                    $mform->addElement('text', $elname, $localmap, $currentmappings[$localmap]);
-                    $mform->setDefault($elname, $currentmappings[$localmap]);
-                    $mform->setType($elname, PARAM_RAW);
-                } else {
-                    $maparray = $metadata->list_remote_to_local_fields($localmap, true);
-                    if ($maparray) {
-                        $maps = ['' => $strunmapped];
-                        foreach ($maparray as $i) {
-                            $maps[$i] = $i;
-                        }
-                    } else {
-                        $maps = ['' => $strnomappings];
-                    }
-                    $mform->addElement('select', $elname, $localmap, $maps, $currentmappings[$localmap]);
-                    $mform->setDefault($elname, $currentmappings[$localmap]);
-                }
-            }
-        }
-
-        $this->add_action_buttons();
-
-    }
-
-    /**
-     * Set errors
-     *
-     * @param array $errors
-     *
-     * @return void
-     *
-     */
-    public function set_errors($errors) {
-        $form = $this->_form;
-        foreach ($errors as $element => $message) {
-            $form->setElementError($element, $message);
-        }
-    }
-}

@@ -131,6 +131,7 @@ $string['import'] = 'Import';
 $string['importcat'] = 'Import category';
 $string['importedcourses'] = 'Imported courses';
 $string['importedfrom'] = 'Imported from';
+$string['importmappingsettings'] = 'Import mapping settings';
 $string['importtype'] = 'Import type';
 $string['importuserdata'] = 'Inbound user data';
 $string['importuserdatainfo'] = 'This controls what happens to the user data included when a user clicks on a link to a course which we have exported to this participant. If no mapping is specified, then that data is ignored. The \'username\' field cannot be mapped on to, as this is automatically generated, to ensure it is unique.<br><strong>WARNING</strong>: if, after mapping, the user identifying field (personIDtype) matches an existing user, then they are authenticated as that user (regardless of how that user was initially configured). e.g. if \'ecs_email\' is set as the personIDtype when exporting, a pre-existing user on this site with the same email address will be treated as the same person (which means that a remote site that allows users to edit their email address field would allow users to access any matching account on this site). This does not apply to the ecs_login or ecs_uid fields, as these are unique to the remote participant.';

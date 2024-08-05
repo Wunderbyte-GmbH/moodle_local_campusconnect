@@ -130,6 +130,7 @@
  $string['importcat'] = 'Kategorie importieren';
  $string['importedcourses'] = 'Importierte Kurse';
  $string['importedfrom'] = 'Importiert von';
+ $string['importmappingsettings'] = 'Zuordnungseinstellungen für den Import';
  $string['importtype'] = 'Importtyp';
  $string['importuserdata'] = 'Eingehende Benutzerdaten';
  $string['importuserdatainfo'] = 'Hier legen Sie fest, was mit den Benutzerdaten geschieht, die enthalten sind, wenn ein Benutzer auf einen Link zu einem Kurs klickt, den wir diesem Teilnehmer exportiert haben. Wenn keine Zuordnung festgelegt ist, werden diese Daten ignoriert. Das Feld „Benutzername“ kann nicht zugeordnet werden, da es automatisch generiert wird, um sicherzustellen, dass es eindeutig ist.<br><strong>WARNUNG</strong>: Wenn nach der Zuordnung das Benutzeridentifizierungsfeld (personIDtype) mit einem vorhandenen Benutzer übereinstimmt, wird dieser als dieser Benutzer authentifiziert (unabhängig davon, wie dieser Benutzer ursprünglich konfiguriert wurde). z. B. wenn beim Exportieren „ecs_email“ als personIDtype festgelegt ist, wird ein bereits vorhandener Benutzer auf dieser Website mit derselben E-Mail-Adresse als dieselbe Person behandelt (was bedeutet, dass eine Remote-Website, die Benutzern erlaubt, ihr E-Mail-Adressfeld zu bearbeiten, Benutzern den Zugriff auf jedes übereinstimmende Konto auf dieser Website ermöglichen würde). Dies gilt nicht für die Felder ecs_login oder ecs_uid, da diese eindeutig für den sendenden Teilnehmer sind.';
