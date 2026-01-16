@@ -210,6 +210,7 @@ class metadata {
         'links' => '',
         'linkToCourse' => '',
         'modules' => '',
+        'abstract' => '{summary}',
     ];
 
     /**
@@ -240,6 +241,7 @@ class metadata {
         'datesAndVenues.lastDate.endDatetime' => '',
         'degreeProgrammes' => '',
         'lecturers' => '',
+        'abstract' => '{summary}',
     ];
 
     /**
