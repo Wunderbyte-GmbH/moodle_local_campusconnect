@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2024080502;
+$plugin->version = 2024080503;
 $plugin->requires = 2022112800; // Moodle 4.1.
 $plugin->cron = 1; // Run every second (or as often as cron is run).
 $plugin->component = 'local_campusconnect';
