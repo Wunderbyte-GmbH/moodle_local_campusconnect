@@ -472,6 +472,7 @@ class export {
             $metadata = new metadata($connect->get_settings());
             $data = $metadata->map_course_to_remote($course);
             $data->url = self::get_course_url($course);
+            $data->courseID = $course->id;
 
             // Update ECS server.
             if ($export->status == self::STATUS_UPDATED) {
