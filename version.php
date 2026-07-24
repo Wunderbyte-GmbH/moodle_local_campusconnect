@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026011901;
+$plugin->version = 2026072400;
 $plugin->requires = 2024110000; // Moodle 5.0.
 $plugin->component = 'local_campusconnect';
 $plugin->maturity = MATURITY_STABLE;
