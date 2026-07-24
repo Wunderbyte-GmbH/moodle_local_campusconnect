@@ -48,9 +48,9 @@ class hook_callbacks {
      * Logic to determine if a redirection is necessary.
      *
      * @param \stdClass $course The course being viewed.
-     * @return bool True if redirection should occur, false otherwise.
+     * @return \moodle_url|string|bool The URL to redirect to, or false if no redirection should occur.
      */
-    private static function extern_server_course($course): bool {
+    private static function extern_server_course($course): \moodle_url|string|bool {
         if ($url = courselink::check_redirect($course->id)) {
             return $url;
         }
