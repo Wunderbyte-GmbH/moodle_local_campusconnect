@@ -617,10 +617,10 @@ class connect {
      */
     protected function get_econtentid_from_header() {
         $header = $this->responseheaders;
-        if (!isset($header['Location'])) {
+        if (!isset($header['location'])) {
             return false;
         }
-        $location = explode('/', $header['Location']);
+        $location = explode('/', $header['location']);
         $id = array_pop($location);
         return intval($id);
     }
@@ -630,10 +630,10 @@ class connect {
      * @return string the content type
      */
     protected function get_contenttype_from_header() {
-        if (!isset($this->responseheaders['Content-Type'])) {
+        if (!isset($this->responseheaders['content-type'])) {
             return '';
         }
-        $contenttype = explode(';', $this->responseheaders['Content-Type']);
+        $contenttype = explode(';', $this->responseheaders['content-type']);
         return trim($contenttype[0]);
     }
 
@@ -668,8 +668,9 @@ class connect {
             if (count($parts) < 2) {
                 continue;
             }
-            list($name, $value) = $parts;
-            $this->responseheaders[$name] = $value;
+            [$name, $value] = $parts;
+            // HTTP header names are case-insensitive (RFC 9110) - ECS 7 sends them lower-case.
+            $this->responseheaders[strtolower(trim($name))] = $value;
         }
         return strlen($header);
     }
