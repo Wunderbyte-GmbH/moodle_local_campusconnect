@@ -1,3 +1,6 @@
+## Version 4.2 (2024080506)
+* Improvement: Raise the minimum required Moodle version to 4.5 and test only supported Moodle versions (4.5 on PHP 8.1-8.3) in the CI matrix. (#14)
+
 ## Version 4.2 (2024080505)
 * Improvement: Fix coding style across the plugin so the Moodle Plugin CI codechecker passes (phpcbf with the moodle standard plus manual fixes; no functional changes). (#3)
 
