@@ -24,12 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2024080506;
+$plugin->version = 2024080507;
 $plugin->requires = 2024100700; // Moodle 4.5.
 $plugin->cron = 1; // Run every second (or as often as cron is run).
 $plugin->component = 'local_campusconnect';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '4.2	(Build: 2024080506)';
+$plugin->release = '4.2	(Build: 2024080507)';
 $plugin->dependencies = [
     'auth_campusconnect' => ANY_VERSION,
     'block_campusconnect' => ANY_VERSION,
