@@ -38,18 +38,15 @@ $redir = new moodle_url('/local/campusconnect/admin/datamapping.php', ['type' =>
 $errors = [];
 $ecslist = ecssettings::list_ecs();
 if ($mform->is_cancelled()) {
-
     redirect($redir);
-
 } else if ($post = $mform->get_data()) {
-
     $coursedata = [];
     $courselinkdata = [];
     foreach ($ecslist as $ecsid => $ecsname) {
         $courselinkdata[$ecsid] = [];
         $coursedata[$ecsid] = [];
         foreach (metadata::list_local_fields() as $fieldname) {
-            $fullfieldname = $ecsid.'_'.$fieldname.'_courselink';
+            $fullfieldname = $ecsid . '_' . $fieldname . '_courselink';
             if (isset($post->{$fullfieldname})) {
                 if ($fieldname == 'summary') {
                     $courselinkdata[$ecsid][$fieldname] = $post->{$fullfieldname}['text'];
@@ -59,7 +56,7 @@ if ($mform->is_cancelled()) {
             }
         }
         foreach (metadata::list_local_fields() as $fieldname) {
-            $fullfieldname = $ecsid.'_'.$fieldname.'_course';
+            $fullfieldname = $ecsid . '_' . $fieldname . '_course';
             if (isset($post->{$fullfieldname})) {
                 if ($fieldname == 'summary') {
                     $coursedata[$ecsid][$fieldname] = $post->{$fullfieldname}['text'];
@@ -76,18 +73,17 @@ if ($mform->is_cancelled()) {
             if (isset($coursedata[$ecsid])) {
                 $metadata = new metadata($ecssettings, false);
                 if (!$metadata->set_import_mappings($coursedata[$ecsid])) {
-                    list ($errmsg, $errfield) = $metadata->get_last_error();
-                    $errors[$ecsid.'_'.$errfield.'_course'] = $errmsg;
+                     [$errmsg, $errfield] = $metadata->get_last_error();
+                    $errors[$ecsid . '_' . $errfield . '_course'] = $errmsg;
                 }
             }
             if (isset($courselinkdata[$ecsid])) {
                 $metadata = new metadata($ecssettings, true);
                 if (!$metadata->set_import_mappings($courselinkdata[$ecsid])) {
-                    list ($errmsg, $errfield) = $metadata->get_last_error();
-                    $errors[$ecsid.'_'.$errfield.'_courselink'] = $errmsg;
+                     [$errmsg, $errfield] = $metadata->get_last_error();
+                    $errors[$ecsid . '_' . $errfield . '_courselink'] = $errmsg;
                 }
             }
-
         }
     }
 
@@ -99,24 +95,24 @@ if ($mform->is_cancelled()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'local_campusconnect'));
 
-print '<div class="controls"><strong><a href="?type=import">'.get_string('import', 'local_campusconnect').'</a></strong> |
-            <a href="?type=export">'.get_string('export', 'local_campusconnect').'</a></div>';
+print '<div class="controls"><strong><a href="?type=import">' . get_string('import', 'local_campusconnect') . '</a></strong> |
+            <a href="?type=export">' . get_string('export', 'local_campusconnect') . '</a></div>';
 
 $remotefields = metadata::list_remote_fields(false);
 $helpcontent = '';
 foreach ($remotefields as $remotefield) {
-    $helpcontent .= '{'.$remotefield.'}<br />';
+    $helpcontent .= '{' . $remotefield . '}<br />';
 }
 print "<div style='float: left; width: 45%; border: 1px solid #000; background: #ddd; margin: 10px 5px; padding: 5px;'><strong>"
-    .get_string('courseavailablefields', 'local_campusconnect').':</strong><br />'.$helpcontent."</div>";
+    . get_string('courseavailablefields', 'local_campusconnect') . ':</strong><br />' . $helpcontent . "</div>";
 
 $remotefields = metadata::list_remote_fields(true);
 $helpcontent = '';
 foreach ($remotefields as $remotefield) {
-    $helpcontent .= '{'.$remotefield.'}<br />';
+    $helpcontent .= '{' . $remotefield . '}<br />';
 }
 print "<div style='float: right; width: 45%; border: 1px solid #000; background: #ddd; margin: 10px 5px; padding: 5px'><strong>"
-    .get_string('courseextavailablefields', 'local_campusconnect').':</strong><br />'.$helpcontent."</div>";
+    . get_string('courseextavailablefields', 'local_campusconnect') . ':</strong><br />' . $helpcontent . "</div>";
 
 echo html_writer::empty_tag('br', ['class' => 'clearer']);
 

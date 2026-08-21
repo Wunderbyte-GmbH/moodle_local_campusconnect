@@ -37,7 +37,7 @@ use local_campusconnect\receivequeue;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/local/campusconnect/lib.php');
+require_once($CFG->dirroot . '/local/campusconnect/lib.php');
 
 /**
  * Class to handle scheduled task that removes relicts and unnecessary artifacts from the DB.
@@ -47,7 +47,6 @@ require_once($CFG->dirroot.'/local/campusconnect/lib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class campusconnect extends \core\task\scheduled_task {
-
     /**
      * Get name of module.
      * @return string
@@ -71,7 +70,7 @@ class campusconnect extends \core\task\scheduled_task {
             $ecssettings = new ecssettings($ecsid);
 
             if ($ecssettings->time_for_cron()) {
-                mtrace("Checking for updates on ECS server '".$ecssettings->get_name()."'");
+                mtrace("Checking for updates on ECS server '" . $ecssettings->get_name() . "'");
                 $connect = new connect($ecssettings);
                 $queue = new receivequeue();
 
@@ -82,7 +81,7 @@ class campusconnect extends \core\task\scheduled_task {
                     local_campusconnect_ecs_error_notification($ecssettings, $e->getMessage());
                 }
 
-                mtrace("Sending updates to ECS server '".$ecssettings->get_name()."'");
+                mtrace("Sending updates to ECS server '" . $ecssettings->get_name() . "'");
                 try {
                     export::update_ecs($connect);
                     course_url::update_ecs($connect);
@@ -97,12 +96,11 @@ class campusconnect extends \core\task\scheduled_task {
                     directorytree::check_all_mappings();
                 }
 
-                mtrace("Emailing any necessary notifications for '".$ecssettings->get_name()."'");
+                mtrace("Emailing any necessary notifications for '" . $ecssettings->get_name() . "'");
                 notification::send_notifications($ecssettings);
 
                 $ecssettings->update_last_cron();
             }
         }
-
     }
 }

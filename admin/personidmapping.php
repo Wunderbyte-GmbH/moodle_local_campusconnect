@@ -24,10 +24,10 @@
 
 use local_campusconnect\member_personid;
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 global $CFG, $PAGE, $OUTPUT;
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/local/campusconnect/admin/personidmapping_form.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/local/campusconnect/admin/personidmapping_form.php');
 
 admin_externalpage_setup('campusconnectpersonidmapping');
 

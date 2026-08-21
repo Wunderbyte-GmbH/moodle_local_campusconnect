@@ -27,7 +27,7 @@ use local_campusconnect\directorytree;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Class to handle Form for general directory tree settings
@@ -37,7 +37,6 @@ require_once($CFG->libdir.'/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class campusconnect_directorymapping_form extends moodleform {
-
     /**
      * Form definition
      *

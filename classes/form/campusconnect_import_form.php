@@ -30,7 +30,7 @@ use moodleform;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Class to handle form for import settings page for campus connect
@@ -40,7 +40,6 @@ require_once($CFG->libdir.'/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class campusconnect_import_form extends moodleform {
-
     /**
      * Form definition
      *
@@ -51,28 +50,27 @@ class campusconnect_import_form extends moodleform {
         $ecslist = ecssettings::list_ecs();
 
         foreach ($ecslist as $ecsid => $ecsname) {
-
             $mform = $this->_form;
             $mform->addElement('header', '', get_string('importmappingsettings', 'local_campusconnect'));
             $mform->addElement('html', "<h2>$ecsname</h2>");
-            $mform->addElement('html', "<h3>".get_string('course')."</h3>");
+            $mform->addElement('html', "<h3>" . get_string('course') . "</h3>");
             $ecssettings = new ecssettings($ecsid);
             $metadata = new metadata($ecssettings, false);
             $localfields = metadata::list_local_fields();
             $currentmappings = $metadata->get_import_mappings();
 
             foreach ($localfields as $localmap) {
-                $elname = $ecsid.'_'.$localmap.'_course';
+                $elname = $ecsid . '_' . $localmap . '_course';
                 $this->add_element($mform, $elname, $localmap, $currentmappings, $metadata);
             }
 
-            $mform->addElement('html', "<h3>".get_string('externalcourse', 'local_campusconnect')."</h3>");
+            $mform->addElement('html', "<h3>" . get_string('externalcourse', 'local_campusconnect') . "</h3>");
 
             $metadata = new metadata($ecssettings, true);
             $currentmappings = $metadata->get_import_mappings();
 
             foreach ($localfields as $localmap) {
-                $elname = $ecsid.'_'.$localmap.'_courselink';
+                $elname = $ecsid . '_' . $localmap . '_courselink';
                 $this->add_element($mform, $elname, $localmap, $currentmappings, $metadata);
             }
         }
@@ -89,8 +87,13 @@ class campusconnect_import_form extends moodleform {
      * @param metadata $metadata
      * @return void
      */
-    private function add_element(\MoodleQuickForm &$mform, string $elname, string $localmap,
-            array $currentmappings, metadata $metadata): void {
+    private function add_element(
+        \MoodleQuickForm &$mform,
+        string $elname,
+        string $localmap,
+        array $currentmappings,
+        metadata $metadata
+    ): void {
         $strunmapped = get_string('unmapped', 'local_campusconnect');
         $strnomappings = get_string('nomappings', 'local_campusconnect');
         if ($localmap == 'summary') {

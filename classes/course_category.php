@@ -32,7 +32,6 @@ namespace local_campusconnect;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_category {
-
     /** @var int $categorid */
     protected $categoryid;
     /** @var int $order */

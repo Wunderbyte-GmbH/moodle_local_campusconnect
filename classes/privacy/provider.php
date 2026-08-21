@@ -39,10 +39,10 @@ use core_privacy\local\request\writer;
  * @copyright 2019 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider,
-                          \core_privacy\local\request\plugin\provider,
-                          \core_privacy\local\request\core_userlist_provider {
-
+class provider implements
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\request\plugin\provider {
     /**
      * Get metadata
      *
@@ -79,7 +79,7 @@ class provider implements \core_privacy\local\metadata\provider,
         $sql = "
            SELECT ctx.id
              FROM {course} c
-             JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = ".CONTEXT_COURSE."
+             JOIN {context} ctx ON ctx.instanceid = c.id AND ctx.contextlevel = " . CONTEXT_COURSE . "
              JOIN {local_campusconnect_crs} crs ON crs.courseid = c.id
              JOIN {local_campusconnect_mbr} mbr ON mbr.cmscourseid = crs.cmsid
              JOIN {auth_campusconnect} acc ON acc.personid = mbr.personid AND acc.personidtype = mbr.personidtype
@@ -237,7 +237,7 @@ class provider implements \core_privacy\local\metadata\provider,
         if (!$cmscourseid = $DB->get_field('local_campusconnect_crs', 'cmsid', ['courseid' => $context->instanceid])) {
             return;
         }
-        list($usql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+        [$usql, $params] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
         $sql = "
             SELECT mbr.id
               FROM {user} u

@@ -37,7 +37,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class export {
-
     // Holds the status of the exported course until the ECS has been updated.
     /**
      * STATUS_UPTODATE
@@ -135,7 +134,7 @@ class export {
      */
     public function get_status($partidentifier) {
         if (!array_key_exists($partidentifier, $this->exportparticipants)) {
-            throw new coding_exception("Attempting to get the status of a participant ($partidentifier)".
+            throw new coding_exception("Attempting to get the status of a participant ($partidentifier)" .
                                        " not in the available to export to list");
         }
         $ecsid = $this->exportparticipants[$partidentifier]->get_ecs_id();
@@ -145,7 +144,7 @@ class export {
             }
         }
 
-        throw new coding_exception("Attempting to get the status of a participant ($partidentifier)".
+        throw new coding_exception("Attempting to get the status of a participant ($partidentifier)" .
                                    " not currently being exported to");
     }
 
@@ -284,7 +283,7 @@ class export {
             $mid = $identifier->get_mid();
         } else {
             if (!array_key_exists($identifier, $this->exportparticipants)) {
-                throw new coding_exception("Attempting to set the exported value of a participant ($identifier)".
+                throw new coding_exception("Attempting to set the exported value of a participant ($identifier)" .
                                            " not in the available to export to list");
             }
             $ecsid = $this->exportparticipants[$identifier]->get_ecs_id();
@@ -398,7 +397,6 @@ class export {
             if ($setting->status == self::STATUS_CREATED) {
                 $DB->delete_records('local_campusconnect_export', ['id' => $setting->id]);
                 unset($this->exportsettings[$setting->id]);
-
             } else if ($setting->status != self::STATUS_DELETED) {
                 $upd = new stdClass();
                 $upd->id = $setting->id;
@@ -440,17 +438,22 @@ class export {
         }
 
         // Get a list of all the courses that need updating on the ECS server.
-        $updated = $DB->get_records_select('local_campusconnect_export', 'ecsid = :ecsid AND status <> :uptodate',
-                                           ['ecsid' => $connect->get_ecs_id(), 'uptodate' => self::STATUS_UPTODATE]);
+        $updated = $DB->get_records_select(
+            'local_campusconnect_export',
+            'ecsid = :ecsid AND status <> :uptodate',
+            ['ecsid' => $connect->get_ecs_id(), 'uptodate' => self::STATUS_UPTODATE]
+        );
         foreach ($updated as $export) {
             if ($export->status == self::STATUS_DELETED) {
                 // Delete from ECS server, then delete local record.
                 $connect->delete_resource($export->resourceid, event::RES_COURSELINK);
                 $DB->delete_records('local_campusconnect_export', ['id' => $export->id]);
-                notification::queue_message($connect->get_ecs_id(),
-                                            notification::MESSAGE_EXPORT_COURSELINK,
-                                            notification::TYPE_DELETE,
-                                            $export->courseid);
+                notification::queue_message(
+                    $connect->get_ecs_id(),
+                    notification::MESSAGE_EXPORT_COURSELINK,
+                    notification::TYPE_DELETE,
+                    $export->courseid
+                );
                 mtrace("No longer exporting course id {$export->courseid} as resource {$export->resourceid}");
                 continue;
             }
@@ -483,19 +486,23 @@ class export {
             if ($export->status == self::STATUS_CREATED) {
                 $resourceid = $connect->add_resource(event::RES_COURSELINK, $data, null, $mids);
 
-                notification::queue_message($connect->get_ecs_id(),
-                                            notification::MESSAGE_EXPORT_COURSELINK,
-                                            notification::TYPE_CREATE,
-                                            $course->id);
+                notification::queue_message(
+                    $connect->get_ecs_id(),
+                    notification::MESSAGE_EXPORT_COURSELINK,
+                    notification::TYPE_CREATE,
+                    $course->id
+                );
                 mtrace("Exported course id $course->id to mids {$export->mids} as resource $resourceid");
             }
             if ($export->status == self::STATUS_UPDATED) {
                 $connect->update_resource($export->resourceid, event::RES_COURSELINK, $data, null, $mids);
 
-                notification::queue_message($connect->get_ecs_id(),
-                                            notification::MESSAGE_EXPORT_COURSELINK,
-                                            notification::TYPE_UPDATE,
-                                            $course->id);
+                notification::queue_message(
+                    $connect->get_ecs_id(),
+                    notification::MESSAGE_EXPORT_COURSELINK,
+                    notification::TYPE_UPDATE,
+                    $course->id
+                );
                 mtrace("Updated exported course id $course->id to mids {$export->mids} as resource {$export->resourceid}");
             }
 
@@ -551,7 +558,7 @@ class export {
             try {
                 self::refresh_ecs($connect);
             } catch (Exception $e) {
-                $errors[] = $ecs.': '.$e->getMessage();
+                $errors[] = $ecs . ': ' . $e->getMessage();
             }
         }
         return $errors;
@@ -589,16 +596,23 @@ class export {
         }
 
         // Get a list of the courses we have exported.
-        $exportedcourses = $DB->get_records('local_campusconnect_export', ['ecsid' => $connect->get_ecs_id()], '',
-                                            'resourceid, id, courseid, mids');
+        $exportedcourses = $DB->get_records(
+            'local_campusconnect_export',
+            ['ecsid' => $connect->get_ecs_id()],
+            '',
+            'resourceid, id, courseid, mids'
+        );
         $exportedresourceids = array_keys($exportedcourses);
         $metadata = new metadata($connect->get_settings());
 
         // Check all the resources on the server against our local list.
         $resources = $connect->get_resource_list(event::RES_COURSELINK, connect::SENT);
         foreach ($resources->get_ids() as $resourceid) {
-            $transferdetails = $connect->get_resource($resourceid, event::RES_COURSELINK,
-                                                      connect::TRANSFERDETAILS);
+            $transferdetails = $connect->get_resource(
+                $resourceid,
+                event::RES_COURSELINK,
+                connect::TRANSFERDETAILS
+            );
             if (!$transferdetails->sent_by_me($mymids)) {
                 continue; // Not one of this VLE's resources.
             }

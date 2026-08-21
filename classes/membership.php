@@ -37,7 +37,6 @@ use stdClass;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class membership {
-
     /**
      * STATUS_ASSIGNED
      *
@@ -288,7 +287,7 @@ class membership {
             } else {
                 $grouprole = '';
             }
-            $pg = $num.':'.$grouprole;
+            $pg = $num . ':' . $grouprole;
             $pgroups[] = $pg;
         }
         return implode(',', $pgroups);
@@ -308,7 +307,7 @@ class membership {
         $pgroups = explode(',', $member->parallelgroups);
         $ret = [];
         foreach ($pgroups as $pgroup) {
-            list($num, $grouprole) = explode(':', $pgroup, 2);
+            [$num, $grouprole] = explode(':', $pgroup, 2);
             if ($grouprole === '') {
                 $grouprole = self::ROLE_UNSPECIFIED;
             }
@@ -377,10 +376,16 @@ class membership {
 
         // Go through all the links from the server and compare to what we have locally.
         foreach ($servermemberships->get_ids() as $resourceid) {
-            $details = $connect->get_resource($resourceid, event::RES_COURSE_MEMBERS,
-                                              connect::CONTENT);
-            $transferdetails = $connect->get_resource($resourceid, event::RES_COURSE_MEMBERS,
-                                                      connect::TRANSFERDETAILS);
+            $details = $connect->get_resource(
+                $resourceid,
+                event::RES_COURSE_MEMBERS,
+                connect::CONTENT
+            );
+            $transferdetails = $connect->get_resource(
+                $resourceid,
+                event::RES_COURSE_MEMBERS,
+                connect::TRANSFERDETAILS
+            );
 
             // Check if we already have this locally.
             if (isset($memberships[$resourceid])) {
@@ -457,16 +462,20 @@ class membership {
         $userids = self::get_userids_from_personids($personids);
 
         // Get a list of all the courses to enrol users into.
-        list($mappedcourseids, $courseids) = course::get_courseids_from_cmscourseids($cmscourseids);
+        [$mappedcourseids, $courseids] = course::get_courseids_from_cmscourseids($cmscourseids);
 
         if (empty($userids) || empty($courseids)) {
             return; // No existing users in the list of personids or no existing courses to enrol them onto.
         }
 
         // Get a list of the enrol instances for 'campusconnect' in these courses.
-        list($csql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-        $enrolinstances = $DB->get_records_select('enrol', "enrol = 'campusconnect' AND courseid $csql",
-                                                  $params, 'sortorder, id ASC');
+        [$csql, $params] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        $enrolinstances = $DB->get_records_select(
+            'enrol',
+            "enrol = 'campusconnect' AND courseid $csql",
+            $params,
+            'sortorder, id ASC'
+        );
         $courseenrol = [];
         foreach ($enrolinstances as $enrolinstance) {
             if (!isset($courseenrol[$enrolinstance->courseid])) {
@@ -509,7 +518,7 @@ class membership {
                 if ($membership->status == self::STATUS_DELETED) {
                     // Deleted => unenrol user, then remove mbr record.
                     if ($output) {
-                        mtrace("Unenroling user '{$membership->personid}' ({$userid}) from course".
+                        mtrace("Unenroling user '{$membership->personid}' ({$userid}) from course" .
                                " '{$membership->cmscourseid}' ({$pgroup->courseid})");
                     }
                     $enrol->unenrol_user($enrolinstance, $userid);
@@ -521,7 +530,7 @@ class membership {
                         // Updated => change the user's role (this will remove any other 'enrol_campusconnect'
                         // roles from this course).
                         if ($output) {
-                            mtrace("Changing role for user '{$membership->personid}' ({$userid}) in course ".
+                            mtrace("Changing role for user '{$membership->personid}' ({$userid}) in course " .
                                    "'{$membership->cmscourseid}' ({$pgroup->courseid}) to role '{$membership->role}' ({$roleid})");
                         }
                         $context = context_course::instance($pgroup->courseid);
@@ -532,8 +541,8 @@ class membership {
                     } else {
                         // Created => enrol the user with the given role.
                         if ($output) {
-                            mtrace("Enroling user '{$membership->personid}' ({$userid}) in course ".
-                                   "'{$membership->cmscourseid}' ({$pgroup->courseid}) with role".
+                            mtrace("Enroling user '{$membership->personid}' ({$userid}) in course " .
+                                   "'{$membership->cmscourseid}' ({$pgroup->courseid}) with role" .
                                    " '{$membership->role}' ({$roleid})");
                         }
                     }
@@ -541,7 +550,7 @@ class membership {
 
                     // Enrol the user in the relevant group.
                     if ($pgroup->groupid) {
-                        require_once($CFG->dirroot.'/group/lib.php');
+                        require_once($CFG->dirroot . '/group/lib.php');
                         if (groups_add_member($pgroup->groupid, $userid)) {
                             if ($output) {
                                 mtrace("... adding user to group {$pgroup->groupid}");
@@ -593,9 +602,13 @@ class membership {
         $userids = self::get_userids_from_personids($personids);
 
         // Get a list of the enrol instances for 'campusconnect' in these courses.
-        list($csql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-        $enrolinstances = $DB->get_recordset_select('enrol', "enrol = 'campusconnect' AND courseid $csql", $params,
-                                                    'sortorder, id ASC');
+        [$csql, $params] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        $enrolinstances = $DB->get_recordset_select(
+            'enrol',
+            "enrol = 'campusconnect' AND courseid $csql",
+            $params,
+            'sortorder, id ASC'
+        );
         $courseenrol = [];
         foreach ($enrolinstances as $enrolinstance) {
             if (!isset($courseenol[$enrolinstance->courseid])) { // Only use the first instance of campusconnect enrol in a course.
@@ -667,15 +680,19 @@ class membership {
         foreach ($memberships as $membership) {
             $cmscourseids[$membership->cmscourseid] = $membership->cmscourseid;
         }
-        list($mappedcourseids, $courseids) = course::get_courseids_from_cmscourseids($cmscourseids);
+        [$mappedcourseids, $courseids] = course::get_courseids_from_cmscourseids($cmscourseids);
         if (empty($courseids)) {
             return true; // No existing courses to enrol them onto.
         }
 
         // Get a list of the enrol instances for 'campusconnect' in these courses.
-        list($csql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
-        $enrolinstances = $DB->get_records_select('enrol', "enrol = 'campusconnect' AND courseid $csql",
-                                                  $params, 'sortorder, id ASC');
+        [$csql, $params] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
+        $enrolinstances = $DB->get_records_select(
+            'enrol',
+            "enrol = 'campusconnect' AND courseid $csql",
+            $params,
+            'sortorder, id ASC'
+        );
         $courseenrol = [];
         foreach ($enrolinstances as $enrolinstance) {
             if (!isset($courseenrol[$enrolinstance->courseid])) {
@@ -736,7 +753,7 @@ class membership {
         $bytype = [];
         foreach ($personids as $personid) {
             if (!is_object($personid) || get_class($personid) != 'local_campusconnect\member_personid') {
-                throw new coding_exception('get_userids_from_personids expects an array of'.
+                throw new coding_exception('get_userids_from_personids expects an array of' .
                                            ' \local_campusconnect\member_personid objects');
             }
             if (!isset($bytype[$personid->type])) {
@@ -749,12 +766,12 @@ class membership {
         $ret = [];
         foreach ($bytype as $personidtype => $personids) {
             if (!$userfield = member_personid::get_userfield_from_type($personidtype)) {
-                log::add("personIDtype '{$personidtype}' included in course_members resource, but not currently".
+                log::add("personIDtype '{$personidtype}' included in course_members resource, but not currently" .
                          " mapped onto a Moodle user field", false, true, false);
                 continue;
             }
             $ret[$personidtype] = [];
-            list($psql, $params) = $DB->get_in_or_equal($personids, SQL_PARAMS_NAMED);
+            [$psql, $params] = $DB->get_in_or_equal($personids, SQL_PARAMS_NAMED);
             if ($fieldname = member_personid::is_custom_field($userfield)) {
                 // Look for the personid in the 'user_info_data' table.
                 $sql = "SELECT u.id, ud.data AS personid
@@ -810,7 +827,7 @@ class membership {
             }
             if ($fieldname = member_personid::is_custom_field($userfield)) {
                 if (!isset($user->profile)) {
-                    require_once($CFG->dirroot.'/user/profile/lib.php');
+                    require_once($CFG->dirroot . '/user/profile/lib.php');
                     profile_load_custom_fields($user);
                 }
                 if (empty($user->profile[$fieldname])) {
@@ -858,12 +875,15 @@ class membership {
         if (empty($cmscourseids)) {
             return [];
         }
-        list($csql, $params) = $DB->get_in_or_equal($cmscourseids, SQL_PARAMS_NAMED);
+        [$csql, $params] = $DB->get_in_or_equal($cmscourseids, SQL_PARAMS_NAMED);
         $params['created'] = self::STATUS_CREATED;
         $params['updated'] = self::STATUS_UPDATED;
-        return $DB->get_records_select('local_campusconnect_mbr', "cmscourseid $csql AND
+        return $DB->get_records_select(
+            'local_campusconnect_mbr',
+            "cmscourseid $csql AND
                                                                    (status = :created OR status = :updated)",
-                                       $params);
+            $params
+        );
     }
 
     /**

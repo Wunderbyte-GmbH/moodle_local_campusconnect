@@ -24,7 +24,7 @@
 
 use local_campusconnect\log;
 
-require_once(dirname(__FILE__).'/../../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 global $PAGE;
 
 $PAGE->set_url(new moodle_url('/local/campusconnect/viewlog.php'));
@@ -37,15 +37,14 @@ if (optional_param('confirmclearlog', null, PARAM_INT)) {
     require_sesskey();
     log::clearlog();
     redirect($PAGE->url);
-
 } else if (optional_param('clearlog', null, PARAM_INT)) {
     echo '<h2>Are you sure you want to clear all log entries?</h2>';
-    echo '<a href="'.$PAGE->url->out(true, ['confirmclearlog' => 1, 'sesskey' => sesskey()]).'">Yes</a>';
-    echo '&nbsp;&nbsp;&nbsp;&nbsp;<a href="'.$PAGE->url->out(true).'">No</a>';
+    echo '<a href="' . $PAGE->url->out(true, ['confirmclearlog' => 1, 'sesskey' => sesskey()]) . '">Yes</a>';
+    echo '&nbsp;&nbsp;&nbsp;&nbsp;<a href="' . $PAGE->url->out(true) . '">No</a>';
     die();
 }
 
-echo '<a href="'.$PAGE->url->out(true, ['clearlog' => 1]).'">Clear log</a>';
+echo '<a href="' . $PAGE->url->out(true, ['clearlog' => 1]) . '">Clear log</a>';
 
 echo '<pre>';
 log::outputlog();

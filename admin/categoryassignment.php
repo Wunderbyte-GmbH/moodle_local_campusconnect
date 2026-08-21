@@ -22,11 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $CFG, $PAGE, $OUTPUT;
 
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 require_once("$CFG->libdir/formslib.php");
 
 $PAGE->set_url(new moodle_url('/local/campusconnect/admin/categoryassignment.php'));
@@ -45,7 +45,6 @@ require_capability('moodle/site:config', context_system::instance());
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class campusconnect_category_form extends moodleform {
-
     /**
      * Form definition
      *
@@ -69,10 +68,22 @@ class campusconnect_category_form extends moodleform {
         ]);
 
         $radioarray = [];
-        $radioarray[] = $mform->createElement('radio', 'cc_mapping', '', get_string('fixedvalue', 'local_campusconnect'),
-                                                'mapping_fixed', 'onclick=cc_switch_mapping_fixed()');
-        $radioarray[] = $mform->createElement('radio', 'cc_mapping', '', get_string('daterange', 'local_campusconnect'),
-                                                'mapping_date', 'onclick=cc_switch_mapping_date()');
+        $radioarray[] = $mform->createElement(
+            'radio',
+            'cc_mapping',
+            '',
+            get_string('fixedvalue', 'local_campusconnect'),
+            'mapping_fixed',
+            'onclick=cc_switch_mapping_fixed()'
+        );
+        $radioarray[] = $mform->createElement(
+            'radio',
+            'cc_mapping',
+            '',
+            get_string('daterange', 'local_campusconnect'),
+            'mapping_date',
+            'onclick=cc_switch_mapping_date()'
+        );
         $mform->addGroup($radioarray, 'radioar', get_string('mappingtype', 'local_campusconnect'), ' ', false);
         $mform->setDefault('cc_mapping', 'mapping_fixed');
 
@@ -83,7 +94,8 @@ class campusconnect_category_form extends moodleform {
         $mform->addElement('date_selector', 'daterangeto', get_string('to'));
 
         $mform->disabledIf('attribute', 'cc_mapping', 'eq', 'mapping_date');
-        $mform->disabledIf('daterangefrom', 'cc_mapping', 'eq', 'mapping_fixed');;
+        $mform->disabledIf('daterangefrom', 'cc_mapping', 'eq', 'mapping_fixed');
+        ;
         $mform->disabledIf('daterangeto', 'cc_mapping', 'eq', 'mapping_fixed');
 
         $this->add_action_buttons();
@@ -93,15 +105,10 @@ class campusconnect_category_form extends moodleform {
 $mform = new campusconnect_category_form();
 
 if ($mform->is_cancelled()) {
-
     redirect("{$CFG->wwwroot}/admin/campusconnect/categoryassignment.php", '', 0);
-
 } else if ($post = $mform->get_data()) {
-
     print 'TODO';
-
 } else {
-
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('pluginname', 'local_campusconnect'));
 
@@ -109,7 +116,7 @@ if ($mform->is_cancelled()) {
 
     print '<table class="generaltable"><thead><tr><th class="header">Current Assignments</th></tr></thead></table>';
 
-    print '<h2>'.get_string('newassignment', 'local_campusconnect').'</h2>';
+    print '<h2>' . get_string('newassignment', 'local_campusconnect') . '</h2>';
 
     $mform->display();
 

@@ -36,7 +36,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class metadata {
-
     /**
      * TYPE_IMPORT_COURSE
      *
@@ -392,7 +391,7 @@ class metadata {
         }
         $summary = '';
         foreach ($mapping as $field => $text) {
-            $summary .= '<b>'.$text.':</b> {'.$field.'}<br/>';
+            $summary .= '<b>' . $text . ':</b> {' . $field . '}<br/>';
         }
 
         return $summary;
@@ -429,13 +428,15 @@ class metadata {
         $mappings = $DB->get_records('local_campusconnect_mappings', ['ecsid' => $this->ecsid]);
         foreach ($mappings as $mapping) {
             if ($courselink) {
-                if ($mapping->type == self::TYPE_IMPORT_COURSE ||
+                if (
+                    $mapping->type == self::TYPE_IMPORT_COURSE ||
                     $mapping->type == self::TYPE_EXPORT_COURSE
                 ) {
                     continue;
                 }
             } else {
-                if ($mapping->type == self::TYPE_IMPORT_EXTERNAL_COURSE ||
+                if (
+                    $mapping->type == self::TYPE_IMPORT_EXTERNAL_COURSE ||
                     $mapping->type == self::TYPE_EXPORT_EXTERNAL_COURSE
                 ) {
                     continue;
@@ -513,7 +514,6 @@ class metadata {
                     }
                 }
             }
-
         } else {
             if (!empty($remotefield)) {
                 if (!in_array($remotefield, self::list_remote_to_local_fields($localfield, $this->courselink))) {
@@ -557,7 +557,6 @@ class metadata {
                     }
                 }
             }
-
         } else {
             if (!empty($localfield) && !in_array($localfield, self::list_local_to_remote_fields($remotefield, $this->courselink))) {
                 throw new coding_exception("$localfield is not a suitable field to map onto $remotefield");
@@ -658,7 +657,7 @@ class metadata {
                             $details['datesAndVenues.lastDate.startDatetime'] = $fieldvalue->startDatetime;
                             $details['datesAndVenues.lastDate.endDatetime'] = $fieldvalue->endDatetime;
                         } else {
-                            $details['datesAndVenues.'.$fieldname] = $fieldvalue;
+                            $details['datesAndVenues.' . $fieldname] = $fieldvalue;
                         }
                     }
                 }
@@ -737,7 +736,7 @@ class metadata {
                             if ($subname) {
                                 $details[$fieldname][$key] = $degree->{$subname};
                             } else {
-                                $details[$fieldname][$key] = $degree->code.' - '.$degree->title;
+                                $details[$fieldname][$key] = $degree->code . ' - ' . $degree->title;
                             }
                         }
                         if ($flattenarrays) {
@@ -746,8 +745,10 @@ class metadata {
                         break;
                     case 'linklist':
                         foreach ($details[$basename] as $key => $link) {
-                            $details[$fieldname][$key] = html_writer::link($details[$basename][$key]->href,
-                                                                           $details[$basename][$key]->title);
+                            $details[$fieldname][$key] = html_writer::link(
+                                $details[$basename][$key]->href,
+                                $details[$basename][$key]->title
+                            );
                         }
                         if ($flattenarrays) {
                             $details[$fieldname] = implode(', ', $details[$fieldname]);
@@ -844,10 +845,9 @@ class metadata {
                             log::add("Unexpected array in field $remotefield", false, true, true);
                             $val = implode(',', $val);
                         }
-                        $course->$localfield = str_replace('{'.$field.'}', $val, $course->$localfield);
+                        $course->$localfield = str_replace('{' . $field . '}', $val, $course->$localfield);
                     }
                 }
-
             } else {
                 if (isset($details[$remotefield])) {
                     $course->$localfield = $details[$remotefield];
@@ -887,7 +887,7 @@ class metadata {
                     case 'list':
                         $course->$fieldname = explode(',', $course->$fieldname);
                         break;
-                    case 'lang': // TODO - test if this needs any conversion.
+                    case 'lang': // Possibly needs conversion, untested.
                     case 'url':
                     case 'string':
                     default:
@@ -911,10 +911,9 @@ class metadata {
                         } else {
                             $val = '';
                         }
-                        $details[$remotefield] = str_replace('{'.$field.'}', $val, $details[$remotefield]);
+                        $details[$remotefield] = str_replace('{' . $field . '}', $val, $details[$remotefield]);
                     }
                 }
-
             } else {
                 if (isset($course->$localfield)) {
                     $details[$remotefield] = $course->$localfield;

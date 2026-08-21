@@ -34,7 +34,6 @@ use coding_exception;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class connect {
-
     /** @var $curlresource resource - curl connection currently being prepared * */
     protected $curlresource = null;
 
@@ -197,7 +196,7 @@ class connect {
 
         $result = $this->call();
         if (!$this->check_status(self::HTTP_CODE_CREATED)) {
-            throw new connect_exception('add_auth - bad response: '.$this->get_status());
+            throw new connect_exception('add_auth - bad response: ' . $this->get_status());
         }
 
         $result = $this->parse_json($result);
@@ -213,11 +212,11 @@ class connect {
         if (empty($hash)) {
             throw new connect_exception('get_auth - no auth hash given');
         }
-        $path = '/sys/auths/'.$hash;
-        $this->init_connection($path.'/details');
+        $path = '/sys/auths/' . $hash;
+        $this->init_connection($path . '/details');
         $result = $this->call();
         if (!$this->check_status(self::HTTP_CODE_OK)) {
-            throw new connect_exception('get_auth - bad response: '.$this->get_status());
+            throw new connect_exception('get_auth - bad response: ' . $this->get_status());
         }
         $details = new details($this->parse_json($result));
 
@@ -226,7 +225,7 @@ class connect {
 
         $result = $this->call();
         if (!$this->check_status(self::HTTP_CODE_OK)) {
-            throw new connect_exception('get_auth - bad response: '.$this->get_status());
+            throw new connect_exception('get_auth - bad response: ' . $this->get_status());
         }
 
         $result = $this->parse_json($result);
@@ -279,7 +278,7 @@ class connect {
 
         $result = $this->call();
         if (!$this->check_status(self::HTTP_CODE_OK)) {
-            throw new connect_exception('get_event_queues - bad response: '.$this->get_status());
+            throw new connect_exception('get_event_queues - bad response: ' . $this->get_status());
         }
 
         return $this->parse_json($result);
@@ -298,7 +297,7 @@ class connect {
 
         $result = $this->call();
         if (!$this->check_status(self::HTTP_CODE_OK)) {
-            throw new connect_exception('read_event_fifo - bad response: '.$this->get_status());
+            throw new connect_exception('read_event_fifo - bad response: ' . $this->get_status());
         }
 
         return $this->parse_json($result);
@@ -315,8 +314,11 @@ class connect {
      * @throws connect_exception
      * @return object|uri_list transfer details OR links to get further details about each resource
      */
-    public function get_resource_list($type, $sent = self::RECEIVED,
-                                      $transferdetails = self::CONTENT) {
+    public function get_resource_list(
+        $type,
+        $sent = self::RECEIVED,
+        $transferdetails = self::CONTENT
+    ) {
         if (!event::is_valid_resource($type)) {
             throw new coding_exception("get_resource_list: unknown resource type $type");
         }
@@ -326,7 +328,7 @@ class connect {
         if (!in_array($transferdetails, self::$validtransferdetails)) {
             throw new coding_exception("get_resource_list: invalid value for transferdetails: $transferdetails");
         }
-        $resourcepath = '/'.$type;
+        $resourcepath = '/' . $type;
         if ($transferdetails == self::TRANSFERDETAILS) {
             $resourcepath .= '/details';
         }
@@ -337,7 +339,7 @@ class connect {
 
         $result = $this->call();
         if (!$this->check_status(self::HTTP_CODE_OK)) {
-            throw new connect_exception('get_resource_list - bad response: '.$this->get_status());
+            throw new connect_exception('get_resource_list - bad response: ' . $this->get_status());
         }
 
         if ($transferdetails == self::TRANSFERDETAILS) {
@@ -364,7 +366,7 @@ class connect {
         if (!in_array($transferdetails, self::$validtransferdetails)) {
             throw new coding_exception("get_resource_list: invalid value for transferdetails: $transferdetails");
         }
-        $resourcepath = '/'.$type;
+        $resourcepath = '/' . $type;
         if ($id) {
             $resourcepath .= "/$id";
         }
@@ -423,7 +425,7 @@ class connect {
         } else {
             $poststr = json_encode($post);
         }
-        $this->init_connection('/'.$type, $sendurilist);
+        $this->init_connection('/' . $type, $sendurilist);
         $this->set_postfields($poststr);
 
         self::log("add_resource $type - $targetcommunityids; $targetmids");
@@ -438,7 +440,7 @@ class connect {
 
         $this->call();
         if (!$this->check_status(self::HTTP_CODE_CREATED)) {
-            throw new connect_exception('add_resource - bad response: '.$this->get_status());
+            throw new connect_exception('add_resource - bad response: ' . $this->get_status());
         }
 
         return $this->get_econtentid_from_header();
@@ -500,7 +502,7 @@ class connect {
         fclose($fp);
 
         if (!$this->check_status(self::HTTP_CODE_OK)) {
-            throw new connect_exception('update_resource - bad response: '.$this->get_status());
+            throw new connect_exception('update_resource - bad response: ' . $this->get_status());
         }
 
         return $this->parse_json($result);
@@ -541,7 +543,7 @@ class connect {
 
         $result = $this->call();
         if (!$this->check_status(self::HTTP_CODE_OK)) {
-            throw new connect_exception('get_memberships - bad response: '.$this->get_status());
+            throw new connect_exception('get_memberships - bad response: ' . $this->get_status());
         }
         $this->check_contenttype('application/json');
         return $this->parse_json($result);
@@ -646,8 +648,8 @@ class connect {
     protected function check_contenttype($expected, $throwexception = true) {
         if ($this->get_contenttype_from_header() != $expected) {
             if ($throwexception) {
-                throw new connect_exception("expected content type '$expected' got type '".
-                                            $this->get_contenttype_from_header()."'");
+                throw new connect_exception("expected content type '$expected' got type '" .
+                                            $this->get_contenttype_from_header() . "'");
             }
             return false;
         }
@@ -691,7 +693,7 @@ class connect {
             throw new coding_exception('Resource path must start with \'/\' and not end with \'/\'');
         }
         $this->headers = []; // Clear out any headers from previous calls.
-        $this->curlresource = curl_init($this->settings->get_url().$resourcepath);
+        $this->curlresource = curl_init($this->settings->get_url() . $resourcepath);
 
         // Set up standard options.
         $this->set_option(CURLOPT_RETURNTRANSFER, 1);
@@ -717,7 +719,7 @@ class connect {
                 }
             }
             if (!empty($CFG->proxyuser) && !empty($CFG->proxypassword)) {
-                $this->set_option(CURLOPT_PROXYUSERPWD, $CFG->proxyuser.':'.$CFG->proxypassword);
+                $this->set_option(CURLOPT_PROXYUSERPWD, $CFG->proxyuser . ':' . $CFG->proxypassword);
                 if (defined('CURLOPT_PROXYAUTH')) {
                     // Any proxy authentication if PHP 5.1.
                     $this->set_option(CURLOPT_PROXYAUTH, CURLAUTH_BASIC | CURLAUTH_NTLM);
@@ -735,7 +737,7 @@ class connect {
                 $this->set_option(CURLOPT_SSL_VERIFYHOST, 0);
                 $this->set_option(CURLOPT_SSL_VERIFYPEER, 0);
                 $this->set_option(CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-                $this->set_option(CURLOPT_USERPWD, $this->settings->get_http_user().':'.
+                $this->set_option(CURLOPT_USERPWD, $this->settings->get_http_user() . ':' .
                                                  $this->settings->get_http_password());
                 break;
 
@@ -749,11 +751,11 @@ class connect {
                 break;
 
             default:
-                throw new coding_exception('Unknown auth type: '.$this->settings->get_auth_type());
+                throw new coding_exception('Unknown auth type: ' . $this->settings->get_auth_type());
                 break;
         }
 
-        self::log($this->settings->get_url().$resourcepath);
+        self::log($this->settings->get_url() . $resourcepath);
     }
 
     /**
@@ -814,8 +816,8 @@ class connect {
      */
     protected function call() {
         if (!$this->settings->is_enabled()) {
-            throw new coding_exception('\local_campusconnect\connect: call() - should not be attempting to connect to'.
-                                       ' disabled ECS ('.$this->get_ecs_id().')');
+            throw new coding_exception('\local_campusconnect\connect: call() - should not be attempting to connect to' .
+                                       ' disabled ECS (' . $this->get_ecs_id() . ')');
         }
 
         if ($this->debug) {
@@ -827,15 +829,15 @@ class connect {
         $this->responseheaders = [];
 
         if (($res = curl_exec($this->curlresource)) === false) {
-            throw new connect_exception('curl error: '.curl_error($this->curlresource).
-                                        ' ('.curl_errno($this->curlresource).')');
+            throw new connect_exception('curl error: ' . curl_error($this->curlresource) .
+                                        ' (' . curl_errno($this->curlresource) . ')');
         }
 
         if ($this->debug) {
             var_dump(curl_getinfo($this->curlresource));
         }
 
-        self::log('Response: '.$res);
+        self::log('Response: ' . $res);
 
         return $res;
     }
@@ -898,13 +900,13 @@ class connect {
             curl_setopt($c, CURLOPT_VERBOSE, 1);
             $res = curl_exec($c);
             if ($res === false) {
-                throw new connect_exception('curl error: '.curl_error($c).
-                                            ' ('.curl_errno($c).')');
+                throw new connect_exception('curl error: ' . curl_error($c) .
+                                            ' (' . curl_errno($c) . ')');
             }
             $result = json_decode($res);
             if (is_null($result)) {
                 $details = "\nURL: $url \nReturned data: $res";
-                throw new connect_exception('Invalid item downloaded from resource'.$details);
+                throw new connect_exception('Invalid item downloaded from resource' . $details);
             }
 
             return $result;

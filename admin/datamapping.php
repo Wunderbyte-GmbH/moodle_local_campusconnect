@@ -22,11 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $CFG, $PAGE, $OUTPUT;
 
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 $PAGE->set_url(new moodle_url('/local/campusconnect/admin/datamapping.php'));
 $PAGE->set_context(context_system::instance());
@@ -38,9 +38,9 @@ require_capability('moodle/site:config', context_system::instance());
 
 $type = optional_param('type', 'import', PARAM_TEXT);
 if ($type == 'export') {
-    include_once($CFG->dirroot.'/local/campusconnect/admin/mapping/export.php');
+    include_once($CFG->dirroot . '/local/campusconnect/admin/mapping/export.php');
 } else {
-    include_once($CFG->dirroot.'/local/campusconnect/admin/mapping/import.php');
+    include_once($CFG->dirroot . '/local/campusconnect/admin/mapping/import.php');
 }
 
 echo $OUTPUT->footer();

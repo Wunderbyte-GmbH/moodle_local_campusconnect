@@ -26,11 +26,11 @@ use local_campusconnect\connect;
 use local_campusconnect\ecssettings;
 use local_campusconnect\event;
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $DB, $OUTPUT, $PAGE;
 
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 $PAGE->set_url(new moodle_url('/local/campusconnect/admin/allecs.php'));
 $PAGE->set_context(context_system::instance());
@@ -55,7 +55,7 @@ require_capability('moodle/site:config', context_system::instance());
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'local_campusconnect'));
 
-print '<a href="'.new moodle_url('/local/campusconnect/admin/ecs.php').'"><h3>Add New ECS</h3></a><br />';
+print '<a href="' . new moodle_url('/local/campusconnect/admin/ecs.php') . '"><h3>Add New ECS</h3></a><br />';
 print '<h4>Available ECS</h4>';
 $ecslist = ecssettings::list_ecs(false);
 print '<table class="generaltable" width="100%">
@@ -71,24 +71,24 @@ foreach ($ecslist as $ecsid => $ecs) {
         try {
             $idtest = $connection->get_resource_list(event::RES_COURSELINK);
         } catch (Exception $e) {
-            $offline = ' ('.get_string('offline', 'local_campusconnect').')';
+            $offline = ' (' . get_string('offline', 'local_campusconnect') . ')';
         }
-        print "<td style='text-align: center'>".get_string('yes')."$offline</td>";
+        print "<td style='text-align: center'>" . get_string('yes') . "$offline</td>";
     } else {
-        print '<td style="text-align: center">'.get_string('no').'</td>';
+        print '<td style="text-align: center">' . get_string('no') . '</td>';
     }
     $certexpiry = $ecsdetails->get_certificate_expiry();
     if ($certexpiry) {
-        $certexpiry = '<strong>'.get_string('certificateexpiry', 'local_campusconnect').':</strong> '.$certexpiry;
+        $certexpiry = '<strong>' . get_string('certificateexpiry', 'local_campusconnect') . ':</strong> ' . $certexpiry;
     }
     print "<td><div class='info'>
-        <strong><a href='".new moodle_url('/local/campusconnect/admin/ecs.php', ['id' => $ecsid])."'>$ecs</a></strong><br />
-        <strong>".get_string('serveraddress', 'local_campusconnect').":</strong> $url $certexpiry
+        <strong><a href='" . new moodle_url('/local/campusconnect/admin/ecs.php', ['id' => $ecsid]) . "'>$ecs</a></strong><br />
+        <strong>" . get_string('serveraddress', 'local_campusconnect') . ":</strong> $url $certexpiry
     </div></td>";
-    print '<td><a href='.new moodle_url('/local/campusconnect/admin/ecs.php', ['id' => $ecsid]).'>'.
-        get_string('edit').'</a> | <a href='.new moodle_url('/local/campusconnect/admin/ecs.php', [
+    print '<td><a href=' . new moodle_url('/local/campusconnect/admin/ecs.php', ['id' => $ecsid]) . '>' .
+        get_string('edit') . '</a> | <a href=' . new moodle_url('/local/campusconnect/admin/ecs.php', [
             'delete' => $ecsid, 'sesskey' => sesskey(),
-        ]).'>'.get_string('delete').'</a></td>';
+        ]) . '>' . get_string('delete') . '</a></td>';
     print '</tr>';
 }
 print '</tbody></table>';
