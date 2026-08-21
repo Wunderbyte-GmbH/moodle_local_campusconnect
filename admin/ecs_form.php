@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->libdir."/formslib.php");
+require_once($CFG->libdir . "/formslib.php");
 
 /**
  * Class to handle ECS settings form for campus connect settings page
@@ -38,7 +38,6 @@ require_once($CFG->libdir."/formslib.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class campusconnect_ecs_form extends moodleform {
-
     /**
      * Form definition
      *
@@ -144,18 +143,30 @@ class campusconnect_ecs_form extends moodleform {
 
         $mform->addElement('header', 'notifications', get_string('notifications', 'local_campusconnect'));
 
-        $mform->addElement('text', 'notifyusers', get_string('notifcationaboutecsusers', 'local_campusconnect'),
-                           ['size' => 50]);
+        $mform->addElement(
+            'text',
+            'notifyusers',
+            get_string('notifcationaboutecsusers', 'local_campusconnect'),
+            ['size' => 50]
+        );
         $mform->addElement('static', 'usernotdesc', '', get_string('usernotificationdesc', 'local_campusconnect'));
         $mform->setType('notifyusers', PARAM_RAW);
 
-        $mform->addElement('text', 'notifycontent', get_string('notificationaboutnewecontent', 'local_campusconnect'),
-                           ['size' => 50]);
+        $mform->addElement(
+            'text',
+            'notifycontent',
+            get_string('notificationaboutnewecontent', 'local_campusconnect'),
+            ['size' => 50]
+        );
         $mform->addElement('static', 'contentnotdesc', '', get_string('contentnotificationdesc', 'local_campusconnect'));
         $mform->setType('notifycontent', PARAM_RAW);
 
-        $mform->addElement('text', 'notifycourses', get_string('notificationaboutapprovedcourses', 'local_campusconnect'),
-                           ['size' => 50]);
+        $mform->addElement(
+            'text',
+            'notifycourses',
+            get_string('notificationaboutapprovedcourses', 'local_campusconnect'),
+            ['size' => 50]
+        );
         $mform->addElement('static', 'coursenotdesc', '', get_string('coursenotificationdesc', 'local_campusconnect'));
         $mform->setType('notifycourses', PARAM_RAW);
 

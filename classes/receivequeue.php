@@ -35,7 +35,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class receivequeue {
-
     /**
      * @var int[] IDs of events that were unsuccessful and should be tried again next update
      */
@@ -131,7 +130,7 @@ class receivequeue {
             $select[] = 'serverid = :serverid';
         }
         if (!empty(self::$skipevents)) {
-            list($ssql, $sparams) = $DB->get_in_or_equal(self::$skipevents, SQL_PARAMS_NAMED, 'param', false);
+            [$ssql, $sparams] = $DB->get_in_or_equal(self::$skipevents, SQL_PARAMS_NAMED, 'param', false);
             $select[] = "id $ssql";
             $params = array_merge($params, $sparams);
         }
@@ -204,7 +203,7 @@ class receivequeue {
                     break;
                 case event::RES_COURSE_URL:
                 default:
-                    debugging("Unexpected incoming event of type: ".$event->get_resource_type());
+                    debugging("Unexpected incoming event of type: " . $event->get_resource_type());
                     break;
             }
 
@@ -238,54 +237,64 @@ class receivequeue {
         $status = $event->get_status();
         // Delete events do not need to retrieve the resource.
         if ($status == event::STATUS_DESTROYED) {
-            mtrace("CampusConnect: delete courselink: ".$event->get_resource_id()."\n");
+            mtrace("CampusConnect: delete courselink: " . $event->get_resource_id() . "\n");
             courselink::delete($event->get_resource_id(), $settings);
             return true;
         }
 
-        if ($status != event::STATUS_CREATED &&
+        if (
+            $status != event::STATUS_CREATED &&
             $status != event::STATUS_UPDATED
         ) {
-            throw new receivequeue_exception("Unknown event status: ".$event->get_status());
+            throw new receivequeue_exception("Unknown event status: " . $event->get_status());
         }
 
         // Retrieve the resource.
         $connect = new connect($settings);
         $resource = $connect->get_resource($event->get_resource_id(), event::RES_COURSELINK);
-        $details = $connect->get_resource($event->get_resource_id(), event::RES_COURSELINK,
-                                          connect::TRANSFERDETAILS);
+        $details = $connect->get_resource(
+            $event->get_resource_id(),
+            event::RES_COURSELINK,
+            connect::TRANSFERDETAILS
+        );
 
         // Process the create/update event.
         if ($status == event::STATUS_CREATED) {
-            mtrace("CampusConnect: create courselink: ".$event->get_resource_id()."\n");
+            mtrace("CampusConnect: create courselink: " . $event->get_resource_id() . "\n");
             try {
                 return courselink::create($event->get_resource_id(), $settings, $resource, $details);
             } catch (moodle_exception $e) {
-                $msg = "Unable to create course for resourceid: ".$event->get_resource_id()." title: {$resource->title}";
+                $msg = "Unable to create course for resourceid: " . $event->get_resource_id() . " title: {$resource->title}";
                 mtrace($msg);
                 if (!$event->get_failcount()) {
                     // If this is the first time this event has failed - notify the admin by email.
-                    notification::queue_message($event->get_ecs_id(),
-                                                notification::MESSAGE_IMPORT_COURSELINK,
-                                                notification::TYPE_ERROR,
-                                                0, $msg);
+                    notification::queue_message(
+                        $event->get_ecs_id(),
+                        notification::MESSAGE_IMPORT_COURSELINK,
+                        notification::TYPE_ERROR,
+                        0,
+                        $msg
+                    );
                 }
                 return false;
             }
         }
 
-        mtrace("CampusConnect: update courselink: ".$event->get_resource_id()."\n");
+        mtrace("CampusConnect: update courselink: " . $event->get_resource_id() . "\n");
         try {
             return courselink::update($event->get_resource_id(), $settings, $resource, $details);
         } catch (moodle_exception $e) {
-            $msg = "Unable to update course for resourceid: ".$event->get_resource_id()." title: {$resource->title}";
+            $msg = "Unable to update course for resourceid: " . $event->get_resource_id() . " title: {$resource->title}";
             mtrace($msg);
             if (!$event->get_failcount()) {
                 // If this is the first time this event has failed - notify the admin by email.
-                notification::queue_message($event->get_ecs_id(),
-                                            notification::MESSAGE_IMPORT_COURSELINK,
-                                            notification::TYPE_ERROR,
-                                            0, $msg);
+                notification::queue_message(
+                    $event->get_ecs_id(),
+                    notification::MESSAGE_IMPORT_COURSELINK,
+                    notification::TYPE_ERROR,
+                    0,
+                    $msg
+                );
             }
             return false;
         }
@@ -306,29 +315,33 @@ class receivequeue {
 
         // Delete events do not need to retrieve the resource.
         if ($status == event::STATUS_DESTROYED) {
-            mtrace("CampusConnect: delete directory: ".$event->get_resource_id()."\n");
+            mtrace("CampusConnect: delete directory: " . $event->get_resource_id() . "\n");
             directorytree::delete_directory($event->get_resource_id(), $settings);
             return true;
         }
 
-        if ($status != event::STATUS_CREATED &&
+        if (
+            $status != event::STATUS_CREATED &&
             $status != event::STATUS_UPDATED
         ) {
-            throw new receivequeue_exception("Unknown event status: ".$event->get_status());
+            throw new receivequeue_exception("Unknown event status: " . $event->get_status());
         }
 
         // Retrieve the resource.
         $connect = new connect($settings);
         $resource = $connect->get_resource($event->get_resource_id(), event::RES_DIRECTORYTREE);
         if ($resource) {
-            $details = $connect->get_resource($event->get_resource_id(), event::RES_DIRECTORYTREE,
-                                              connect::TRANSFERDETAILS);
+            $details = $connect->get_resource(
+                $event->get_resource_id(),
+                event::RES_DIRECTORYTREE,
+                connect::TRANSFERDETAILS
+            );
         } else {
             return true; // The resource no longer exists - assume we will process the 'delete' event in a moment.
         }
 
         // Process the create/update event.
-        mtrace("CampusConnect: create/update directorytree: ".$event->get_resource_id()."\n");
+        mtrace("CampusConnect: create/update directorytree: " . $event->get_resource_id() . "\n");
         if ($status = directorytree::update_directory($event->get_resource_id(), $settings, $resource, $details)) {
             directorytree::delete_missing_directories($event->get_resource_id(), $settings, $resource, $details);
         }
@@ -351,37 +364,41 @@ class receivequeue {
 
         // Delete events do not need to retrieve the resource.
         if ($status == event::STATUS_DESTROYED) {
-            mtrace("CampusConnect: delete course: ".$event->get_resource_id()."\n");
+            mtrace("CampusConnect: delete course: " . $event->get_resource_id() . "\n");
             course::delete($event->get_resource_id(), $settings);
             return true;
         }
 
-        if ($status != event::STATUS_CREATED &&
+        if (
+            $status != event::STATUS_CREATED &&
             $status != event::STATUS_UPDATED
         ) {
-            throw new receivequeue_exception("Unknown event status: ".$event->get_status());
+            throw new receivequeue_exception("Unknown event status: " . $event->get_status());
         }
 
         // Retrieve the resource.
         $connect = new connect($settings);
         $resource = $connect->get_resource($event->get_resource_id(), event::RES_COURSE);
         if ($resource) {
-            $details = $connect->get_resource($event->get_resource_id(), event::RES_COURSE,
-                                              connect::TRANSFERDETAILS);
+            $details = $connect->get_resource(
+                $event->get_resource_id(),
+                event::RES_COURSE,
+                connect::TRANSFERDETAILS
+            );
         } else {
             return true; // The resource no longer exists - assume we will process the 'delete' event in a moment.
         }
 
         // Process the create/update event.
         if ($status == event::STATUS_CREATED) {
-            mtrace("CampusConnect: create course: ".$event->get_resource_id()."\n");
+            mtrace("CampusConnect: create course: " . $event->get_resource_id() . "\n");
             if (!$status = course::create($event->get_resource_id(), $settings, $resource, $details)) {
                 mtrace("CamupsConnect: unable to create course - directory not yet mapped");
             }
             return $status;
         }
 
-        mtrace("CampusConnect: update course: ".$event->get_resource_id()."\n");
+        mtrace("CampusConnect: update course: " . $event->get_resource_id() . "\n");
         if (!$status = course::update($event->get_resource_id(), $settings, $resource, $details)) {
             mtrace("CampusConnect: unable to update course - directory not yet mapped");
         }
@@ -399,34 +416,38 @@ class receivequeue {
 
         // Delete events do not need to retrieve the resource.
         if ($status == event::STATUS_DESTROYED) {
-            mtrace("CampusConnect: delete members: ".$event->get_resource_id()."\n");
+            mtrace("CampusConnect: delete members: " . $event->get_resource_id() . "\n");
             membership::delete($event->get_resource_id(), $settings);
             return true;
         }
 
-        if ($status != event::STATUS_CREATED &&
+        if (
+            $status != event::STATUS_CREATED &&
             $status != event::STATUS_UPDATED
         ) {
-            throw new receivequeue_exception("Unknown event status: ".$event->get_status());
+            throw new receivequeue_exception("Unknown event status: " . $event->get_status());
         }
 
         // Retrieve the resource.
         $connect = new connect($settings);
         $resource = $connect->get_resource($event->get_resource_id(), event::RES_COURSE_MEMBERS);
         if ($resource) {
-            $details = $connect->get_resource($event->get_resource_id(), event::RES_COURSE_MEMBERS,
-                                              connect::TRANSFERDETAILS);
+            $details = $connect->get_resource(
+                $event->get_resource_id(),
+                event::RES_COURSE_MEMBERS,
+                connect::TRANSFERDETAILS
+            );
         } else {
             return true; // The resource no longer exists - assume we will process the 'delete' event in a moment.
         }
 
         // Process the create/update event.
         if ($status == event::STATUS_CREATED) {
-            mtrace("CampusConnect: create course members: ".$event->get_resource_id()."\n");
+            mtrace("CampusConnect: create course members: " . $event->get_resource_id() . "\n");
             return membership::create($event->get_resource_id(), $settings, $resource, $details);
         }
 
-        mtrace("CampusConnect: update course: ".$event->get_resource_id()."\n");
+        mtrace("CampusConnect: update course: " . $event->get_resource_id() . "\n");
         return membership::update($event->get_resource_id(), $settings, $resource, $details);
     }
 
@@ -450,10 +471,13 @@ class receivequeue {
         if (!$resource) {
             return true; // Resource not found - assume it has been deleted and move on.
         }
-        $details = $connect->get_resource($event->get_resource_id(), event::RES_ENROLMENT,
-                                          connect::TRANSFERDETAILS);
+        $details = $connect->get_resource(
+            $event->get_resource_id(),
+            event::RES_ENROLMENT,
+            connect::TRANSFERDETAILS
+        );
 
-        mtrace("CampusConnect: update enrolment status: ".$event->get_resource_id()."\n");
+        mtrace("CampusConnect: update enrolment status: " . $event->get_resource_id() . "\n");
 
         if (enrolment::update_status_from_ecs($settings, $resource, $details)) {
             // Delete the resource once it has been processed.

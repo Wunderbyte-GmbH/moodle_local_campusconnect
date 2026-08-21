@@ -35,7 +35,6 @@ use stdClass;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_url {
-
     /** The course url has been updated on the ECS */
     const STATUS_UPTODATE = 0;
     /** New course url, not yet sent to the ECS */
@@ -63,11 +62,11 @@ class course_url {
      */
     public function add() {
         if ($this->crs->urlstatus != self::STATUS_UPTODATE) {
-            throw new course_exception('\local_campusconnect\course_url::add - unexpected status for newly created crs record'.
+            throw new course_exception('\local_campusconnect\course_url::add - unexpected status for newly created crs record' .
                                        " ($this->crs->id)");
         }
         if ($this->crs->urlresourceid != 0) {
-            throw new course_exception('\local_campusconnect\course_url::add - newly created crs record should not have a'.
+            throw new course_exception('\local_campusconnect\course_url::add - newly created crs record should not have a' .
                                        " urlresourceid ($this->crs->id)");
         }
         $this->set_status(self::STATUS_CREATED);
@@ -81,7 +80,7 @@ class course_url {
             return; // Nothing to do - updates already pending.
         }
         if ($this->crs->urlstatus == self::STATUS_DELETED) {
-            throw new course_exception('\local_campusconnect\course_url::update - attempting to update crs record'.
+            throw new course_exception('\local_campusconnect\course_url::update - attempting to update crs record' .
                                        " ($this->crs->id) that is scheduled for deletion");
         }
         if ($this->crs->urlresourceid) {
@@ -104,7 +103,7 @@ class course_url {
             return;
         }
         if ($this->crs->urlresourceid == 0) {
-            throw new course_exception('\local_campusconnect\course_url::delete - cannot delete record on ECS with no'.
+            throw new course_exception('\local_campusconnect\course_url::delete - cannot delete record on ECS with no' .
                                        " urlresourceid ($this->crs->id)");
         }
 
@@ -142,7 +141,7 @@ class course_url {
                 } catch (connect_exception $e) {
                     // Ignore exceptions if not in debugging (resource may no longer exist).
                     if (debugging()) {
-                        throw new connect_exception('Debug mode is ON, error: '.$e->getMessage());
+                        throw new connect_exception('Debug mode is ON, error: ' . $e->getMessage());
                     }
                 }
                 continue;
@@ -154,7 +153,7 @@ class course_url {
             if ($courseurl->urlstatus == self::STATUS_UPDATED) {
                 if (!$courseurl->resourceid) {
                     $courseurl->urlstatus = self::STATUS_CREATED;
-                    debugging("\\local_campusconnect\\course_url::update_ecs - cannot update course url ({$courseurl->id})".
+                    debugging("\\local_campusconnect\\course_url::update_ecs - cannot update course url ({$courseurl->id})" .
                               " without resourceid (creating new resource instead)");
                 }
             }
@@ -304,9 +303,13 @@ class course_url {
         }
 
         // Note, internal links are not exported, as they are not separate courses, from the point of view of the external CMS.
-        list($rsql, $params) = $DB->get_in_or_equal($updatedresourceids, SQL_PARAMS_NAMED);
-        $courseurls = $DB->get_records_select('local_campusconnect_crs', "resourceid $rsql AND internallink = 0",
-                                              $params, 'resourceid, internallink, id');
+        [$rsql, $params] = $DB->get_in_or_equal($updatedresourceids, SQL_PARAMS_NAMED);
+        $courseurls = $DB->get_records_select(
+            'local_campusconnect_crs',
+            "resourceid $rsql AND internallink = 0",
+            $params,
+            'resourceid, internallink, id'
+        );
 
         // Loop throught he courseurls and combine together those that match a single resourceid.
         /** @var stdClass $lasturl */
@@ -334,7 +337,7 @@ class course_url {
         }
         $courses = [];
         if ($allcourseids) {
-            list($csql, $params) = $DB->get_in_or_equal($allcourseids);
+            [$csql, $params] = $DB->get_in_or_equal($allcourseids);
             $courses = $DB->get_records_select_menu('course', "id {$csql}", $params, '', 'id, fullname');
         }
 
@@ -369,7 +372,7 @@ class course_url {
             ];
         }
         $data = new stdClass();
-        $data->cms_course_id = $courseurl->cmsid.''; // Convert to string if 'NULL'.
+        $data->cms_course_id = $courseurl->cmsid . ''; // Convert to string if 'NULL'.
         $data->ecs_course_url = $connect->get_resource_url($courseurl->resourceid, event::RES_COURSE);
         $data->lms_course_urls = $moodleurls;
 

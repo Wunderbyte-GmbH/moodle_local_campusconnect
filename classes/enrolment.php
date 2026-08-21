@@ -34,7 +34,6 @@ use coding_exception;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrolment {
-
     /**
      * STATUS_ACTIVE
      *
@@ -102,7 +101,7 @@ class enrolment {
         global $DB;
 
         if ($user->auth != 'campusconnect') {
-            throw new coding_exception('\local_campusconnect\enrolment::set_status is only relevant for users authenticated via'.
+            throw new coding_exception('\local_campusconnect\enrolment::set_status is only relevant for users authenticated via' .
                                        ' auth_campusconnect');
         }
         if (!in_array($status, self::$validstatuses)) {
@@ -117,7 +116,6 @@ class enrolment {
                 'status' => $status,
             ];
             $DB->update_record('local_campusconnect_enrex', $upd);
-
         } else {
             // New entry.
             $ins = (object)$params;
@@ -176,22 +174,30 @@ class enrolment {
                     foreach ($mids as $mid) {
                         if ($export->should_send_enrolment_status($connect->get_ecs_id(), $mid)) {
                             $connect->add_resource(event::RES_ENROLMENT, $data, null, $mid);
-                            log::add("Sending status update for user {$user->id} in course {$enrol->courseid} to ECS".
+                            log::add("Sending status update for user {$user->id} in course {$enrol->courseid} to ECS" .
                                      " {$ecsid} MID {$mid} PID {$user->pids} - new status = {$enrol->status}", true, false, false);
                         }
                     }
                 } else {
-                    log::add("NOT sending status update for user {$user->id} in course {$enrol->courseid} - this course is".
+                    log::add(
+                        "NOT sending status update for user {$user->id} in course {$enrol->courseid} - this course is" .
                              " not exported to the participant the user came from (ECS {$ecsid} PID {$user->pids})",
-                             true, false, false);
+                        true,
+                        false,
+                        false
+                    );
                 }
                 $notifiedecsids[] = $connect->get_ecs_id(); // Finished notifying this ECS.
             }
 
             if (array_diff($ecsids, $notifiedecsids)) {
                 // Still ECS to send notifications to.
-                $DB->set_field('local_campusconnect_enrex', 'notifiedecsids', implode(',', $notifiedecsids),
-                               ['id' => $enrol->id]);
+                $DB->set_field(
+                    'local_campusconnect_enrex',
+                    'notifiedecsids',
+                    implode(',', $notifiedecsids),
+                    ['id' => $enrol->id]
+                );
             } else {
                 // All relevant ECS have been updated => delete the record.
                 $DB->delete_records('local_campusconnect_enrex', ['id' => $enrol->id]);
@@ -253,8 +259,12 @@ class enrolment {
         }
 
         // Match back to the original user.
-        if (!$user = courselink::get_user_from_personid($resource->personID, $resource->personIDtype,
-                                                        $participantsettings)
+        if (
+            !$user = courselink::get_user_from_personid(
+                $resource->personID,
+                $resource->personIDtype,
+                $participantsettings
+            )
         ) {
             log::add("Cannot find user matching personID: {$resource->personID} ({$resource->personIDtype})");
             return true;
@@ -278,8 +288,12 @@ class enrolment {
                     $instance = reset($instance);
                     $enrol->unenrol_user($instance, $user->id);
                 }
-                log::add("member_status change received - unenrolling user {$user->id} from course {$course->id}",
-                         true, false, false);
+                log::add(
+                    "member_status change received - unenrolling user {$user->id} from course {$course->id}",
+                    true,
+                    false,
+                    false
+                );
                 break;
 
             case self::STATUS_PENDING:

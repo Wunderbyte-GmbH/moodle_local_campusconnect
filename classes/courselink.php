@@ -34,7 +34,7 @@ use stdClass;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
 /**
  * Holds and updates courselinks created that link fake local courses to real courses on an external server.
@@ -44,7 +44,6 @@ require_once($CFG->dirroot.'/course/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class courselink {
-
     /**
      * PERSON_UNIQUECODE
      *
@@ -269,7 +268,7 @@ class courselink {
      *
      */
     public function get_participantname() {
-        return $this->participantname." ({$this->ecsid}_{$this->mid})";
+        return $this->participantname . " ({$this->ecsid}_{$this->mid})";
     }
 
     /**
@@ -304,7 +303,7 @@ class courselink {
         global $DB;
 
         if (is_null($transferdetails)) {
-            throw new coding_exception('\local_campusconnect\courselink::create - $transferdetails must not be null. '.
+            throw new coding_exception('\local_campusconnect\courselink::create - $transferdetails must not be null. ' .
                                        'Did you get here via "refresh_from_ecs"?');
         }
 
@@ -366,18 +365,15 @@ class courselink {
 
                     // If there was no guest at all, we need to install it.
                     if (count($instances) < 1) {
-
                         // We need to add the guest enrolment method.
                         mtrace('Need to add guest enrolement method.');
 
                         $plugin->add_default_instance($course);
                     } else {
-
                         // We need to add the guest enrolment method.
                         mtrace('No need to install guest enrolement method anymore.');
 
                         foreach ($instances as $instance) {
-
                             // We need to add the guest enrolment method.
                             mtrace('Iterate over installed guest instances');
 
@@ -394,10 +390,12 @@ class courselink {
                 }
             }
 
-            notification::queue_message($settings->get_id(),
-                                        notification::MESSAGE_IMPORT_COURSELINK,
-                                        notification::TYPE_CREATE,
-                                        $course->id);
+            notification::queue_message(
+                $settings->get_id(),
+                notification::MESSAGE_IMPORT_COURSELINK,
+                notification::TYPE_CREATE,
+                $course->id
+            );
         }
 
         return true;
@@ -415,7 +413,8 @@ class courselink {
     public static function update($resourceid, ecssettings $settings, $courselink, $transferdetails, $mid = null) {
         global $DB;
 
-        if ((is_null($transferdetails) && is_null($mid)) ||
+        if (
+            (is_null($transferdetails) && is_null($mid)) ||
             (!is_null($transferdetails) && !is_null($mid))
         ) {
             throw new coding_exception('\local_campusconnect\courselink::update must set EITHER $transferdetails OR $mid');
@@ -452,7 +451,7 @@ class courselink {
 
             if ($currlink->mid != $mid) {
                 throw new courselink_exception("Participant $mid attempted to update resource created by participant "
-                                               ."{$currlink->mid}");
+                                               . "{$currlink->mid}");
             }
 
             if (!self::check_required_fields(true, $coursedata, $resourceid)) {
@@ -476,10 +475,12 @@ class courselink {
                 $upd->courseid = $course->id;
                 $DB->update_record('local_campusconnect_clink', $upd);
 
-                notification::queue_message($settings->get_id(),
-                                            notification::MESSAGE_IMPORT_COURSELINK,
-                                            notification::TYPE_CREATE,
-                                            $coursedata->id);
+                notification::queue_message(
+                    $settings->get_id(),
+                    notification::MESSAGE_IMPORT_COURSELINK,
+                    notification::TYPE_CREATE,
+                    $coursedata->id
+                );
             } else {
                 // Course still exists - update it.
                 $coursedata->id = $currlink->courseid;
@@ -487,14 +488,16 @@ class courselink {
 
                 $course = $DB->get_record('course', ['id' => $coursedata->id]);
 
-                // TODO: Make sure guest account is activated.
+                // Make sure the guest account is activated.
                 $plugin = enrol_get_plugin('guest');
                 $plugin->add_default_instance($course);
 
-                notification::queue_message($settings->get_id(),
-                                            notification::MESSAGE_IMPORT_COURSELINK,
-                                            notification::TYPE_UPDATE,
-                                            $coursedata->id);
+                notification::queue_message(
+                    $settings->get_id(),
+                    notification::MESSAGE_IMPORT_COURSELINK,
+                    notification::TYPE_UPDATE,
+                    $coursedata->id
+                );
             }
 
             if ($currlink->url != $courselink->url) {
@@ -521,12 +524,15 @@ class courselink {
         if ($currlink = self::get_by_resourceid($resourceid, $settings->get_id())) {
             $msg = "{$currlink->courseid} ($resourceid)";
             if ($coursename = $DB->get_field('course', 'fullname', ['id' => $currlink->courseid])) {
-                $msg .= ' - '.format_string($coursename);
+                $msg .= ' - ' . format_string($coursename);
             }
-            notification::queue_message($settings->get_id(),
-                                        notification::MESSAGE_IMPORT_COURSELINK,
-                                        notification::TYPE_DELETE,
-                                        0, $msg);
+            notification::queue_message(
+                $settings->get_id(),
+                notification::MESSAGE_IMPORT_COURSELINK,
+                notification::TYPE_DELETE,
+                0,
+                $msg
+            );
             delete_course($currlink->courseid, false);
             $DB->delete_records('local_campusconnect_clink', ['id' => $currlink->id]);
         }
@@ -548,8 +554,12 @@ class courselink {
         $ret = (object)['created' => [], 'updated' => [], 'deleted' => []];
 
         // Get full list of courselinks from this ECS.
-        $courselinks = $DB->get_records('local_campusconnect_clink', ['ecsid' => $ecssettings->get_id()],
-                                        '', 'resourceid, ecsid, mid');
+        $courselinks = $DB->get_records(
+            'local_campusconnect_clink',
+            ['ecsid' => $ecssettings->get_id()],
+            '',
+            'resourceid, ecsid, mid'
+        );
 
         // Get list of participants we are importing from.
         $communities = participantsettings::load_communities($ecssettings);
@@ -584,18 +594,27 @@ class courselink {
                     continue; // Skip links that don't match the MID we are interested in.
                 }
                 if (isset($importparticipants[$mid])) {
-                    $details = $connect->get_resource($resourceid, event::RES_COURSELINK,
-                                                      connect::CONTENT);
+                    $details = $connect->get_resource(
+                        $resourceid,
+                        event::RES_COURSELINK,
+                        connect::CONTENT
+                    );
                     self::update($resourceid, $ecssettings, $details, null, $mid);
                     $ret->updated[] = $resourceid;
                     unset($courselinks[$resourceid]); // So we can delete anything left in the list at the end.
                 }
             } else {
                 // We don't already have this link.
-                $details = $connect->get_resource($resourceid, event::RES_COURSELINK,
-                                                  connect::CONTENT);
-                $transferdetails = $connect->get_resource($resourceid, event::RES_COURSELINK,
-                                                          connect::TRANSFERDETAILS);
+                $details = $connect->get_resource(
+                    $resourceid,
+                    event::RES_COURSELINK,
+                    connect::CONTENT
+                );
+                $transferdetails = $connect->get_resource(
+                    $resourceid,
+                    event::RES_COURSELINK,
+                    connect::TRANSFERDETAILS
+                );
 
                 if (empty($details)) {
                     continue; // This probably shouldn't occur, but we're just going to ignore it.
@@ -669,7 +688,6 @@ class courselink {
 
         // If the Privacy Modal was not yet shown, show it now.
         if (empty($privacywarning)) {
-
             if (array_key_exists('HTTP_ORIGIN', $_SERVER)) {
                 $returnurl = $_SERVER['HTTP_ORIGIN'];
             } else if (array_key_exists('HTTP_REFERER', $_SERVER)) {
@@ -688,7 +706,6 @@ class courselink {
             ]);
 
             redirect($url);
-
         }
 
         $url = $courselink->url;
@@ -696,7 +713,6 @@ class courselink {
 
         $participant = new participantsettings($courselink->ecsid, $courselink->mid);
         if (!isguestuser() && $participant->is_import_token_enabled()) {
-
             $userdata = $participant->map_export_data($user);
             $userparams = http_build_query($userdata, '', '&');
 
@@ -709,14 +725,14 @@ class courselink {
             $url .= $userparams;
 
             $hash = self::get_ecs_hash($url, $courselink, $userdata, $participant->is_legacy_export());
-            $url .= '&ecs_hash='.$hash;
+            $url .= '&ecs_hash=' . $hash;
 
             self::log("Adding user params: {$userparams}");
             self::log("Adding ecs_hash: {$hash}");
             if ($participant->is_legacy_export() && self::INCLUDE_LEGACY_PARAMS) {
                 $hashurl = self::get_encoded_hash_url($courselink, $hash);
                 self::log("Adding ecs_hash_url: {$hashurl}");
-                $url .= '&ecs_hash_url='.$hashurl;
+                $url .= '&ecs_hash_url=' . $hashurl;
             }
         }
 
@@ -772,7 +788,7 @@ class courselink {
      */
     protected static function get_encoded_hash_url($courselink, $hash) {
         $ecssettings = new ecssettings($courselink->ecsid);
-        $ret = $ecssettings->get_url().'/sys/auths/'.$hash;
+        $ret = $ecssettings->get_url() . '/sys/auths/' . $hash;
 
         return urlencode($ret);
     }
@@ -793,7 +809,7 @@ class courselink {
         if ($personidtype == self::PERSON_UID) {
             // Strip off the prefix.
             $siteid = substr(sha1($CFG->wwwroot), 0, 8); // Generate a unique ID from the site URL.
-            $personidprefix = 'moodle_'.$siteid.'_usr_';
+            $personidprefix = 'moodle_' . $siteid . '_usr_';
             if (substr($personid, 0, strlen($personidprefix)) == $personidprefix) {
                 $personid = intval(substr($personid, strlen($personidprefix)));
             }
@@ -819,7 +835,6 @@ class courselink {
                 if (count($users) == 1) {
                     // All OK, we've matched up to an existing user.
                     $user = reset($users);
-
                 } else if (count($users) > 1) {
                     self::log("More than one user found with {$moodlefield} (mapped from {$personidtype}) set to {$personid}");
                 }
@@ -868,7 +883,7 @@ class courselink {
         }
         foreach ($requiredfields as $requiredfield) {
             if (!isset($courselink->{$requiredfield}) || !trim($courselink->{$requiredfield})) {
-                log::add("Imported courselink from resource {$resourceid} is missing required field".
+                log::add("Imported courselink from resource {$resourceid} is missing required field" .
                          " '{$requiredfield}'{$aftermapping}");
                 return false;
             }

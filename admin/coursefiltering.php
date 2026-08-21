@@ -26,12 +26,12 @@ use local_campusconnect\course;
 use local_campusconnect\filtering;
 use local_campusconnect\metadata;
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $CFG, $PAGE, $OUTPUT;
 
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/local/campusconnect/admin/coursefiltering_form.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/local/campusconnect/admin/coursefiltering_form.php');
 
 $categoryid = optional_param('categoryid', null, PARAM_INT);
 

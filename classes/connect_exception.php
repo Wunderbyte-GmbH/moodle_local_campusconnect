@@ -34,7 +34,6 @@ use moodle_exception;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class connect_exception extends moodle_exception {
-
     /**
      * Constructor
      *
@@ -55,7 +54,7 @@ class connect_exception extends moodle_exception {
      *
      */
     protected function email_admin($msg) {
-        // TODO - implement this function
+        // Not implemented yet.
         // May need to consider gathering the errors into a log and only sending emails at most once an hour?
     }
 }

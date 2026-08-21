@@ -26,11 +26,11 @@ use local_campusconnect\connect_exception;
 use local_campusconnect\ecssettings;
 use local_campusconnect\participantsettings;
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $CFG, $PAGE, $OUTPUT;
 
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 require_login();
 require_capability('moodle/site:config', context_system::instance());
@@ -99,7 +99,7 @@ if (optional_param('saveparticipants', false, PARAM_TEXT)) {
                     continue; // This participant was not in the list being updated.
                 }
 
-                $tosave = new stdClass;
+                $tosave = new stdClass();
                 $tosave->import = in_array($identifier, $import);
                 $tosave->importenrolment = in_array($identifier, $importenrolment);
                 $tosave->importtoken = in_array($identifier, $importtoken);
@@ -159,7 +159,7 @@ if (!empty($confirmmsgs)) {
 if ($ecsid = optional_param('refresh', null, PARAM_INT)) {
     require_sesskey();
 
-    require_once($CFG->dirroot.'/local/campusconnect/lib.php');
+    require_once($CFG->dirroot . '/local/campusconnect/lib.php');
     $ecssettings = new ecssettings($ecsid);
 
     echo $OUTPUT->heading(get_string('refreshing', 'local_campusconnect', $ecssettings->get_name()), 3);
@@ -234,7 +234,7 @@ $strcancel = get_string('cancel');
 
 if ($error) {
     foreach ($error as $ecsname => $errormessage) {
-        echo $OUTPUT->notification($ecsname.': '.get_string('errorparticipants', 'local_campusconnect', $errormessage));
+        echo $OUTPUT->notification($ecsname . ': ' . get_string('errorparticipants', 'local_campusconnect', $errormessage));
     }
 }
 if ($settingerrors) {
@@ -263,11 +263,11 @@ foreach ($allcommunities as $ecsname => $communities) {
         echo '<table class="generaltable participantsettings" width="100%">
         <thead>
             <tr>
-                <th class="header c0">'.$strparticipants.'</th>
-                <th class="header c1">'.$strfurtherinformation.'</th>
-                <th class="header c2">'.$strexport.'</th>
-                <th class="header c3">'.$strimport.'</th>
-                <th class="header c4 lastcol">'.$strimporttype.'</th>
+                <th class="header c0">' . $strparticipants . '</th>
+                <th class="header c1">' . $strfurtherinformation . '</th>
+                <th class="header c2">' . $strexport . '</th>
+                <th class="header c3">' . $strimport . '</th>
+                <th class="header c4 lastcol">' . $strimporttype . '</th>
             </tr>
         </thead>
         <tbody>';
@@ -279,10 +279,14 @@ foreach ($allcommunities as $ecsname => $communities) {
             foreach ($community->participants as $participant) {
                 $partid = $participant->get_identifier();
                 $name = s($participant->get_name());
-                $userdataurl = new moodle_url('/local/campusconnect/admin/userdatamapping.php',
-                                              ['ecsid' => $participant->get_ecs_id(), 'mid' => $participant->get_mid()]);
-                $userdatalink = '<br/>'.html_writer::link($userdataurl,
-                                                          get_string('edituserdatamapping', 'local_campusconnect'));
+                $userdataurl = new moodle_url(
+                    '/local/campusconnect/admin/userdatamapping.php',
+                    ['ecsid' => $participant->get_ecs_id(), 'mid' => $participant->get_mid()]
+                );
+                $userdatalink = '<br/>' . html_writer::link(
+                    $userdataurl,
+                    get_string('edituserdatamapping', 'local_campusconnect')
+                );
                 echo '<tr><td><h4';
                 if ($participant->is_me()) {
                     echo ' class="itsme"';
@@ -291,75 +295,108 @@ foreach ($allcommunities as $ecsname => $communities) {
                 echo '>';
                 echo $name;
                 echo '</h4></td><td>';
-                echo "<strong>{$strprovider}:</strong> ".$participant->get_organisation()."<br />";
-                echo "<strong>{$strdomain}:</strong> ".$participant->get_domain()."<br />";
-                echo "<strong>{$stremail}:</strong> ".$participant->get_email()."<br />";
-                echo "<strong>{$strabbr}:</strong> ".$participant->get_organisation_abbr()."<br />";
-                echo "<strong>{$strpartid}:</strong> ".$partid;
+                echo "<strong>{$strprovider}:</strong> " . $participant->get_organisation() . "<br />";
+                echo "<strong>{$strdomain}:</strong> " . $participant->get_domain() . "<br />";
+                echo "<strong>{$stremail}:</strong> " . $participant->get_email() . "<br />";
+                echo "<strong>{$strabbr}:</strong> " . $participant->get_organisation_abbr() . "<br />";
+                echo "<strong>{$strpartid}:</strong> " . $partid;
                 echo '</td>';
                 echo "<td>";
-                echo html_writer::checkbox('export[]', $partid,
-                                           $participant->is_export_enabled(),
-                                           get_string('externalcourse', 'local_campusconnect'),
-                                           ['id' => 'export_'.$partid]);
+                echo html_writer::checkbox(
+                    'export[]',
+                    $partid,
+                    $participant->is_export_enabled(),
+                    get_string('externalcourse', 'local_campusconnect'),
+                    ['id' => 'export_' . $partid]
+                );
                 echo '<br/>';
-                echo html_writer::checkbox('exportenrolment[]', $partid,
-                                           $participant->is_export_enrolment_enabled(),
-                                           get_string('enrolmentstatus', 'local_campusconnect'),
-                                           ['id' => 'exportenrolment_'.$partid]);
+                echo html_writer::checkbox(
+                    'exportenrolment[]',
+                    $partid,
+                    $participant->is_export_enrolment_enabled(),
+                    get_string('enrolmentstatus', 'local_campusconnect'),
+                    ['id' => 'exportenrolment_' . $partid]
+                );
                 echo '<br/>';
-                echo html_writer::checkbox('exporttoken[]', $partid,
-                                           $participant->is_export_token_enabled(),
-                                           get_string('authenticationtoken', 'local_campusconnect'),
-                                           ['id' => 'exporttoken_'.$partid]);
+                echo html_writer::checkbox(
+                    'exporttoken[]',
+                    $partid,
+                    $participant->is_export_token_enabled(),
+                    get_string('authenticationtoken', 'local_campusconnect'),
+                    ['id' => 'exporttoken_' . $partid]
+                );
 
                 echo '<br/>';
-                echo html_writer::checkbox('oauth2export[]', $partid,
-                                            $participant->is_oauth2_export_enabled(),
-                                            get_string('oauth2export', 'local_campusconnect'),
-                                            ['id' => 'oauth2export_'.$partid]);
+                echo html_writer::checkbox(
+                    'oauth2export[]',
+                    $partid,
+                    $participant->is_oauth2_export_enabled(),
+                    get_string('oauth2export', 'local_campusconnect'),
+                    ['id' => 'oauth2export_' . $partid]
+                );
 
                 echo '<br/>';
-                echo html_writer::checkbox('shibbolethexport[]', $partid,
-                                            $participant->is_shibboleth_export_enabled(),
-                                            get_string('shibbolethexport', 'local_campusconnect'),
-                                            ['id' => 'shibbolethexport_'.$partid]);
+                echo html_writer::checkbox(
+                    'shibbolethexport[]',
+                    $partid,
+                    $participant->is_shibboleth_export_enabled(),
+                    get_string('shibbolethexport', 'local_campusconnect'),
+                    ['id' => 'shibbolethexport_' . $partid]
+                );
 
                 if ($participant->is_export_token_enabled()) {
                     echo $userdatalink;
                 }
                 echo '</td>';
                 echo "<td>";
-                echo html_writer::checkbox('import[]', $partid,
-                                           $participant->is_import_enabled(),
-                                           get_string('enabled', 'local_campusconnect'),
-                                           ['id' => 'import_'.$partid]);
+                echo html_writer::checkbox(
+                    'import[]',
+                    $partid,
+                    $participant->is_import_enabled(),
+                    get_string('enabled', 'local_campusconnect'),
+                    ['id' => 'import_' . $partid]
+                );
                 echo '<br/>';
-                echo html_writer::checkbox('importenrolment[]', $partid,
-                                           $participant->is_import_enrolment_enabled(),
-                                           get_string('enrolmentstatus', 'local_campusconnect'),
-                                           ['id' => 'importenrolment_'.$partid]);
+                echo html_writer::checkbox(
+                    'importenrolment[]',
+                    $partid,
+                    $participant->is_import_enrolment_enabled(),
+                    get_string('enrolmentstatus', 'local_campusconnect'),
+                    ['id' => 'importenrolment_' . $partid]
+                );
                 echo '<br/>';
-                echo html_writer::checkbox('importtoken[]', $partid,
-                                           $participant->is_import_token_enabled(),
-                                           get_string('authenticationtoken', 'local_campusconnect'),
-                                           ['id' => 'importtoken_'.$partid]);
+                echo html_writer::checkbox(
+                    'importtoken[]',
+                    $partid,
+                    $participant->is_import_token_enabled(),
+                    get_string('authenticationtoken', 'local_campusconnect'),
+                    ['id' => 'importtoken_' . $partid]
+                );
                 echo '<br/>';
-                echo html_writer::checkbox('uselegacy[]', $partid,
-                                           $participant->is_legacy_export(),
-                                           get_string('uselegacytoken', 'local_campusconnect'),
-                                           ['id' => 'uselegacy_'.$partid]);
+                echo html_writer::checkbox(
+                    'uselegacy[]',
+                    $partid,
+                    $participant->is_legacy_export(),
+                    get_string('uselegacytoken', 'local_campusconnect'),
+                    ['id' => 'uselegacy_' . $partid]
+                );
                 echo '<br/>';
-                echo html_writer::checkbox('oauth2import[]', $partid,
-                                            $participant->is_oauth2_import_enabled(),
-                                            get_string('oauth2import', 'local_campusconnect'),
-                                            ['id' => 'oauth2import_'.$partid]);
+                echo html_writer::checkbox(
+                    'oauth2import[]',
+                    $partid,
+                    $participant->is_oauth2_import_enabled(),
+                    get_string('oauth2import', 'local_campusconnect'),
+                    ['id' => 'oauth2import_' . $partid]
+                );
 
                 echo '<br/>';
-                echo html_writer::checkbox('shibbolethimport[]', $partid,
-                                            $participant->is_shibboleth_import_enabled(),
-                                            get_string('shibbolethimport', 'local_campusconnect'),
-                                            ['id' => 'shibbolethimport_'.$partid]);
+                echo html_writer::checkbox(
+                    'shibbolethimport[]',
+                    $partid,
+                    $participant->is_shibboleth_import_enabled(),
+                    get_string('shibbolethimport', 'local_campusconnect'),
+                    ['id' => 'shibbolethimport_' . $partid]
+                );
 
                 if ($participant->is_import_token_enabled()) {
                     echo $userdatalink;
@@ -368,8 +405,12 @@ foreach ($allcommunities as $ecsname => $communities) {
                 echo '<br/>';
                 echo '</td>';
                 echo "<td style='text-align: center'>";
-                echo html_writer::select($importopts, 'importtype['.$partid.']',
-                                         $participant->get_import_type(), '');
+                echo html_writer::select(
+                    $importopts,
+                    'importtype[' . $partid . ']',
+                    $participant->get_import_type(),
+                    ''
+                );
 
                 echo html_writer::empty_tag('input', [
                     'type' => 'hidden',
@@ -389,9 +430,9 @@ foreach ($allcommunities as $ecsname => $communities) {
         echo '</tbody></table>';
     }
     echo '<div style="float: right;">
-        <input type="submit" name="saveparticipants" value="'.$strsavechanges.'" />
+        <input type="submit" name="saveparticipants" value="' . $strsavechanges . '" />
         <input onclick="M.local_campusconnect.participantsettings.hasChanges=false;
-                        window.location.reload( true );" type="button" value="'.$strcancel.'" />
+                        window.location.reload( true );" type="button" value="' . $strcancel . '" />
     </div>';
     echo '</form>';
     echo '<br style="clear:both;" /><br />';

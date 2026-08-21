@@ -35,7 +35,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ecssettings {
-
     /**
      * AUTH_NONE
      * Development only - direct connection to ECS server.
@@ -584,7 +583,7 @@ class ecssettings {
                 $requiredfields = ['httpuser', 'httppass'];
                 foreach ($requiredfields as $required) {
                     if (empty($settings->$required) && empty($this->$required)) {
-                        throw new coding_exception("campusconnect_ecssettings - auth method 'AUTH_HTTP' requires ".
+                        throw new coding_exception("campusconnect_ecssettings - auth method 'AUTH_HTTP' requires " .
                                                    "a '$required' value");
                     }
                 }
@@ -593,7 +592,7 @@ class ecssettings {
                 $requiredfields = ['cacertpath', 'certpath', 'keypath', 'keypass'];
                 foreach ($requiredfields as $required) {
                     if (empty($settings->$required) && empty($this->$required)) {
-                        throw new coding_exception("campusconnect_ecssettings - auth method 'AUTH_CERTIFICATE' requires ".
+                        throw new coding_exception("campusconnect_ecssettings - auth method 'AUTH_CERTIFICATE' requires " .
                                                    "a '$required' value");
                     }
                 }

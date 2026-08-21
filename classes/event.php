@@ -34,7 +34,6 @@ use coding_exception;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class event {
-
     /**
      * STATUS_CREATED
      *
@@ -186,9 +185,8 @@ class event {
             $this->status = $eventdata->status;
             $this->resourcetype = $eventdata->type;
             $this->resourceid = $eventdata->resourceid;
-            $this->resource = $this->resourcetype.'/'.$this->resourceid;
+            $this->resource = $this->resourcetype . '/' . $this->resourceid;
             $this->failcount = $eventdata->failcount;
-
         } else {
             // Constructing from an ECS response.
             $this->ecsid = $ecsid;

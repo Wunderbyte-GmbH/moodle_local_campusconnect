@@ -38,7 +38,6 @@ use stdClass;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class filtering {
-
     /**
      * [Description for $config
      *
@@ -155,7 +154,7 @@ class filtering {
                 }
             }
             if (empty($catnames)) {
-                throw new coding_exception("Attempting to create subdirectories for attribute '{$attribute}', but the".
+                throw new coding_exception("Attempting to create subdirectories for attribute '{$attribute}', but the" .
                                            " course '{$coursedata['title']}' has no matching values for this attribute");
             }
             foreach ($catnames as $catname) {
@@ -308,7 +307,8 @@ class filtering {
         if (!is_null($categoryid)) {
             $params['categoryid'] = $categoryid;
         }
-        $settings = $DB->get_records('local_campusconnect_filter', $params);;
+        $settings = $DB->get_records('local_campusconnect_filter', $params);
+        ;
         foreach ($settings as $setting) {
             if (!isset($ordered[$setting->categoryid])) {
                 $ordered[$setting->categoryid] = [];
@@ -420,8 +420,12 @@ class filtering {
      *
      * @return string
      */
-    protected static function output_category_and_children(core_course_category $category, $baseurl, $activecategories,
-                                                           $selectedcategory = null) {
+    protected static function output_category_and_children(
+        core_course_category $category,
+        $baseurl,
+        $activecategories,
+        $selectedcategory = null
+    ) {
         $childcats = '';
         $cats = $category->get_children();
         if ($cats) {
@@ -457,5 +461,4 @@ class filtering {
         }
         return self::$config;
     }
-
 }

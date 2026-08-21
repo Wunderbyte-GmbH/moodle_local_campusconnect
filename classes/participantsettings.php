@@ -37,7 +37,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class participantsettings {
-
     /**
      * IMPORT_LINK
      *
@@ -730,7 +729,7 @@ class participantsettings {
             // Don't include 'textarea' customfields, as the data for them is not loaded into the user object.
             $customfields = $DB->get_fieldset_select('user_info_field', 'shortname', "datatype <> 'textarea'");
             foreach ($customfields as &$customfield) {
-                $customfield = self::CUSTOM_FIELD_PREFIX.$customfield;
+                $customfield = self::CUSTOM_FIELD_PREFIX . $customfield;
             }
         }
         return $customfields;
@@ -773,7 +772,7 @@ class participantsettings {
      */
     public function is_exported() {
         if (is_null($this->exported)) {
-            throw new coding_exception('is_exported can only be called after set_exported has been called '.
+            throw new coding_exception('is_exported can only be called after set_exported has been called ' .
                                        '(usually via campusconnect_export)');
         }
         return $this->exported;
@@ -835,7 +834,7 @@ class participantsettings {
         }
         $displayname = $this->name;
         if (!empty($this->communityname)) {
-            $displayname = $this->communityname.': '.$displayname;
+            $displayname = $this->communityname . ': ' . $displayname;
         }
 
         if ($displayname != $this->displayname) {
@@ -1267,11 +1266,10 @@ class participantsettings {
             $ret['ecs_login'] = $user->username;
             $ret['ecs_email'] = $user->email;
             if (courselink::INCLUDE_LEGACY_PARAMS) {
-                $ret['ecs_uid_hash'] = self::get_uid_prefix().$user->id;
+                $ret['ecs_uid_hash'] = self::get_uid_prefix() . $user->id;
             } else {
                 $ret['ecs_uid'] = $user->id;
             }
-
         } else {
             // Map the selected fields.
             $mapping = $this->get_export_mappings();
@@ -1299,7 +1297,7 @@ class participantsettings {
         // UID needs the site identifier adding to it.
         if (!empty($ret[courselink::PERSON_UID])) {
             $prefix = self::get_uid_prefix();
-            $ret[courselink::PERSON_UID] = $prefix.$ret[courselink::PERSON_UID];
+            $ret[courselink::PERSON_UID] = $prefix . $ret[courselink::PERSON_UID];
         }
 
         return $ret;
@@ -1314,7 +1312,7 @@ class participantsettings {
     public static function get_uid_prefix() {
         global $CFG;
         $siteid = substr(sha1($CFG->wwwroot), 0, 8);
-        return 'moodle_'.$siteid.'_usr_';
+        return 'moodle_' . $siteid . '_usr_';
     }
 
     /**
@@ -1349,7 +1347,6 @@ class participantsettings {
             // Email is the only other value mapped by the legacy params.
             $ret->email = $ecsdata['ecs_email'];
         } else {
-
             // Non-legacy - do the full mapping.
             $mapping = $this->get_import_mappings();
             $possiblefields = self::get_possible_import_fields();

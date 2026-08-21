@@ -41,7 +41,6 @@ use stdClass;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class modal_confirmprivacy extends dynamic_form {
-
     /** @var int $courseid */
     private $courseid = 0;
 
@@ -75,7 +74,6 @@ class modal_confirmprivacy extends dynamic_form {
         $data = (object)$this->_ajaxformdata;
 
         $this->set_data($data);
-
     }
 
     /**
@@ -112,23 +110,33 @@ class modal_confirmprivacy extends dynamic_form {
         $mform->addElement('hidden', 'courseid', $ajaxformdata['courseid']);
         $mform->addElement('hidden', 'targeturl', $ajaxformdata['targeturl']);
 
-        $mform->addElement('static', 'coursetitle',
-            get_string('coursetitle', 'local_campusconnect'), html_writer::tag('b', $coursetitle));
+        $mform->addElement(
+            'static',
+            'coursetitle',
+            get_string('coursetitle', 'local_campusconnect'),
+            html_writer::tag('b', $coursetitle)
+        );
 
-        $mform->addElement('static', 'ecsparticipant',
-            get_string('ecsparticipant', 'local_campusconnect'), html_writer::tag('b', $participant->get_displayname()));
+        $mform->addElement(
+            'static',
+            'ecsparticipant',
+            get_string('ecsparticipant', 'local_campusconnect'),
+            html_writer::tag('b', $participant->get_displayname())
+        );
 
         $exportdata = $participant->map_export_data($USER);
 
         $listelements = array_map(fn($a) => html_writer::tag('li', $a), $exportdata);
 
-        $html = html_writer::tag('ul', implode (PHP_EOL, $listelements));
+        $html = html_writer::tag('ul', implode(PHP_EOL, $listelements));
 
         $mform->addElement('static', 'userinformation', '', $html);
 
-        $mform->addElement('checkbox', 'ecsformconsent',
-            get_string('ecsformconsent', 'local_campusconnect'));
-
+        $mform->addElement(
+            'checkbox',
+            'ecsformconsent',
+            get_string('ecsformconsent', 'local_campusconnect')
+        );
     }
 
     /**
@@ -156,5 +164,4 @@ class modal_confirmprivacy extends dynamic_form {
     protected function get_page_url_for_dynamic_submission(): moodle_url {
         return new moodle_url('/local/campusconnect/consent.php', ['courseid' => $this->courseid]);
     }
-
 }

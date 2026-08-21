@@ -25,7 +25,7 @@
 use local_campusconnect\courselink;
 use local_campusconnect\participantsettings;
 
-require_once(dirname(__FILE__).'/../../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 global $DB, $SESSION, $FULLME, $USER, $OUTPUT, $PAGE;
 
 require_login();
@@ -60,7 +60,6 @@ die;
 
 $participant = new participantsettings($courselink->ecsid, $courselink->mid);
 if (!isguestuser() && $participant->is_import_token_enabled()) {
-
     $userdata = $participant->map_export_data($user);
     $userparams = http_build_query($userdata, '', '&');
 
@@ -73,8 +72,7 @@ if (!isguestuser() && $participant->is_import_token_enabled()) {
     $url .= $userparams;
 
     $hash = self::get_ecs_hash($url, $courselink, $userdata, $participant->is_legacy_export());
-    $url .= '&ecs_hash='.$hash;
+    $url .= '&ecs_hash=' . $hash;
 }
 
 return $url;
-

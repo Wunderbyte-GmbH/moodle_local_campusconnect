@@ -36,7 +36,6 @@ use moodle_url;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class notification {
-
     /**
      * MESSAGE_IMPORT_COURSELINK
      *
@@ -217,7 +216,7 @@ class notification {
                 foreach ($subtypes as $subtype => $subnotifications) {
                     $prefix = $subtypesprefix[$subtype];
                     $subject = get_string("notify{$type->string}{$prefix}_subject", 'local_campusconnect', $sitename);
-                    $bodytext = get_string("notify{$type->string}{$prefix}_body", 'local_campusconnect', $sitename)."\n\n";
+                    $bodytext = get_string("notify{$type->string}{$prefix}_body", 'local_campusconnect', $sitename) . "\n\n";
                     $body = str_replace("\n", '<br />', $bodytext);
                     $body .= html_writer::start_tag('ul');
 
@@ -239,8 +238,8 @@ class notification {
                                 $msg .= ($msg) ? ' - ' : '';
                                 $msg .= $notification->extra;
                             }
-                            $bodytext .= $msg."\n";
-                            $body .= html_writer::tag('li', $msg)."\n";
+                            $bodytext .= $msg . "\n";
+                            $body .= html_writer::tag('li', $msg) . "\n";
                         } else {
                             $link = new moodle_url($type->url, ['id' => $object->id]);
                             if ($type->name == 'firstname,lastname') {
@@ -248,9 +247,9 @@ class notification {
                             } else {
                                 $name = format_string($object->{$type->name});
                             }
-                            $extra = ($notification->extra) ? ' - '.$notification->extra : '';
-                            $bodytext .= $name.' - '.$link->out(false).$extra."\n";
-                            $body .= html_writer::tag('li', html_writer::link($link, $name).$extra)."\n";
+                            $extra = ($notification->extra) ? ' - ' . $notification->extra : '';
+                            $bodytext .= $name . ' - ' . $link->out(false) . $extra . "\n";
+                            $body .= html_writer::tag('li', html_writer::link($link, $name) . $extra) . "\n";
                         }
                     }
                     $body .= html_writer::end_tag('ul');
@@ -284,7 +283,8 @@ class notification {
             'username',
             $users,
             '',
-            'id, email, mailformat, ' . implode(',', $userfields));
+            'id, email, mailformat, ' . implode(',', $userfields)
+        );
         foreach ($userobjs as $user) {
             email_to_user($user, $admin, $subject, $bodytext, $body);
         }

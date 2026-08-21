@@ -24,12 +24,12 @@
 
 use local_campusconnect\directorytree;
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $CFG, $PAGE, $OUTPUT;
 
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/local/campusconnect/admin/directorytree_form.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/local/campusconnect/admin/directorytree_form.php');
 
 $PAGE->set_url(new moodle_url('/local/campusconnect/admin/directorytree.php'));
 
