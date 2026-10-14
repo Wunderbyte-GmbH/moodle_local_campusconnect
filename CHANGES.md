@@ -1,3 +1,6 @@
+## Version 4.2.1 (2025101400)
+* Bugfix: When the ECS does not provide the campusconnect/member_status resource (HTTP 404, e.g. ECS 7 by free IT), enrolment status updates no longer send an "ECS connection error" message to all site admins on every cron run. The updates stay queued and are retried on the next run, and a log entry explains the reason. Other errors are reported as before. (#17)
+
 ## Version 4.2 (2024080506)
 * Improvement: Raise the minimum required Moodle version to 4.5 and test only supported Moodle versions (4.5 on PHP 8.1-8.3) in the CI matrix. (#14)
 
