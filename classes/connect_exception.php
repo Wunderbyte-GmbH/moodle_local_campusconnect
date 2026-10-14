@@ -35,14 +35,32 @@ use moodle_exception;
  */
 class connect_exception extends moodle_exception {
     /**
+     * HTTP status code of the ECS response that caused this exception (null if not caused by a bad response)
+     *
+     * @var int|null
+     */
+    protected $httpcode;
+
+    /**
      * Constructor
      *
      * @param string $msg
+     * @param int|null $httpcode the HTTP status code of the ECS response, if known
      *
      */
-    public function __construct($msg) {
+    public function __construct($msg, $httpcode = null) {
         parent::__construct('error', 'local_campusconnect', '', $msg);
+        $this->httpcode = $httpcode;
         $this->email_admin($msg);
+    }
+
+    /**
+     * Get the HTTP status code of the ECS response that caused this exception
+     *
+     * @return int|null
+     */
+    public function get_http_code() {
+        return $this->httpcode;
     }
 
     /**
