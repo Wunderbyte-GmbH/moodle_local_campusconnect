@@ -175,7 +175,20 @@ class enrolment {
                     ];
                     foreach ($mids as $mid) {
                         if ($export->should_send_enrolment_status($connect->get_ecs_id(), $mid)) {
-                            $connect->add_resource(event::RES_ENROLMENT, $data, null, $mid);
+                            try {
+                                $connect->add_resource(event::RES_ENROLMENT, $data, null, $mid);
+                            } catch (connect_exception $e) {
+                                if ($e->get_http_code() != connect::HTTP_CODE_NOT_FOUND) {
+                                    $enrolments->close();
+                                    throw $e;
+                                }
+                                // The ECS does not provide the member_status resource (e.g. ECS 7) - keep all remaining
+                                // status updates queued and try again on the next run.
+                                log::add("Unable to send enrolment status updates to ECS {$ecsid} - the resource ".
+                                         event::RES_ENROLMENT." is not available on this ECS (HTTP 404). The updates".
+                                         " remain queued and will be retried.", false, true, false);
+                                break 2;
+                            }
                             log::add("Sending status update for user {$user->id} in course {$enrol->courseid} to ECS".
                                      " {$ecsid} MID {$mid} PID {$user->pids} - new status = {$enrol->status}", true, false, false);
                         }
@@ -197,6 +210,7 @@ class enrolment {
                 $DB->delete_records('local_campusconnect_enrex', ['id' => $enrol->id]);
             }
         }
+        $enrolments->close();
     }
 
     /**

@@ -438,7 +438,7 @@ class connect {
 
         $this->call();
         if (!$this->check_status(self::HTTP_CODE_CREATED)) {
-            throw new connect_exception('add_resource - bad response: '.$this->get_status());
+            throw new connect_exception('add_resource - bad response: '.$this->get_status(), $this->get_status());
         }
 
         return $this->get_econtentid_from_header();
