@@ -79,8 +79,8 @@ class campusconnect_category_form extends moodleform {
         $mform->addElement('text', 'attribute', get_string('attribute', 'local_campusconnect'));
         $mform->setType('crstitle', PARAM_TEXT);
 
-        $mform->addElement('date_selector', 'daterangefrom', get_string('from'));
-        $mform->addElement('date_selector', 'daterangeto', get_string('to'));
+        $mform->addElement('date_selector', 'daterangefrom', get_string('fromdate'));
+        $mform->addElement('date_selector', 'daterangeto', get_string('todate'));
 
         $mform->disabledIf('attribute', 'cc_mapping', 'eq', 'mapping_date');
         $mform->disabledIf('daterangefrom', 'cc_mapping', 'eq', 'mapping_fixed');;

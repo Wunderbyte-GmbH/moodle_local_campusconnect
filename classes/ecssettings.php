@@ -495,7 +495,7 @@ class ecssettings {
             return '';
         }
         $certinfo = openssl_x509_parse(file_get_contents($this->certpath));
-        return userdate($certinfo['validTo_time_t'], get_string('strftimedate'));
+        return userdate($certinfo['validTo_time_t'], get_string('strftimedate', 'langconfig'));
     }
 
     /**
