@@ -1,3 +1,8 @@
+## Version 5.0.2 (2026101601)
+* Improvement: Support Moodle 5.2 and 5.3 (`$plugin->supported = [500, 503]`). The code was checked against Moodle 5.3 for removed or deprecated APIs. CI now also tests MOODLE_502_STABLE and MOODLE_503_STABLE.
+* Bugfix: Fix language strings that were shown as [[from]], [[to]], [[strftimedate]] and [[strftimedatetime]]: the date range labels in the category assignment form (the core strings 'from' and 'to' were removed in Moodle 5.0), and the date format of the ECS certificate expiry date and of the course metadata dates (these strings are in the 'langconfig' component).
+* Bugfix: When the ECS does not provide the campusconnect/member_status resource (HTTP 404, e.g. ECS 7 by free IT), enrolment status updates no longer send an "ECS connection error" message to all site admins on every cron run. The updates stay queued and are retried on the next run, and a log entry explains the reason. Other errors are reported as before. (#17)
+
 ## Version 5.0 (2026072402)
 * Improvement: Fix coding style across the plugin so the Moodle Plugin CI codechecker passes (phpcbf with the moodle standard plus manual fixes; no functional changes). (#3)
 

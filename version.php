@@ -24,11 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2026082100;
+$plugin->version = 2026101601;
 $plugin->requires = 2024110000; // Moodle 5.0.
 $plugin->component = 'local_campusconnect';
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '5.0	(Build: 2026082100)';
+$plugin->release = '5.0.2 (Build: 2026101601)';
 $plugin->supported = [500, 503];
 $plugin->dependencies = [
     'auth_campusconnect' => ANY_VERSION,
