@@ -834,7 +834,7 @@ class metadata {
                         if (isset($details[$field])) {
                             $type = $remotefields[$field];
                             if ($type == 'date') {
-                                $val = userdate($details[$field], get_string('strftimedatetime'));
+                                $val = userdate($details[$field], get_string('strftimedatetime', 'langconfig'));
                             } else {
                                 $val = $details[$field];
                             }
