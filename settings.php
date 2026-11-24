@@ -67,6 +67,17 @@ if ($hassiteconfig) {
                                                         get_string('userdatamapping', 'local_campusconnect'),
                                                         new moodle_url('/local/campusconnect/admin/userdatamapping.php')));
 
+    $ADMIN->add('campusconnect', new admin_externalpage(
+        'campusconnectdatamapping',
+        get_string('ecsdatamapping', 'local_campusconnect'),
+        new moodle_url('/local/campusconnect/admin/datamapping.php')
+    ));
+
+    $ADMIN->add('campusconnect', new admin_externalpage(
+        'campusconnectcategoryassignment',
+        get_string('assignmenttocategories', 'local_campusconnect'),
+        new moodle_url('/local/campusconnect/admin/categoryassignment.php')
+    ));
     $ADMIN->add('campusconnect', new admin_externalpage('campusconnectdatamapping',
                                                         get_string('ecsdatamapping', 'local_campusconnect'),
                                                         new moodle_url('/local/campusconnect/admin/datamapping.php')));
