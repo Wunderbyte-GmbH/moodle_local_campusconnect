@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/campusconnect/db" VERSION="20161117" COMMENT="XMLDB file for Moodle local/campusconnect"
+<XMLDB PATH="local/campusconnect/db" VERSION="20261124" COMMENT="XMLDB file for Moodle local/campusconnect"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -274,6 +274,27 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="local_campusconnect_catrule" COMMENT="Rules that assign imported course links to course categories">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="ecsid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The ECS this rule belongs to"/>
+        <FIELD NAME="categoryid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The category the matching course links are created in"/>
+        <FIELD NAME="mappingtype" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="1 = fixed values, 2 = date range, 3 = object type"/>
+        <FIELD NAME="attribute" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The ECS attribute the rule checks (fixed values and date range)"/>
+        <FIELD NAME="fixedvalues" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Comma-separated list of values (fixed values)"/>
+        <FIELD NAME="datefrom" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Start of the date range, inclusive (date range)"/>
+        <FIELD NAME="dateto" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="End of the date range, inclusive (date range)"/>
+        <FIELD NAME="objecttype" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="The ECS object type (object type)"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Rules are checked in this order, the first match wins"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="ecsid" TYPE="foreign" FIELDS="ecsid" REFTABLE="local_campusconnect_ecs" REFFIELDS="id"/>
+        <KEY NAME="categoryid" TYPE="foreign" FIELDS="categoryid" REFTABLE="course_categories" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>
