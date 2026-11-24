@@ -994,5 +994,38 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024032200, 'local', 'campusconnect');
     }
 
+    if ($oldversion < 2026101602) {
+        // Define table local_campusconnect_catrule to be created.
+        $table = new xmldb_table('local_campusconnect_catrule');
+
+        // Adding fields to table local_campusconnect_catrule.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('ecsid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('categoryid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('mappingtype', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('attribute', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('fixedvalues', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('datefrom', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('dateto', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('objecttype', XMLDB_TYPE_CHAR, '50', null, null, null, null);
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table local_campusconnect_catrule.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('ecsid', XMLDB_KEY_FOREIGN, ['ecsid'], 'local_campusconnect_ecs', ['id']);
+        $table->add_key('categoryid', XMLDB_KEY_FOREIGN, ['categoryid'], 'course_categories', ['id']);
+
+        // Conditionally launch create table for local_campusconnect_catrule.
+        // The check keeps the step safe when a site switches between the plugin branches.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Campusconnect savepoint reached.
+        upgrade_plugin_savepoint(true, 2026101602, 'local', 'campusconnect');
+    }
+
     return true;
 }
