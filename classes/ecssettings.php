@@ -684,6 +684,7 @@ class ecssettings {
 
         if (!is_null($this->recordid)) {
             metadata::delete_ecs_metadata_mappings($this->recordid);
+            categoryrule::delete_ecs_rules($this->recordid);
             participantsettings::delete_ecs_participant_settings($this->recordid);
             export::delete_ecs_exports($this->recordid, $force);
             $DB->delete_records('local_campusconnect_ecs', ['id' => $this->recordid]);
