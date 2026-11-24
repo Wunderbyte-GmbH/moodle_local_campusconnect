@@ -335,7 +335,8 @@ class courselink {
                 return true;
             }
 
-            $coursedata->category = $settings->get_import_category();
+            $coursedata->category = categoryrule::get_courselink_category($settings, $mid, $courselink)
+                ?? $settings->get_import_category();
 
             $baseshortname = $coursedata->shortname;
             $num = 1;
@@ -460,7 +461,8 @@ class courselink {
 
             if (!$DB->record_exists('course', ['id' => $currlink->courseid])) {
                 // The course has been deleted - recreate it.
-                $coursedata->category = $settings->get_import_category();
+                $coursedata->category = categoryrule::get_courselink_category($settings, $mid, $courselink)
+                    ?? $settings->get_import_category();
                 $baseshortname = $coursedata->shortname;
                 $num = 1;
                 while ($DB->record_exists('course', ['shortname' => $coursedata->shortname])) {
@@ -484,6 +486,19 @@ class courselink {
             } else {
                 // Course still exists - update it.
                 $coursedata->id = $currlink->courseid;
+
+                // Move the course if a category assignment rule matches.
+                // Without a matching rule the course stays where it is (it is not moved to the import category).
+                $rulecategory = categoryrule::get_courselink_category($settings, $mid, $courselink);
+                if ($rulecategory) {
+                    $oldcategory = $DB->get_field('course', 'category', ['id' => $coursedata->id]);
+                    if ($oldcategory != $rulecategory) {
+                        $coursedata->category = $rulecategory;
+                        self::log("Courselink {$resourceid}: moving course {$coursedata->id} from category {$oldcategory} "
+                                  . "to category {$rulecategory} (category assignment rule)");
+                    }
+                }
+
                 update_course($coursedata);
 
                 $course = $DB->get_record('course', ['id' => $coursedata->id]);
