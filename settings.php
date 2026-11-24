@@ -80,13 +80,12 @@ if ($hassiteconfig) {
         get_string('ecsdatamapping', 'local_campusconnect'),
         new moodle_url('/local/campusconnect/admin/datamapping.php')
     ));
-    // phpcs:disable
-    /*
-    $ADMIN->add('campusconnect', new admin_externalpage('campusconnectcategoryassignment',
-                                                        get_string('assignmenttocategories', 'local_campusconnect'),
-                                                        new moodle_url('/local/campusconnect/admin/categoryassignment.php')));
-    */
-    // phpcs:enable
+
+    $ADMIN->add('campusconnect', new admin_externalpage(
+        'campusconnectcategoryassignment',
+        get_string('assignmenttocategories', 'local_campusconnect'),
+        new moodle_url('/local/campusconnect/admin/categoryassignment.php')
+    ));
 
     $ADMIN->add('campusconnect', new admin_externalpage(
         'campusconnectimportedcourses',
