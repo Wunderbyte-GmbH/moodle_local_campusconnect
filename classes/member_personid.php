@@ -140,7 +140,7 @@ class member_personid {
     public static function get_mapping() {
         if (!self::$mapping) {
             if ($mapping = get_config('local_campusconnect', 'member_personid_mapping')) {
-                self::$mapping = unserialize($mapping);
+                self::$mapping = unserialize_array($mapping);
             } else {
                 self::$mapping = [
                     courselink::PERSON_UNIQUECODE => null,
