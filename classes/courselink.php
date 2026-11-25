@@ -816,7 +816,8 @@ class courselink {
 
         // Map the field name, then look for a match.
         $map = $participant->get_export_mappings();
-        if (!empty($map[$personidtype])) { // This type is mapped onto a Moodle field.
+        // This type is mapped onto a Moodle field.
+        if (!empty($map[$personidtype])) {
             $moodlefield = $map[$personidtype];
             if (in_array($moodlefield, participantsettings::get_possible_export_fields())) {
                 if ($fieldname = $participant->is_custom_field($moodlefield)) {
