@@ -21,6 +21,7 @@
  * @copyright 2012 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace local_campusconnect;
 
 /**

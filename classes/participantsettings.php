@@ -1117,14 +1117,14 @@ class participantsettings {
         }
         if ($this->exportfieldmapping) {
             if (!is_array($this->exportfieldmapping)) {
-                $this->exportfieldmapping = unserialize($this->exportfieldmapping);
+                $this->exportfieldmapping = unserialize_array($this->exportfieldmapping);
             }
         } else if ($this->exportfieldmapping !== null) {
             $this->exportfieldmapping = [];
         }
         if ($this->importfieldmapping) {
             if (!is_array($this->importfieldmapping)) {
-                $this->importfieldmapping = unserialize($this->importfieldmapping);
+                $this->importfieldmapping = unserialize_array($this->importfieldmapping);
             }
         } else if ($this->importfieldmapping !== null) {
             $this->importfieldmapping = [];

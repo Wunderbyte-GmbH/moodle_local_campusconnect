@@ -218,7 +218,8 @@ class receivequeue {
         // Check if any new categories need to be created.
         directory::process_new_directories();
 
-        if ($fixcourses) { // Avoid fix_course_sortorder in unit tests.
+        // Avoid fix_course_sortorder in unit tests.
+        if ($fixcourses) {
             fix_course_sortorder();
         }
         if ($enrolusers) {

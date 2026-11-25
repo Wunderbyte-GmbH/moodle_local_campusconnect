@@ -795,7 +795,8 @@ class course {
         // if no longer mapped to its current location.
         foreach ($removecategoryids as $rcrsid => $rcatid) {
             $currcourse = $currcourses[$rcrsid];
-            if ($currcourse->internallink == 0) { // We are trying to remove the 'real' course - instead move it.
+            // We are trying to remove the 'real' course - instead move it.
+            if ($currcourse->internallink == 0) {
                 if (!empty($newcategories) || $firstnewcategory) {
                     // Move it into the newly-mapped category.
                     // phpcs:ignore
