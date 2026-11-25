@@ -139,7 +139,11 @@ class categoryrule_form extends moodleform {
             } else if ($field == 'ecsid') {
                 $field = 'categoryid';
             }
-            $errors[$field] = get_string('categoryrule_error_' . $code, 'local_campusconnect');
+            $a = null;
+            if ($code == 'sharedvalues') {
+                $a = implode(', ', categoryrule::get_shared_values($rule));
+            }
+            $errors[$field] = get_string('categoryrule_error_' . $code, 'local_campusconnect', $a);
         }
 
         return $errors;

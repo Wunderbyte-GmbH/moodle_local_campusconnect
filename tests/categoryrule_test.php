@@ -350,6 +350,102 @@ final class categoryrule_test extends advanced_testcase {
     }
 
     /**
+     * Fixed values: a value that another rule of the same ECS with the same attribute already uses is not valid.
+     */
+    public function test_validate_shared_values(): void {
+        $this->resetAfterTest();
+        $ecs = $this->create_ecs();
+        $otherecs = $this->create_ecs();
+        $cat1 = $this->getDataGenerator()->create_category();
+        $cat2 = $this->getDataGenerator()->create_category();
+        $base = ['ecsid' => $ecs->get_id(), 'categoryid' => $cat2->id, 'attribute' => 'courseType'];
+
+        $fixedid = categoryrule::save($this->make_rule(categoryrule::TYPE_FIXED, [
+            'ecsid' => $ecs->get_id(), 'categoryid' => $cat1->id, 'attribute' => 'courseType', 'fixedvalues' => 'Seminar, Übung',
+        ]));
+
+        // Same values, one shared value, other case: not valid. The shared values are returned as written in the new rule.
+        $cases = [
+            'übung,SEMINAR' => ['übung', 'SEMINAR'],
+            'Vorlesung, seminar' => ['seminar'],
+            ' Seminar , Vorlesung , SEMINAR ' => ['Seminar'],
+        ];
+        foreach ($cases as $values => $shared) {
+            $rule = $this->make_rule(categoryrule::TYPE_FIXED, $base + ['fixedvalues' => $values]);
+            $this->assertSame(['fixedvalues' => 'sharedvalues'], categoryrule::validate($rule), $values);
+            $this->assertSame($shared, categoryrule::get_shared_values($rule), $values);
+        }
+
+        // Other values, another attribute or another ECS: valid.
+        $rule = $this->make_rule(categoryrule::TYPE_FIXED, $base + ['fixedvalues' => 'Vorlesung, Seminar 2']);
+        $this->assertSame([], categoryrule::validate($rule));
+        $rule = $this->make_rule(categoryrule::TYPE_FIXED, ['attribute' => 'term'] + $base + ['fixedvalues' => 'Seminar']);
+        $this->assertSame([], categoryrule::validate($rule));
+        $rule = $this->make_rule(categoryrule::TYPE_FIXED, ['ecsid' => $otherecs->get_id()] + $base + ['fixedvalues' => 'Seminar']);
+        $this->assertSame([], categoryrule::validate($rule));
+
+        // A rule does not share values with itself (editing it).
+        $rule = categoryrule::get_rule($fixedid);
+        $rule->categoryid = $cat2->id;
+        $this->assertSame([], categoryrule::validate($rule));
+
+        // A rule with a shared value is not saved.
+        $this->expectException(coding_exception::class);
+        categoryrule::save($this->make_rule(categoryrule::TYPE_FIXED, $base + ['fixedvalues' => 'Vorlesung, Übung']));
+    }
+
+    /**
+     * Date range and object type: an exact duplicate of an existing rule of the same ECS is not valid.
+     * Overlapping date ranges are valid.
+     */
+    public function test_validate_duplicate(): void {
+        $this->resetAfterTest();
+        $ecs = $this->create_ecs();
+        $otherecs = $this->create_ecs();
+        $cat1 = $this->getDataGenerator()->create_category();
+        $cat2 = $this->getDataGenerator()->create_category();
+        $base = ['ecsid' => $ecs->get_id(), 'categoryid' => $cat2->id];
+
+        $daterangeid = categoryrule::save($this->make_rule(categoryrule::TYPE_DATERANGE, [
+            'ecsid' => $ecs->get_id(), 'categoryid' => $cat1->id, 'attribute' => 'firstDate', 'datefrom' => 1000, 'dateto' => 2000,
+        ]));
+        categoryrule::save($this->make_rule(categoryrule::TYPE_OBJECTTYPE, [
+            'ecsid' => $ecs->get_id(), 'categoryid' => $cat1->id, 'objecttype' => categoryrule::OBJECTTYPE_COURSELINK,
+        ]));
+
+        // Date range: same attribute and same dates is a duplicate, other dates are not.
+        $rule = $this->make_rule(categoryrule::TYPE_DATERANGE, $base + [
+            'attribute' => 'firstDate', 'datefrom' => 1000, 'dateto' => 2000,
+        ]);
+        $this->assertSame(['datefrom' => 'duplicate'], categoryrule::validate($rule));
+        $rule = $this->make_rule(categoryrule::TYPE_DATERANGE, $base + [
+            'attribute' => 'firstDate', 'datefrom' => 1000, 'dateto' => 2001,
+        ]);
+        $this->assertSame([], categoryrule::validate($rule));
+
+        // Object type: the same type is a duplicate.
+        $rule = $this->make_rule(categoryrule::TYPE_OBJECTTYPE, $base + ['objecttype' => categoryrule::OBJECTTYPE_COURSELINK]);
+        $this->assertSame(['objecttype' => 'duplicate'], categoryrule::validate($rule));
+
+        // The same rule in another ECS is not a duplicate.
+        $rule = $this->make_rule(categoryrule::TYPE_OBJECTTYPE, [
+            'ecsid' => $otherecs->get_id(), 'categoryid' => $cat2->id, 'objecttype' => categoryrule::OBJECTTYPE_COURSELINK,
+        ]);
+        $this->assertSame([], categoryrule::validate($rule));
+
+        // A rule is not a duplicate of itself (editing it).
+        $rule = categoryrule::get_rule($daterangeid);
+        $rule->categoryid = $cat2->id;
+        $this->assertSame([], categoryrule::validate($rule));
+
+        // A duplicate is not saved.
+        $this->expectException(coding_exception::class);
+        categoryrule::save($this->make_rule(categoryrule::TYPE_OBJECTTYPE, $base + [
+            'objecttype' => categoryrule::OBJECTTYPE_COURSELINK,
+        ]));
+    }
+
+    /**
      * Saving cleans the rule and adds new rules at the end of the list.
      */
     public function test_save(): void {
