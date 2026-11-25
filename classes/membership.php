@@ -611,7 +611,8 @@ class membership {
         );
         $courseenrol = [];
         foreach ($enrolinstances as $enrolinstance) {
-            if (!isset($courseenol[$enrolinstance->courseid])) { // Only use the first instance of campusconnect enrol in a course.
+            // Only use the first instance of campusconnect enrol in a course.
+            if (!isset($courseenol[$enrolinstance->courseid])) {
                 $courseenrol[$enrolinstance->courseid] = $enrolinstance;
             }
         }
