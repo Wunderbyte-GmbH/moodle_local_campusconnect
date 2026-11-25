@@ -97,7 +97,8 @@ class filtering {
      */
     public static function check_filter_match($coursedata, $attributes) {
         foreach ($attributes as $attribute => $settings) {
-            if (!$settings->allwords) { // Must match specific words.
+            // Must match specific words.
+            if (!$settings->allwords) {
                 if (!isset($coursedata[$attribute])) {
                     return false; // Attribute does not exist in the metadata => does not match.
                 }
