@@ -71,6 +71,12 @@ class categoryrule {
     /** Object type: course link. */
     public const OBJECTTYPE_COURSELINK = 'courselink';
 
+    /** Form field that shows the "duplicate" error, per rule type (fixed values use "sharedvalues"). */
+    protected const DUPLICATE_ERROR_FIELDS = [
+        self::TYPE_DATERANGE => 'datefrom',
+        self::TYPE_OBJECTTYPE => 'objecttype',
+    ];
+
     /** @var array Community names: ecsid => mid => string[] */
     protected static $communitycache = [];
 
@@ -182,7 +188,75 @@ class categoryrule {
                 $errors['mappingtype'] = 'mappingtype';
         }
 
+        if (!$errors) {
+            if ($mappingtype == self::TYPE_FIXED) {
+                if (self::get_shared_values($rule)) {
+                    $errors['fixedvalues'] = 'sharedvalues';
+                }
+            } else if (self::is_duplicate($rule)) {
+                $errors[self::DUPLICATE_ERROR_FIELDS[$mappingtype]] = 'duplicate';
+            }
+        }
+
         return $errors;
+    }
+
+    /**
+     * Get the values of a fixed values rule that another fixed values rule of the same ECS with the
+     * same attribute already uses. Such a value can only match the rule that is higher in the list,
+     * so it is never used in the other rule. Upper/lower case is ignored.
+     *
+     * @param stdClass $rule a fixed values rule
+     * @return string[] the shared values, as written in $rule
+     */
+    public static function get_shared_values(stdClass $rule): array {
+        $used = [];
+        foreach (self::get_rules((int)$rule->ecsid) as $other) {
+            if (!empty($rule->id) && $other->id == $rule->id) {
+                continue;
+            }
+            if ($other->mappingtype != self::TYPE_FIXED || $other->attribute !== ($rule->attribute ?? '')) {
+                continue;
+            }
+            foreach (self::split_values($other->fixedvalues ?? '') as $value) {
+                $used[core_text::strtolower($value)] = true;
+            }
+        }
+
+        $shared = [];
+        foreach (self::split_values($rule->fixedvalues ?? '') as $value) {
+            $key = core_text::strtolower($value);
+            if (isset($used[$key]) && !isset($shared[$key])) {
+                $shared[$key] = $value;
+            }
+        }
+        return array_values($shared);
+    }
+
+    /**
+     * Check if another date range or object type rule of the same ECS has the same attribute and values
+     * (the target category is not checked).
+     *
+     * @param stdClass $rule a date range or object type rule
+     * @return bool
+     */
+    protected static function is_duplicate(stdClass $rule): bool {
+        foreach (self::get_rules((int)$rule->ecsid) as $other) {
+            if ((!empty($rule->id) && $other->id == $rule->id) || $other->mappingtype != $rule->mappingtype) {
+                continue;
+            }
+            if ($rule->mappingtype == self::TYPE_DATERANGE) {
+                $same = $other->attribute === $rule->attribute
+                    && (int)$other->datefrom === (int)$rule->datefrom
+                    && (int)$other->dateto === (int)$rule->dateto;
+            } else {
+                $same = $other->objecttype === $rule->objecttype;
+            }
+            if ($same) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
