@@ -180,6 +180,49 @@ final class categoryrule_form_test extends advanced_testcase {
     }
 
     /**
+     * Values that another rule with the same attribute already uses are shown as an error at the values.
+     */
+    public function test_validation_shared_values(): void {
+        categoryrule::save((object)[
+            'ecsid' => $this->ecs->get_id(),
+            'categoryid' => $this->categoryid,
+            'mappingtype' => categoryrule::TYPE_FIXED,
+            'attribute' => categoryrule::ATTRIBUTE_PARTICIPANT,
+            'fixedvalues' => '5_2',
+        ]);
+
+        $form = $this->submit($this->form_data(['fixedvalues' => '5_17, 5_2']));
+        $this->assertNull($form->get_data());
+
+        $dates = ['datefrom' => self::ts('2026-10-16 00:00:00'), 'dateto' => self::ts('2027-04-16 00:00:00')];
+        $errors = $form->validation($this->form_data(['fixedvalues' => '5_17, 5_2'] + $dates), []);
+        $this->assertSame(['fixedvalues' => get_string('categoryrule_error_sharedvalues', 'local_campusconnect', '5_2')], $errors);
+    }
+
+    /**
+     * An exact duplicate of a date range rule is shown as an error at the "from" date.
+     */
+    public function test_validation_duplicate(): void {
+        categoryrule::save((object)[
+            'ecsid' => $this->ecs->get_id(),
+            'categoryid' => $this->categoryid,
+            'mappingtype' => categoryrule::TYPE_DATERANGE,
+            'attribute' => 'firstDate',
+            'datefrom' => self::ts('2026-10-16 00:00:00'),
+            'dateto' => self::ts('2027-04-16 23:59:59'),
+        ]);
+
+        $data = $this->form_data([
+            'mappingtype' => categoryrule::TYPE_DATERANGE,
+            'datefrom' => self::ts('2026-10-16 00:00:00'),
+            'dateto' => self::ts('2027-04-16 00:00:00'),
+        ]);
+        $form = new categoryrule_form(null, ['ecsid' => $this->ecs->get_id()]);
+        $errors = $form->validation($data, []);
+        $this->assertSame(['datefrom' => get_string('categoryrule_error_duplicate', 'local_campusconnect')], $errors);
+    }
+
+    /**
      * A saved rule can be loaded into the form and saved again unchanged.
      */
     public function test_edit_round_trip(): void {
