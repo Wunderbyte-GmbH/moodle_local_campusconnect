@@ -35,7 +35,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class directorytree {
-
     /**
      * MODE_PENDING
      *
@@ -490,10 +489,12 @@ class directorytree {
         directory::delete_root_directory($this->rootid);
         $this->update_field('mappingmode', self::MODE_DELETED);
 
-        notification::queue_message($this->ecsid,
-                                    notification::MESSAGE_DIRTREE,
-                                    notification::TYPE_DELETE,
-                                    $this->rootid);
+        notification::queue_message(
+            $this->ecsid,
+            notification::MESSAGE_DIRTREE,
+            notification::TYPE_DELETE,
+            $this->rootid
+        );
     }
 
     /**
@@ -731,8 +732,11 @@ class directorytree {
 
             if (!$directories) {
                 // Resource failed to download - not sure why that would ever happen, but just skip it.
-                $ret->errors[] = get_string('faileddownload', 'local_campusconnect',
-                                            event::RES_DIRECTORYTREE.'/'.$resourceid);
+                $ret->errors[] = get_string(
+                    'faileddownload',
+                    'local_campusconnect',
+                    event::RES_DIRECTORYTREE . '/' . $resourceid
+                );
                 continue;
             }
 
@@ -751,15 +755,15 @@ class directorytree {
                 if ($directory->id != $directories->rootID) {
                     log::add("Root directory id ($directory->id) does not match the rootID ($directories->rootID)");
                     log::add_object($directories);
-                    throw new directorytree_exception("Root directory id ($directory->id) does not match the rootID".
+                    throw new directorytree_exception("Root directory id ($directory->id) does not match the rootID" .
                                                       " ($directories->rootID) - see log file for details");
                 }
                 if ($directory->title != $directories->directoryTreeTitle) {
-                    log::add("Root directory title ($directory->title) does not match the directoryTreeTitle".
+                    log::add("Root directory title ($directory->title) does not match the directoryTreeTitle" .
                              " ($directories->directoryTreeTitle)");
                     log::add_object($directories);
-                    throw new directorytree_exception("Root directory title ($directory->title) does not match".
-                                                      " the directoryTreeTitle ($directories->directoryTreeTitle) - ".
+                    throw new directorytree_exception("Root directory title ($directory->title) does not match" .
+                                                      " the directoryTreeTitle ($directories->directoryTreeTitle) - " .
                                                       "see log file for details");
                 }
 
@@ -917,13 +921,13 @@ class directorytree {
             $isdirectorytree = $directory->parent->id ? false : true;
             if ($isdirectorytree) {
                 if (!isset($existingtrees[$directories->rootID])) {
-                    throw new coding_exception("delete_missing_directories - found a directory tree {$directories->rootID}".
+                    throw new coding_exception("delete_missing_directories - found a directory tree {$directories->rootID}" .
                                                " in the resource that does not exist in Moodle (after doing the update)");
                 }
                 $existingtrees[$directories->rootID]->set_still_exists();
             } else {
                 if (!isset($existingdirs[$directory->id])) {
-                    throw new coding_exception("delete_missing_directories - found a directory {$directories->id} in the".
+                    throw new coding_exception("delete_missing_directories - found a directory {$directories->id} in the" .
                                                " resource that does not exist in Moodle (after doing the update)");
                 }
                 $existingdirs[$directory->id]->set_still_exists();

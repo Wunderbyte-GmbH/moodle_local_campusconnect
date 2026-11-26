@@ -27,13 +27,13 @@ use local_campusconnect\ecssettings;
 use local_campusconnect\event;
 use local_campusconnect\participantsettings;
 
-require_once(dirname(__FILE__).'/../../config.php');
+require_once(dirname(__FILE__) . '/../../config.php');
 global $CFG, $PAGE, $OUTPUT;
 
-$membershipdir = $CFG->dataroot.'/fakecms/';
+$membershipdir = $CFG->dataroot . '/fakecms/';
 check_dir_exists($membershipdir, true, true);
 if ($filename = optional_param('sendfile', null, PARAM_FILE)) {
-    $filepath = $membershipdir.$filename;
+    $filepath = $membershipdir . $filename;
     if (file_exists($filepath)) {
         header('Content-type: application/json');
         readfile($filepath);
@@ -41,7 +41,7 @@ if ($filename = optional_param('sendfile', null, PARAM_FILE)) {
     }
 }
 
-require_once($CFG->dirroot.'/local/campusconnect/fakecms_form.php');
+require_once($CFG->dirroot . '/local/campusconnect/fakecms_form.php');
 
 $url = new moodle_url('/local/campusconnect/fakecms.php');
 $PAGE->set_url($url);
@@ -76,7 +76,7 @@ foreach ($ecslist as $ecsid => $ecsname) {
         // phpcs:ignore
         /** @var $participant participantsettings */
         foreach ($community->participants as $identifier => $participant) {
-            $participants[$identifier] = $ecsname.' - '.$participant->get_displayname();
+            $participants[$identifier] = $ecsname . ' - ' . $participant->get_displayname();
             if ($identifier == $cms->get_identifier()) {
                 $cmscid = $cid; // Found the right community, now find out the MID of this participant there.
                 // phpcs:ignore
@@ -163,7 +163,6 @@ if ($dirid = optional_param('showdir', false, PARAM_INT)) {
     }
     $frmdata->diraction = 'update';
     $frmdata->dirresourceid = $dirid;
-
 } else if ($crsid = optional_param('showcrs', false, PARAM_INT)) {
     $crs = $connect->get_resource($crsid, event::RES_COURSE);
 
@@ -215,7 +214,6 @@ if ($dirid = optional_param('showdir', false, PARAM_INT)) {
 
     $frmdata->crsaction = 'update';
     $frmdata->crsresourceid = $crsid;
-
 } else if ($mbrid = optional_param('showmbr', false, PARAM_INT)) {
     $mbr = $connect->get_resource($mbrid, event::RES_COURSE_MEMBERS);
 
@@ -248,9 +246,8 @@ $form->set_data($frmdata);
 
 $msg = null;
 if ($data = $form->get_data()) {
-
-    list($srcecs, $srcmid) = explode('_', $data->srcpart);
-    list($dstecs, $dstmid) = explode('_', $data->dstpart);
+    [$srcecs, $srcmid] = explode('_', $data->srcpart);
+    [$dstecs, $dstmid] = explode('_', $data->dstpart);
     if ($srcecs != $dstecs) {
         die("Source and destination participants must be on the same ECS server");
     }
@@ -277,23 +274,20 @@ if ($data = $form->get_data()) {
             $dirtree->nodes[] = $node;
             if ($data->diraction == 'create') {
                 $dirresourceid = $connect->add_resource(event::RES_DIRECTORYTREE, $dirtree, null, $dstmid);
-                $msg = 'Created new directory tree with resource id: '.$dirresourceid;
+                $msg = 'Created new directory tree with resource id: ' . $dirresourceid;
                 redirect(new moodle_url($PAGE->url, ['showdir' => $dirresourceid]), $msg, 3);
             } else {
                 $connect->update_resource($data->dirresourceid, event::RES_DIRECTORYTREE, $dirtree, null, $dstmid);
-                $msg = 'Updated directory tree, resource id: '.$data->dirresourceid;
+                $msg = 'Updated directory tree, resource id: ' . $data->dirresourceid;
                 redirect(new moodle_url($PAGE->url, ['showdir' => $data->dirresourceid]), $msg, 3);
             }
-
         } else if ($data->diraction == 'delete') {
             $connect->delete_resource($data->dirresourceid, event::RES_DIRECTORYTREE);
-            $msg = 'Deleted directory tree, resource id: '.$data->dirresourceid;
+            $msg = 'Deleted directory tree, resource id: ' . $data->dirresourceid;
             redirect($PAGE->url, $msg, 3);
-
         } else if ($data->diraction == 'retrieve') {
             redirect(new moodle_url($PAGE->url, ['showdir' => $data->dirresourceid]));
         }
-
     } else if (!empty($data->crssubmit)) {
         if ($data->crsaction == 'create' || $data->crsaction == 'update') {
             $crs = (object)[
@@ -351,23 +345,20 @@ if ($data = $form->get_data()) {
 
             if ($data->crsaction == 'create') {
                 $crsresourceid = $connect->add_resource(event::RES_COURSE, $crs, null, $dstmid);
-                $msg = 'Created new course with resource id: '.$crsresourceid;
+                $msg = 'Created new course with resource id: ' . $crsresourceid;
                 redirect(new moodle_url($PAGE->url, ['showcrs' => $crsresourceid]), $msg, 3);
             } else {
                 $connect->update_resource($data->crsresourceid, event::RES_COURSE, $crs, null, $dstmid);
-                $msg = 'Updated course, resource id: '.$data->crsresourceid;
+                $msg = 'Updated course, resource id: ' . $data->crsresourceid;
                 redirect(new moodle_url($PAGE->url, ['showcrs' => $data->crsresourceid]), $msg, 3);
             }
-
         } else if ($data->crsaction == 'delete') {
             $connect->delete_resource($data->crsresourceid, event::RES_COURSE);
-            $msg = 'Deleted course, resource id: '.$data->crsresourceid;
+            $msg = 'Deleted course, resource id: ' . $data->crsresourceid;
             redirect($PAGE->url, $msg, 3);
-
         } else if ($data->crsaction == 'retrieve') {
             redirect(new moodle_url($PAGE->url, ['showcrs' => $data->crsresourceid]));
         }
-
     } else if (!empty($data->mbrsubmit)) {
         if ($data->mbraction == 'create' || $data->mbraction == 'update') {
             $mbr = (object)[
@@ -399,23 +390,21 @@ if ($data = $form->get_data()) {
             }
             if ($data->mbraction == 'create') {
                 $data->mbrresourceid = $connect->add_resource(event::RES_COURSE_MEMBERS, [], null, $dstmid);
-                $msg = 'Created new membership list with resource id: '.$data->mbrresourceid;
+                $msg = 'Created new membership list with resource id: ' . $data->mbrresourceid;
             } else {
-                $msg = 'Updated membership list, resource id: '.$data->mbrresourceid;
+                $msg = 'Updated membership list, resource id: ' . $data->mbrresourceid;
             }
 
             // Write the contents to a file, so it can be served back to the VLE later - put the access URL in the resource.
-            file_put_contents($membershipdir.$data->mbrresourceid, json_encode($mbr));
+            file_put_contents($membershipdir . $data->mbrresourceid, json_encode($mbr));
             $url = new moodle_url('/local/campusconnect/fakecms.php', ['sendfile' => $data->mbrresourceid]);
             $urls = $url->out();
             $connect->update_resource($data->mbrresourceid, event::RES_COURSE_MEMBERS, $urls, null, $dstmid);
             redirect(new moodle_url($PAGE->url, ['showmbr' => $data->mbrresourceid]), $msg, 3);
-
         } else if ($data->mbraction == 'delete') {
             $connect->delete_resource($data->mbrresourceid, event::RES_COURSE_MEMBERS);
-            $msg = 'Deleted membership list, resource id: '.$data->mbrresourceid;
+            $msg = 'Deleted membership list, resource id: ' . $data->mbrresourceid;
             redirect($PAGE->url, $msg, 3);
-
         } else if ($data->mbraction == 'retrieve') {
             redirect(new moodle_url($PAGE->url, ['showmbr' => $data->mbrresourceid]));
         }

@@ -281,6 +281,8 @@ $string['savegeneral'] = 'Allgemeine Einstellungen speichern';
 $string['seconds'] = 'Sekunden';
 $string['serveraddress'] = 'Serveradresse';
 $string['settings'] = 'Einstellungen';
+$string['shibbolethexport'] = 'Shibboleth verwenden';
+$string['shibbolethimport'] = 'Shibboleth verwenden';
 $string['showmapping'] = 'Zuordnung anzeigen';
 $string['singlecategory'] = 'Einzelne Kategorie';
 $string['takeoverallocation'] = 'Übernahme der Zuweisung';
@@ -299,10 +301,6 @@ $string['url'] = 'URL';
 $string['urldesc'] = 'Sie dürfen nicht den Teil http:// oder https:// einfügen';
 $string['useattribute'] = 'Attribut verwenden';
 $string['uselegacytoken'] = 'Verwenden Sie das Legacy-Token';
-$string['oauth2export'] = 'OAuth2 verwenden';
-$string['oauth2import'] = 'OAuth2 verwenden';
-$string['shibbolethexport'] = 'Shibboleth verwenden';
-$string['shibbolethimport'] = 'Shibboleth verwenden';
 $string['useraccountsettings'] = 'Benutzerkontoeinstellungen';
 $string['userdatamapping'] = 'Benutzerdaten-Zuordnung';
 $string['usermappingfor'] = 'Benutzerdaten-Zuordnung für {$a}';
@@ -314,15 +312,3 @@ $string['usesinglecategory_help'] = 'Alle Kurse werden in der angegebenen Katego
 $string['viewlog'] = 'Protokolle anzeigen';
 $string['warningexports'] = 'Warnung - die folgenden Kurse werden derzeit nach \'{$a}\' exportiert - sie werden nicht mehr exportiert, wenn Sie fortfahren.';
 $string['warningimports'] = 'Warnung - die folgenden Kurse werden derzeit von \'{$a}\' importiert - sie werden entfernt, wenn Sie fortfahren.';
-$string['nosystemrole'] = 'Keine Systemrolle';
-
-$string['campusconnecttask'] = 'Aufgabe über Cron ausführen, um Synchronisierung mit ECS-Server durchzuführen';
-
-// Datenschutzmodell.
-$string['confirmprivacytitle'] = "Datenschutzinformationen";
-$string['confirmprivacy'] = "Datenschutzinformationen";
-$string['coursetitle'] = "Kurstitel";
-$string['ecstargetplatform'] = "ESC-Plattform";
-$string['ecsparticipant'] = "ESC-Teilnehmer";
-$string['ecsformconsent'] = "Ich akzeptiere dies";
-$string['confirm'] = "Bitte bestätigen";

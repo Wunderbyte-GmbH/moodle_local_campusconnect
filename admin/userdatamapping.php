@@ -27,10 +27,10 @@ use local_campusconnect\connect_exception;
 use local_campusconnect\ecssettings;
 use local_campusconnect\participantsettings;
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 global $CFG, $OUTPUT, $PAGE;
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/local/campusconnect/admin/userdata_mapping_form.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/local/campusconnect/admin/userdata_mapping_form.php');
 
 $ecsid = optional_param('ecsid', null, PARAM_INT);
 $mid = optional_param('mid', null, PARAM_INT);
@@ -70,7 +70,7 @@ if (!$part) {
         } catch (connect_exception $e) {
             // Ignore exceptions if not in debugging.
             if (debugging()) {
-                throw new connect_exception('Debug mode is ON, error: '.$e->getMessage());
+                throw new connect_exception('Debug mode is ON, error: ' . $e->getMessage());
             }
         }
     }

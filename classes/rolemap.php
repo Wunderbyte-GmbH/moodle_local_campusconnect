@@ -32,7 +32,6 @@ namespace local_campusconnect;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rolemap {
-
     /**
      * For a given CampusConnect role, return the id of its role mapping (or false when not found)
      *

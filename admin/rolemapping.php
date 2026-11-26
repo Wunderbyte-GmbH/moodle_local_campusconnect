@@ -22,11 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 global $CFG, $DB, $PAGE, $OUTPUT;
-require_once($CFG->dirroot.'/local/campusconnect/admin/rolemapping_form.php');
+require_once($CFG->dirroot . '/local/campusconnect/admin/rolemapping_form.php');
 
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 $PAGE->set_url(new moodle_url('/local/campusconnect/admin/rolemapping.php'));
 $PAGE->set_context(context_system::instance());
@@ -70,8 +70,10 @@ if ($data = $form->get_data()) {
                 'moodleroleid' => $newmappings[$ccrolename],
                 'ccrolename' => $ccrolename,
             ];
-            $DB->execute("UPDATE {local_campusconnect_rolemap} SET moodleroleid = :moodleroleid WHERE ccrolename = :ccrolename",
-                         $params);
+            $DB->execute(
+                "UPDATE {local_campusconnect_rolemap} SET moodleroleid = :moodleroleid WHERE ccrolename = :ccrolename",
+                $params
+            );
             $mappings[$ccrolename] = $newmappings[$ccrolename];
         } else {
             $DB->delete_records('local_campusconnect_rolemap', ['ccrolename' => $ccrolename]);
@@ -90,7 +92,7 @@ if ($data = $form->get_data()) {
             $mappings[$ccrolename] = $moodleroleid;
         }
     }
-    redirect($CFG->wwwroot.'/local/campusconnect/admin/rolemapping.php');
+    redirect($CFG->wwwroot . '/local/campusconnect/admin/rolemapping.php');
 }
 
 // Output starts here.

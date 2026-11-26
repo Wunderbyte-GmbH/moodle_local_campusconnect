@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
-require_once($CFG->libdir."/formslib.php");
-require_once($CFG->libdir."/form/group.php");
+require_once($CFG->libdir . "/formslib.php");
+require_once($CFG->libdir . "/form/group.php");
 
 /**
  * Class to handle rolemapping form on ECS settings page for campus connect
@@ -37,7 +37,6 @@ require_once($CFG->libdir."/form/group.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class campusconnect_rolemapping_form extends moodleform {
-
     /**
      * $roles
      *
@@ -92,14 +91,22 @@ class campusconnect_rolemapping_form extends moodleform {
 
         if (!isset($this->mappings)) {
             global $DB;
-            $this->mappings = $DB->get_records_menu('local_campusconnect_rolemap', [],
-                                                    'ccrolename', 'ccrolename, moodleroleid');
+            $this->mappings = $DB->get_records_menu(
+                'local_campusconnect_rolemap',
+                [],
+                'ccrolename',
+                'ccrolename, moodleroleid'
+            );
         }
 
         // Create repeating mapping elements.
         $ccrolename = $mform->createElement('text', 'ccrolename', get_string('ccrolename', 'local_campusconnect'));
-        $moodleroleid = $mform->createElement('select', 'moodleroleid', get_string('moodlerole', 'local_campusconnect'),
-                                              $this->roles);
+        $moodleroleid = $mform->createElement(
+            'select',
+            'moodleroleid',
+            get_string('moodlerole', 'local_campusconnect'),
+            $this->roles
+        );
         $mapping = new MoodleQuickForm_group('mapping', null, [$ccrolename, $moodleroleid]);
         $repeatels = [
             $mapping,
@@ -109,7 +116,7 @@ class campusconnect_rolemapping_form extends moodleform {
         // Default mappings.
         $id = 0;
         foreach ($this->mappings as $ccrolename => $moodleroleid) {
-            $group = $mform->getElement('mapping['.$id.']');
+            $group = $mform->getElement('mapping[' . $id . ']');
             $elements = $group->getElements();
             $elements[0]->setValue($ccrolename);
             $elements[1]->setValue($moodleroleid);

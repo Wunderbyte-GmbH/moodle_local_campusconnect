@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Class to handle coursefiltering form for the 'course filtering' page
@@ -35,7 +35,6 @@ require_once($CFG->libdir.'/formslib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class campusconnect_coursefiltering_form extends moodleform {
-
     /**
      * Form definition
      *
@@ -123,8 +122,7 @@ class campusconnect_coursefiltering_form extends moodleform {
  * @copyright 2012 Davo Smith, Synergy Learning
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class campusconnect_coursefilteringcategory_form extends moodleform {
-
+class campusconnect_coursefilteringcategory_form extends moodleform { // phpcs:ignore PSR1.Classes.ClassDeclaration.MultipleClasses
     /**
      * Form definition
      *

@@ -32,7 +32,6 @@ namespace local_campusconnect;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class log {
-
     /**
      * LOGNAME
      *
@@ -58,13 +57,13 @@ class log {
             return;
         }
 
-        $fp = fopen($CFG->dataroot.'/'.self::LOGNAME, 'a');
+        $fp = fopen($CFG->dataroot . '/' . self::LOGNAME, 'a');
 
         if (!$fp) {
             return;
         }
 
-        fwrite($fp, date('j M Y H:i:s').' - '.$msg."\n");
+        fwrite($fp, date('j M Y H:i:s') . ' - ' . $msg . "\n");
         fclose($fp);
 
         if ($output) {
@@ -101,7 +100,7 @@ class log {
      */
     public static function outputlog() {
         global $CFG;
-        $filename = $CFG->dataroot.'/'.self::LOGNAME;
+        $filename = $CFG->dataroot . '/' . self::LOGNAME;
         if (file_exists($filename)) {
             readfile($filename);
         } else {
@@ -117,6 +116,6 @@ class log {
      */
     public static function clearlog() {
         global $CFG;
-        @unlink($CFG->dataroot.'/'.self::LOGNAME);
+        @unlink($CFG->dataroot . '/' . self::LOGNAME);
     }
 }

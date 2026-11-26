@@ -36,7 +36,6 @@ use stdClass;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course {
-
     /**
      * $enabled
      *
@@ -84,8 +83,13 @@ class course {
      *
      * @return bool true if successful
      */
-    public static function create(int $resourceid, ecssettings $ecssettings, $course,
-                                  details $transferdetails, ?participantsettings $cms = null): bool {
+    public static function create(
+        int $resourceid,
+        ecssettings $ecssettings,
+        $course,
+        details $transferdetails,
+        ?participantsettings $cms = null
+    ): bool {
         if (is_null($cms)) {
             $cms = participantsettings::get_cms_participant();
         }
@@ -103,7 +107,7 @@ class course {
             throw new coding_exception('Should not call \local_campusconnect\course::create without course data');
         }
         if (empty($course->lectureID)) {
-            log::add("Course resource ({$resourceid}) is missing the lectureID value - is it using an old,".
+            log::add("Course resource ({$resourceid}) is missing the lectureID value - is it using an old," .
                      " unsupported data format?");
             return true; // Remove the event.
         }
@@ -120,7 +124,7 @@ class course {
             return false; // The directory has not yet been mapped onto a category => cannot yet create the course.
         }
 
-        list($pgroups, $pgroupmode) = parallelgroups::get_parallel_groups($course);
+        [$pgroups, $pgroupmode] = parallelgroups::get_parallel_groups($course);
         if (count($pgroups) < 1) {
             $pgroups[] = []; // Make sure there is at least one course to be created.
         }
@@ -128,8 +132,17 @@ class course {
         $courseids = [];
         $pgclass = new parallelgroups($ecssettings, $resourceid);
         foreach ($pgroups as $pgcourse) {
-            $courseids[] = self::create_new_course($ecssettings, $resourceid, $course, $mid, $coursedata, $pgclass, $pgroupmode,
-                                                   $pgcourse, $categories);
+            $courseids[] = self::create_new_course(
+                $ecssettings,
+                $resourceid,
+                $course,
+                $mid,
+                $coursedata,
+                $pgclass,
+                $pgroupmode,
+                $pgcourse,
+                $categories
+            );
         }
 
         // Process any pre-existing course_members requests for this course.
@@ -152,9 +165,17 @@ class course {
      *
      * @return int the id of the 'real' course created.
      */
-    protected static function create_new_course(ecssettings $ecssettings, $resourceid, $course, $mid,
-                                                $coursedata, parallelgroups $pgclass,
-                                                $pgroupmode, $pgcourse, $categories) {
+    protected static function create_new_course(
+        ecssettings $ecssettings,
+        $resourceid,
+        $course,
+        $mid,
+        $coursedata,
+        parallelgroups $pgclass,
+        $pgroupmode,
+        $pgcourse,
+        $categories
+    ) {
         global $DB;
 
         $internallink = 0;
@@ -195,10 +216,12 @@ class course {
                 // Create any required groups for this course.
                 $pgclass->update_parallel_groups($course->lectureID, $newcourse, $pgroupmode, $pgcourse);
 
-                notification::queue_message($ecssettings->get_id(),
-                                            notification::MESSAGE_COURSE,
-                                            notification::TYPE_CREATE,
-                                            $newcourse->id);
+                notification::queue_message(
+                    $ecssettings->get_id(),
+                    notification::MESSAGE_COURSE,
+                    notification::TYPE_CREATE,
+                    $newcourse->id
+                );
             }
         }
 
@@ -214,8 +237,13 @@ class course {
      * @param ?participantsettings $cms - the cms (already loaded if doing full refresh)
      * @return bool true if successful
      */
-    public static function update($resourceid, ecssettings $ecssettings, $course,
-                                  details $transferdetails, ?participantsettings $cms = null) {
+    public static function update(
+        $resourceid,
+        ecssettings $ecssettings,
+        $course,
+        details $transferdetails,
+        ?participantsettings $cms = null
+    ) {
         global $DB;
 
         if (is_null($cms)) {
@@ -235,7 +263,7 @@ class course {
             throw new coding_exception('Should not call \local_campusconnect\course::update without course data');
         }
         if (empty($course->lectureID)) {
-            log::add("Course resource ({$resourceid}) is missing the lectureID value - is it using an old,".
+            log::add("Course resource ({$resourceid}) is missing the lectureID value - is it using an old," .
                      " unsupported data format?");
             return true; // Remove the event.
         }
@@ -256,16 +284,20 @@ class course {
             return false; // The directory has not yet been mapped onto a category => cannot yet create the course.
         }
 
-        list($pgroups, $pgroupmode) = parallelgroups::get_parallel_groups($course);
+        [$pgroups, $pgroupmode] = parallelgroups::get_parallel_groups($course);
         if (count($pgroups) < 1) {
             $pgroups[] = []; // Make sure there is at least one course to be created.
         }
         $pgclass = new parallelgroups($ecssettings, $resourceid);
-        list ($pgmatched, $pgnotmatched) = $pgclass->match_parallel_groups_to_courses($course->lectureID, $pgroups,
-                                                                                      $pgroupmode, $currcourse->courseid);
+         [$pgmatched, $pgnotmatched] = $pgclass->match_parallel_groups_to_courses(
+             $course->lectureID,
+             $pgroups,
+             $pgroupmode,
+             $currcourse->courseid
+         );
 
         // Compare the existing allocations to the new allocations.
-        list($csql, $params) = $DB->get_in_or_equal(array_keys($currcourses), SQL_PARAMS_NAMED);
+        [$csql, $params] = $DB->get_in_or_equal(array_keys($currcourses), SQL_PARAMS_NAMED);
         $existingcategoryids = $DB->get_records_sql_menu("SELECT ccc.id, c.category
                                                             FROM {local_campusconnect_crs} ccc
                                                             JOIN {course} c ON ccc.courseid = c.id
@@ -312,8 +344,11 @@ class course {
                         $coursedetails->shortname = "{$baseshortname}_{$num}";
                     }
                     if (isset($pgmatched[$currcourse->courseid])) {
-                        $coursedetails->fullname = $pgclass->update_course_name($coursedetails->fullname,
-                                                                                $pgroupmode, $pgmatched[$currcourse->courseid]);
+                        $coursedetails->fullname = $pgclass->update_course_name(
+                            $coursedetails->fullname,
+                            $pgroupmode,
+                            $pgmatched[$currcourse->courseid]
+                        );
                     }
                     $newcourse = create_course($coursedetails);
                     unset($coursedetails);
@@ -348,12 +383,15 @@ class course {
                 $coursedetails->id = $currcourse->courseid;
                 $realcourseid = $currcourse->internallink ? $currcourse->internallink : $currcourse->courseid;
                 if (isset($pgmatched[$realcourseid])) {
-                    $coursedetails->fullname = $pgclass->update_course_name($coursedetails->fullname,
-                                                                            $pgroupmode, $pgmatched[$realcourseid]);
+                    $coursedetails->fullname = $pgclass->update_course_name(
+                        $coursedetails->fullname,
+                        $pgroupmode,
+                        $pgmatched[$realcourseid]
+                    );
                 }
                 // Avoid duplicate shortname fields.
                 if ($oldcourserecord->shortname != $coursedetails->shortname) {
-                    $matchshortname = '^'.preg_quote($coursedetails->shortname).'_\d+$';
+                    $matchshortname = '^' . preg_quote($coursedetails->shortname) . '_\d+$';
                     if (!preg_match("|{$matchshortname}|", $oldcourserecord->shortname)) {
                         // Old shortname does not match the current shortname OR the current shortname + '_NN'.
                         $baseshortname = $coursedetails->shortname;
@@ -382,16 +420,22 @@ class course {
                     // Let the ECS server know about the updated link.
                     $courseurl = new course_url($currcourse->id);
                     $courseurl->update();
-                    notification::queue_message($ecssettings->get_id(),
-                                                notification::MESSAGE_COURSE,
-                                                notification::TYPE_UPDATE,
-                                                $currcourse->courseid);
+                    notification::queue_message(
+                        $ecssettings->get_id(),
+                        notification::MESSAGE_COURSE,
+                        notification::TYPE_UPDATE,
+                        $currcourse->courseid
+                    );
                 }
 
                 // Check the groups for this course.
                 if (isset($pgmatched[$coursedetails->id])) {
-                    $pgclass->update_parallel_groups($course->lectureID, $coursedetails, $pgroupmode,
-                                                     $pgmatched[$coursedetails->id]);
+                    $pgclass->update_parallel_groups(
+                        $course->lectureID,
+                        $coursedetails,
+                        $pgroupmode,
+                        $pgmatched[$coursedetails->id]
+                    );
                 }
             }
         }
@@ -450,10 +494,18 @@ class course {
                 $DB->update_record('course', $swapcourse);
 
                 // Swap the directoryids & sortorder for these courses.
-                $crs1 = $DB->get_record('local_campusconnect_crs', ['courseid' => $realcourse->id],
-                                        'id, sortorder, directoryid', MUST_EXIST);
-                $crs2 = $DB->get_record('local_campusconnect_crs', ['courseid' => $swapcourseid],
-                                        'id, sortorder, directoryid', MUST_EXIST);
+                $crs1 = $DB->get_record(
+                    'local_campusconnect_crs',
+                    ['courseid' => $realcourse->id],
+                    'id, sortorder, directoryid',
+                    MUST_EXIST
+                );
+                $crs2 = $DB->get_record(
+                    'local_campusconnect_crs',
+                    ['courseid' => $swapcourseid],
+                    'id, sortorder, directoryid',
+                    MUST_EXIST
+                );
                 $tempid = $crs1->id;
                 $crs1->id = $crs2->id;
                 $crs2->id = $tempid;
@@ -466,8 +518,17 @@ class course {
         if ($pgnotmatched) {
             $courseids = [];
             foreach ($pgnotmatched as $pgcourse) {
-                $courseids[] = self::create_new_course($ecssettings, $resourceid, $course, $mid, $coursedata, $pgclass,
-                                                       $pgroupmode, $pgcourse, $categories);
+                $courseids[] = self::create_new_course(
+                    $ecssettings,
+                    $resourceid,
+                    $course,
+                    $mid,
+                    $coursedata,
+                    $pgclass,
+                    $pgroupmode,
+                    $pgcourse,
+                    $categories
+                );
             }
             // Not calling \local_campusconnect\membership::assign_course_users here as this will have already been
             // processed for this cmscourseid at the point when the 'course' resource was first created OR at the point
@@ -491,10 +552,12 @@ class course {
         foreach ($currcourses as $currcourse) {
             if ($currcourse->internallink == 0) {
                 // Do not actually delete the 'real' course.
-                notification::queue_message($ecssettings->get_id(),
-                                            notification::MESSAGE_COURSE,
-                                            notification::TYPE_DELETE,
-                                            $currcourse->courseid);
+                notification::queue_message(
+                    $ecssettings->get_id(),
+                    notification::MESSAGE_COURSE,
+                    notification::TYPE_DELETE,
+                    $currcourse->courseid
+                );
 
                 // Leave the course_url code to delete the record once it has informed the ECS.
                 $courseurl = new course_url($currcourse->id);
@@ -537,8 +600,12 @@ class course {
         }
 
         // Get full list of courselinks from this ECS.
-        $courses = $DB->get_records('local_campusconnect_crs', ['ecsid' => $cms->get_ecs_id(), 'mid' => $cms->get_mid()],
-                                    '', 'DISTINCT resourceid');
+        $courses = $DB->get_records(
+            'local_campusconnect_crs',
+            ['ecsid' => $cms->get_ecs_id(), 'mid' => $cms->get_mid()],
+            '',
+            'DISTINCT resourceid'
+        );
 
         // Get full list of courselink resources shared with us.
         $connect = new connect($ecssettings);
@@ -546,10 +613,16 @@ class course {
 
         // Go through all the links from the server and compare to what we have locally.
         foreach ($servercourses->get_ids() as $resourceid) {
-            $details = $connect->get_resource($resourceid, event::RES_COURSE,
-                                              connect::CONTENT);
-            $transferdetails = $connect->get_resource($resourceid, event::RES_COURSE,
-                                                      connect::TRANSFERDETAILS);
+            $details = $connect->get_resource(
+                $resourceid,
+                event::RES_COURSE,
+                connect::CONTENT
+            );
+            $transferdetails = $connect->get_resource(
+                $resourceid,
+                event::RES_COURSE,
+                connect::TRANSFERDETAILS
+            );
 
             // Check if we already have this locally.
             if (isset($courses[$resourceid])) {
@@ -658,10 +731,15 @@ class course {
             return [];
         }
 
-        list($csql, $params) = $DB->get_in_or_equal($cmscourseids);
+        [$csql, $params] = $DB->get_in_or_equal($cmscourseids);
 
-        $recs = $DB->get_records_select('local_campusconnect_crs', "cmsid  $csql AND internallink = 0", $params,
-                                        'id', 'id, cmsid, courseid');
+        $recs = $DB->get_records_select(
+            'local_campusconnect_crs',
+            "cmsid  $csql AND internallink = 0",
+            $params,
+            'id',
+            'id, cmsid, courseid'
+        );
         $mapping = [];
         $courseids = [];
         foreach ($recs as $rec) {
@@ -687,9 +765,14 @@ class course {
             return [];
         }
 
-        list($csql, $params) = $DB->get_in_or_equal($courseids);
-        return $DB->get_records_select_menu('local_campusconnect_crs', "courseid $csql AND internallink = 0", $params,
-                                            '', 'courseid, cmsid');
+        [$csql, $params] = $DB->get_in_or_equal($courseids);
+        return $DB->get_records_select_menu(
+            'local_campusconnect_crs',
+            "courseid $csql AND internallink = 0",
+            $params,
+            '',
+            'courseid, cmsid'
+        );
     }
 
     /**
@@ -786,7 +869,7 @@ class course {
         }
 
         if (empty($newcategories) && empty($unchangedcategories)) {
-            throw new coding_exception('\local_campusconnect\course::remove_allocations - unchangedcategories and'.
+            throw new coding_exception('\local_campusconnect\course::remove_allocations - unchangedcategories and' .
                                        " newcategories should never both be empty");
         }
 

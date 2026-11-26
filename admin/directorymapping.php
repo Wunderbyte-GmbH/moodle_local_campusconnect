@@ -25,12 +25,12 @@
 use local_campusconnect\directory;
 use local_campusconnect\directorytree;
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $CFG, $PAGE, $OUTPUT;
 
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/local/campusconnect/admin/directorymapping_form.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/local/campusconnect/admin/directorymapping_form.php');
 
 $rootid = required_param('id', PARAM_ALPHANUMEXT);
 $dirtree = directorytree::get_by_root_id($rootid);
@@ -46,7 +46,6 @@ $url = new moodle_url('/local/campusconnect/admin/directorymapping.php', ['id' =
 if ($showmapping && $directoryid) {
     $url->param('showdirectory', $directoryid);
     redirect($url);
-
 } else if ($showdirectory) {
     $url->param('showdirectory', $showdirectory);
 }
@@ -85,7 +84,6 @@ if ($mapdirectory || $unmapdirectory) {
                 // Unmap.
                 $dirtree->unmap_category();
             }
-
         } else {
             // Directory selected.
             if (!$mapdir = $dirtree->get_directory($directoryid)) {
@@ -95,10 +93,10 @@ if ($mapdirectory || $unmapdirectory) {
             if ($mapdirectory) {
                 // Map.
                 $mode = $dirtree->get_mode();
-                if ($mode == directorytree::MODE_PENDING ||
+                if (
+                    $mode == directorytree::MODE_PENDING ||
                     $mode == directorytree::MODE_WHOLE
                 ) {
-
                     if (!optional_param('mappingconfirm', false, PARAM_BOOL)) {
                         $continue = new moodle_url($PAGE->url, [
                             'sesskey' => sesskey(),
@@ -221,7 +219,7 @@ echo html_writer::empty_tag('input', [
     'value' => get_string('showmapping', 'local_campusconnect'),
 ]);
 if ($mappingerror) {
-    echo ' '.$OUTPUT->error_text($mappingerror);
+    echo ' ' . $OUTPUT->error_text($mappingerror);
 }
 echo html_writer::table($table);
 echo html_writer::end_tag('form');

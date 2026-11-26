@@ -27,7 +27,7 @@ use local_campusconnect\participantsettings;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Class to handle form for mapping user data to/from courselink authentication.
@@ -37,7 +37,6 @@ require_once($CFG->libdir.'/formslib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class campusconnect_userdata_mapping_form extends moodleform {
-
     /**
      * Form definition
      *
@@ -59,13 +58,18 @@ class campusconnect_userdata_mapping_form extends moodleform {
             $exportopts = participantsettings::get_possible_export_fields();
             $exportopts = array_merge(['' => '-'], array_combine($exportopts, $exportopts));
             $mform->addElement('html', '<table class="userdatamappingtable">');
-            $mform->addElement('html', '<thead><th>'.get_string('ecs', 'local_campusconnect').
-                                     '</th><th>'.get_string('moodle', 'local_campusconnect').
-                                     '</th><th>'.get_string('id', 'local_campusconnect').'</th></thead>');
+            $mform->addElement('html', '<thead><th>' . get_string('ecs', 'local_campusconnect') .
+                                     '</th><th>' . get_string('moodle', 'local_campusconnect') .
+                                     '</th><th>' . get_string('id', 'local_campusconnect') . '</th></thead>');
             foreach (courselink::$validexportmappingfields as $fieldname) {
                 $mform->addElement('html', '<tr><td>');
-                $mform->addElement('checkbox', "exportfields[{$fieldname}]", '', $fieldname,
-                                   ['value' => $fieldname]);
+                $mform->addElement(
+                    'checkbox',
+                    "exportfields[{$fieldname}]",
+                    '',
+                    $fieldname,
+                    ['value' => $fieldname]
+                );
                 $mform->addElement('html', '</td><td>');
                 $mform->addElement('select', "exportfieldmapping[{$fieldname}]", '', $exportopts);
                 $mform->addElement('html', '</td><td>');
@@ -84,11 +88,11 @@ class campusconnect_userdata_mapping_form extends moodleform {
             $importopts = participantsettings::get_possible_import_fields();
             $importopts = array_merge(['' => '-'], array_combine($importopts, $importopts));
             $mform->addElement('html', '<table class="userdatamappingtable">');
-            $mform->addElement('html', '<thead><th>'.get_string('ecs', 'local_campusconnect').
-                                     '</th><th>'.get_string('moodle', 'local_campusconnect').'</th></thead>');
+            $mform->addElement('html', '<thead><th>' . get_string('ecs', 'local_campusconnect') .
+                                     '</th><th>' . get_string('moodle', 'local_campusconnect') . '</th></thead>');
             foreach (courselink::$validimportmappingfields as $fieldname) {
                 $mform->addElement('html', '<tr><td>');
-                $mform->addElement('html', '<span class="indentfield">'.$fieldname.'</span>');
+                $mform->addElement('html', '<span class="indentfield">' . $fieldname . '</span>');
                 $mform->addElement('html', '</td><td>');
                 $mform->addElement('select', "importfieldmapping[{$fieldname}]", '', $importopts);
                 $mform->addElement('html', '</td></tr>');
