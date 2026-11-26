@@ -27,7 +27,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \local_campusconnect\courselink
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(courselink::class)]
 final class courselink_test extends advanced_testcase {
     /** The participant that sends the course links. */
     private const MID = 37;

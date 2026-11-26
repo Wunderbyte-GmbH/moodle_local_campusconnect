@@ -31,7 +31,6 @@ use local_campusconnect\participantsettings;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \local_campusconnect\form\categoryrule_form
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(categoryrule_form::class)]
 final class categoryrule_form_test extends advanced_testcase {
     /** @var ecssettings */
     private $ecs;

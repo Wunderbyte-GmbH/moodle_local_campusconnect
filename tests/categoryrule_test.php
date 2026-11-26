@@ -30,7 +30,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers     \local_campusconnect\categoryrule
  */
-#[\PHPUnit\Framework\Attributes\CoversClass(categoryrule::class)]
 final class categoryrule_test extends advanced_testcase {
     /** Timezone used for all date range tests. */
     private const TIMEZONE = 'Europe/Berlin';
