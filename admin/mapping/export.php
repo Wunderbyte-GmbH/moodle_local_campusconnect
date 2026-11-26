@@ -36,18 +36,15 @@ $redir = new moodle_url('/local/campusconnect/admin/datamapping.php', ['type' =>
 $errors = [];
 $ecslist = ecssettings::list_ecs();
 if ($mform->is_cancelled()) {
-
     redirect($redir);
-
 } else if ($post = $mform->get_data()) {
-
     $courselinkdata = [];
     $coursedata = [];
     foreach ($ecslist as $ecsid => $ecsname) {
         $courselinkdata[$ecsid] = [];
         $coursedata[$ecsid] = [];
         foreach (metadata::list_remote_fields(true) as $fieldname) {
-            $fullfieldname = $ecsid.'_'.$fieldname.'_courselink';
+            $fullfieldname = $ecsid . '_' . $fieldname . '_courselink';
             if (isset($post->{$fullfieldname})) {
                 $courselinkdata[$ecsid][$fieldname] = $post->{$fullfieldname};
             }
@@ -60,11 +57,10 @@ if ($mform->is_cancelled()) {
             if (isset($courselinkdata[$ecsid])) {
                 $metadata = new metadata($ecssettings, true);
                 if (!$metadata->set_export_mappings($courselinkdata[$ecsid])) {
-                    list ($errmsg, $errfield) = $metadata->get_last_error();
-                    $errors[$ecsid.'_'.$errfield.'_courselink'] = $errmsg;
+                     [$errmsg, $errfield] = $metadata->get_last_error();
+                    $errors[$ecsid . '_' . $errfield . '_courselink'] = $errmsg;
                 }
             }
-
         }
     }
 
@@ -76,16 +72,16 @@ if ($mform->is_cancelled()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('pluginname', 'local_campusconnect'));
 
-print '<div class="controls"><a href="?type=import">'.get_string('import', 'local_campusconnect').'</a> |
-            <strong><a href="?type=export">'.get_string('export', 'local_campusconnect').'</a></strong></div>';
+print '<div class="controls"><a href="?type=import">' . get_string('import', 'local_campusconnect') . '</a> |
+            <strong><a href="?type=export">' . get_string('export', 'local_campusconnect') . '</a></strong></div>';
 
 $remotefields = metadata::list_local_fields();
 $helpcontent = '';
 foreach ($remotefields as $remotefield) {
-    $helpcontent .= '{'.$remotefield.'}<br />';
+    $helpcontent .= '{' . $remotefield . '}<br />';
 }
 print "<div style='float: left; width: 45%; border: 1px solid #000; background: #ddd; margin: 10px 5px; padding: 5px;'><strong>"
-    .get_string('courseavailablefields', 'local_campusconnect').':</strong><br />'.$helpcontent."</div>";
+    . get_string('courseavailablefields', 'local_campusconnect') . ':</strong><br />' . $helpcontent . "</div>";
 
 echo html_writer::empty_tag('br', ['class' => 'clearer']);
 
@@ -105,7 +101,6 @@ echo html_writer::end_tag('span');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class campusconnect_export_form extends moodleform {
-
     /**
      * Form definition
      *
@@ -116,7 +111,6 @@ class campusconnect_export_form extends moodleform {
         $ecslist = ecssettings::list_ecs();
 
         foreach ($ecslist as $ecsid => $ecsname) {
-
             $mform = $this->_form;
 
             $mform->addElement('hidden', 'type', 'export');
@@ -128,7 +122,7 @@ class campusconnect_export_form extends moodleform {
             $strunmapped = get_string('unmapped', 'local_campusconnect');
             $strnomappings = get_string('nomappings', 'local_campusconnect');
 
-            $mform->addElement('html', "<h3>".get_string('externalcourse', 'local_campusconnect')."</h3>");
+            $mform->addElement('html', "<h3>" . get_string('externalcourse', 'local_campusconnect') . "</h3>");
 
             $ecssettings = new ecssettings($ecsid);
             $metadata = new metadata($ecssettings, true);
@@ -136,7 +130,7 @@ class campusconnect_export_form extends moodleform {
             $currentmappings = $metadata->get_export_mappings();
 
             foreach ($remotefields as $remotemap) {
-                $elname = $ecsid.'_'.$remotemap.'_courselink';
+                $elname = $ecsid . '_' . $remotemap . '_courselink';
                 if ($remotemap == 'summary') {
                     $mform->addElement('editor', $elname, $remotemap);
                     $mform->setType($elname, PARAM_RAW);
@@ -166,7 +160,6 @@ class campusconnect_export_form extends moodleform {
         }
 
         $this->add_action_buttons();
-
     }
 
     /**

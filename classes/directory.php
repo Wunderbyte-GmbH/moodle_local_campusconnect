@@ -37,7 +37,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class directory {
-
     /**
      * MAPPING_AUTOMATIC
      *
@@ -335,7 +334,7 @@ class directory {
         $childnodes = '';
         if ($children = $this->get_children()) {
             foreach ($children as $child) {
-                list($childnode, $childexpand) = $child->output_directory_tree_node($radioname, $selecteddir);
+                [$childnode, $childexpand] = $child->output_directory_tree_node($radioname, $selecteddir);
                 $childnodes .= $childnode;
                 $expand = $expand || $childexpand;
             }
@@ -345,7 +344,7 @@ class directory {
         $class = $classes[$status];
         $ret = html_writer::tag('span', s($this->title), ['class' => $class]);
         if ($radioname) {
-            $elid = $radioname.'-'.$this->directoryid;
+            $elid = $radioname . '-' . $this->directoryid;
             $label = html_writer::tag('label', $ret, ['for' => $elid]);
             $radioparams = [
                 'type' => 'radio',
@@ -358,18 +357,20 @@ class directory {
                 $radioparams['checked'] = 'checked';
                 $expand = true;
             }
-            if ($status == self::STATUS_MAPPED_AUTOMATIC ||
+            if (
+                $status == self::STATUS_MAPPED_AUTOMATIC ||
                 $status == self::STATUS_DELETED ||
                 $status == self::STATUS_PENDING_AUTOMATIC
             ) {
                 $radioparams['disabled'] = 'disabled';
-            } else if ($status == self::STATUS_MAPPED_MANUAL ||
+            } else if (
+                $status == self::STATUS_MAPPED_MANUAL ||
                 $status == self::STATUS_PENDING_MANUAL
             ) {
                 $expand = true;
             }
             $ret = html_writer::empty_tag('input', $radioparams);
-            $ret .= ' '.$label;
+            $ret .= ' ' . $label;
             $ret = html_writer::tag('span', $ret); // To stop YUI treeview getting upset.
         }
         $ret .= $childnodes;
@@ -429,7 +430,7 @@ class directory {
      */
     public function check_parent_id($parentid) {
         if ($this->parentid != $parentid) {
-            throw new directorytree_exception("parent {$this->parentid} for directory {$this->directoryid}".
+            throw new directorytree_exception("parent {$this->parentid} for directory {$this->directoryid}" .
                                               " does not match parent id {$parentid} from ECS");
         }
     }
@@ -592,7 +593,7 @@ class directory {
      */
     public function unmap_category() {
         if (!$this->can_unmap()) {
-            throw new directorytree_exception("Unmapping of directories can only be done when mapping is pending -".
+            throw new directorytree_exception("Unmapping of directories can only be done when mapping is pending -" .
                                               " current mapping status: {$this->mapping}");
         }
 
@@ -660,7 +661,7 @@ class directory {
         $ins = new stdClass();
         $ins->parent = $parentcat;
         $ins->name = $this->title;
-        $ins->sortorder = 999; // TODO - do something with the order field.
+        $ins->sortorder = 999; // The order field is not used yet.
         $categoryid = $DB->insert_record('course_categories', $ins);
         $this->set_field('categoryid', $categoryid);
 
@@ -785,13 +786,13 @@ class directory {
         $childdirs = '';
         if ($dirs = self::get_toplevel_directories($dirtree->get_root_id())) {
             foreach ($dirs as $dir) {
-                list($childdir, $childexpand) = $dir->output_directory_tree_node($radioname, $selecteddir);
+                [$childdir, $childexpand] = $dir->output_directory_tree_node($radioname, $selecteddir);
                 $childdirs .= $childdir;
                 $expand = $expand || $childexpand;
             }
             $childdirs = html_writer::tag('ul', $childdirs);
         }
-        $elid = $radioname.'-'.$dirtree->get_root_id();
+        $elid = $radioname . '-' . $dirtree->get_root_id();
         $label = html_writer::tag('label', s($dirtree->get_title()), ['for' => $elid]);
         $radioparams = [
             'type' => 'radio',
@@ -804,8 +805,8 @@ class directory {
             $radioparams['checked'] = 'checked';
         }
         $ret = html_writer::empty_tag('input', $radioparams);
-        $ret .= ' '.$label;
-        $ret = html_writer::tag('span', $ret).$childdirs;
+        $ret .= ' ' . $label;
+        $ret = html_writer::tag('span', $ret) . $childdirs;
         if ($expand) {
             $params = ['class' => 'expanded'];
         } else {
@@ -856,10 +857,10 @@ class directory {
             $childcats = html_writer::tag('ul', $childcats);
         }
         $ret = format_string($category->name);
-        $elid = $radioname.'-'.$category->id;
+        $elid = $radioname . '-' . $category->id;
         $labelparams = [
             'for' => $elid,
-            'id' => 'label'.$elid,
+            'id' => 'label' . $elid,
             'class' => 'categorylabel',
         ];
         $radioparams = [
@@ -875,7 +876,7 @@ class directory {
         }
         $label = html_writer::tag('label', $ret, $labelparams);
         $ret = html_writer::empty_tag('input', $radioparams);
-        $ret .= ' '.$label;
+        $ret .= ' ' . $label;
         $ret .= $childcats;
         return html_writer::tag('li', $ret);
     }
@@ -940,7 +941,7 @@ class directory {
 
             $category = $DB->get_record('course_categories', ['id' => $dirtomove->categoryid], 'id, parent', MUST_EXIST);
             if ($category->parent != $oldcategoryid) {
-                throw new directorytree_exception("move_category: found automatic directory {$dirtomove->id} where category".
+                throw new directorytree_exception("move_category: found automatic directory {$dirtomove->id} where category" .
                                                   " parent != old category");
             }
             $category->parent = $newcategoryid;
@@ -952,7 +953,7 @@ class directory {
         foreach ($coursestomove as $coursetomove) {
             $course = $DB->get_record('course', ['id' => $coursetomove->id], 'id, category', MUST_EXIST);
             if ($course->category != $oldcategoryid) {
-                throw new directorytree_exception("move_root_category: found course {$course->id} in root directory where".
+                throw new directorytree_exception("move_root_category: found course {$course->id} in root directory where" .
                                                   " category != root directory category");
             }
             $course->category = $newcategoryid;
@@ -989,7 +990,7 @@ class directory {
                     }
                 }
                 if (!$founddirtree) {
-                    throw new directorytree_exception("Unable to find directory tree ".$dir->get_root_id()." for directory ".
+                    throw new directorytree_exception("Unable to find directory tree " . $dir->get_root_id() . " for directory " .
                                                       $dir->get_directory_id());
                 }
                 $mode = $founddirtree->get_mode();
@@ -1062,4 +1063,3 @@ class directory {
         return $updated;
     }
 }
-

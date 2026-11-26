@@ -24,12 +24,12 @@
 
 use local_campusconnect\ecssettings;
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $CFG, $PAGE, $OUTPUT;
 
-require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->dirroot.'/local/campusconnect/admin/ecs_form.php');
+require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/local/campusconnect/admin/ecs_form.php');
 
 $deleteid = optional_param('delete', null, PARAM_INT);
 $ecsid = optional_param('id', $deleteid, PARAM_INT);
@@ -39,7 +39,7 @@ require_login();
 require_capability('moodle/site:config', context_system::instance());
 
 if ($ecsid) {
-    admin_externalpage_setup('ecs'.$ecsid);
+    admin_externalpage_setup('ecs' . $ecsid);
 } else {
     admin_externalpage_setup('allecs');
 }
@@ -62,10 +62,10 @@ if (isset($deleteid)) {
     echo $OUTPUT->confirm(
         get_string('deleteecsareyousuremessage', 'local_campusconnect'),
         new moodle_url($PAGE->url, ['delete' => $deleteid, 'confirm' => 1]),
-        new moodle_url('/local/campusconnect/admin/allecs.php'));
+        new moodle_url('/local/campusconnect/admin/allecs.php')
+    );
     echo $OUTPUT->footer();
     exit;
-
 }
 
 $currentsettings = $ecssettings->get_settings();
@@ -99,17 +99,16 @@ if ($form->is_cancelled()) {
     redirect($PAGE->url); // Will clear the settings back to their previous values.
 }
 if ($data = $form->get_data()) {
-
     $data->crontime = ($data->pollingtimemin * 60) + $data->pollingtimesec;
     $url = $data->url;
     if (!empty($data->port)) {
         $spliturl = explode('/', $url, 2);
-        $url = $spliturl[0].':'.$data->port;
+        $url = $spliturl[0] . ':' . $data->port;
         if (isset($spliturl[1])) {
-            $url .= '/'.$spliturl[1];
+            $url .= '/' . $spliturl[1];
         }
     }
-    $data->url = $data->protocol.'://'.$url;
+    $data->url = $data->protocol . '://' . $url;
     foreach (['notifyusers', 'notifycontent', 'notifycourses'] as $fieldname) {
         if (!empty($data->{$fieldname})) {
             $users = explode(',', $data->{$fieldname});

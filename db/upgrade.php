@@ -132,7 +132,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012061801) {
-
         // Define table local_campusconnect_part to be created.
         $table = new xmldb_table('local_campusconnect_part');
 
@@ -161,7 +160,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012062600) {
-
         // Define table local_campusconnect_mappings to be created.
         $table = new xmldb_table('local_campusconnect_mappings');
 
@@ -186,7 +184,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012062601) {
-
         // Define field displayname to be added to local_campusconnect_part.
         $table = new xmldb_table('local_campusconnect_part');
         $field = new xmldb_field('displayname', XMLDB_TYPE_TEXT, 'small', null, null, null, null, 'importtype');
@@ -201,7 +198,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012062700) {
-
         // Define table local_campusconnect_export to be created.
         $table = new xmldb_table('local_campusconnect_export');
 
@@ -228,7 +224,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012071800) {
-
         // Define table local_campusconnect_dirroot to be created.
         $table = new xmldb_table('local_campusconnect_dirroot');
 
@@ -259,7 +254,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012071801) {
-
         // Define table local_campusconnect_dir to be created.
         $table = new xmldb_table('local_campusconnect_dir');
 
@@ -287,7 +281,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012071900) {
-
         // Changing precision of field type on table local_campusconnect_eventin to (50).
         $table = new xmldb_table('local_campusconnect_eventin');
         $field = new xmldb_field('type', XMLDB_TYPE_CHAR, '50', null, null, null, null, 'id');
@@ -323,7 +316,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012072600) {
-
         // Define field enabled to be added to local_campusconnect_ecs.
         $table = new xmldb_table('local_campusconnect_ecs');
         $field = new xmldb_field('enabled', XMLDB_TYPE_INTEGER, '4', null, null, null, '1', 'id');
@@ -338,7 +330,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012100201) {
-
         // Define table local_campusconnect_crs to be created.
         $table = new xmldb_table('local_campusconnect_crs');
 
@@ -363,7 +354,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012100800) {
-
         // Define field internallink to be added to local_campusconnect_crs.
         $table = new xmldb_table('local_campusconnect_crs');
         $field = new xmldb_field('internallink', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'mid');
@@ -378,7 +368,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012101000) {
-
         // Define field urlresourceid to be added to local_campusconnect_crs.
         $table = new xmldb_table('local_campusconnect_crs');
 
@@ -398,7 +387,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012101001) {
-
         // Define field cmsid to be added to local_campusconnect_crs.
         $table = new xmldb_table('local_campusconnect_crs');
         $field = new xmldb_field('cmsid', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'resourceid');
@@ -413,7 +401,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012101500) {
-
         // Changing type of field cmsid on table local_campusconnect_crs to char.
         $table = new xmldb_table('local_campusconnect_crs');
         $field = new xmldb_field('cmsid', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'resourceid');
@@ -453,7 +440,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012101502) {
-
         // Define table local_campusconnect_rolemap to be created.
         $table = new xmldb_table('local_campusconnect_rolemap');
 
@@ -500,7 +486,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012112000) {
-
         // Define table local_campusconnect_filter to be created.
         $table = new xmldb_table('local_campusconnect_filter');
 
@@ -525,7 +510,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012112300) {
-
         // Define field sortorder to be added to local_campusconnect_crs.
         $table = new xmldb_table('local_campusconnect_crs');
 
@@ -544,7 +528,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012112301) {
-
         // Define table local_campusconnect_pgroup to be created.
         $table = new xmldb_table('local_campusconnect_pgroup');
 
@@ -577,7 +560,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012120300) {
-
         // Define field parallelgroups to be added to local_campusconnect_mbr.
         $table = new xmldb_table('local_campusconnect_mbr');
         $field = new xmldb_field('parallelgroups', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'status');
@@ -592,7 +574,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012120400) {
-
         // Define field subtype to be added to local_campusconnect_notify.
         $table = new xmldb_table('local_campusconnect_notify');
         $field = new xmldb_field('subtype', XMLDB_TYPE_INTEGER, '4', null, null, null, '0', 'type');
@@ -607,7 +588,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012120700) {
-
         // Define field extra to be added to local_campusconnect_notify.
         $table = new xmldb_table('local_campusconnect_notify');
         $field = new xmldb_field('extra', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, 'data');
@@ -622,7 +602,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012120701) {
-
         // Define field failcount to be added to local_campusconnect_eventin.
         $table = new xmldb_table('local_campusconnect_eventin');
         $field = new xmldb_field('failcount', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'status');
@@ -680,7 +659,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012121100) {
-
         // Changing type of field data on table local_campusconnect_notify to char.
         $table = new xmldb_table('local_campusconnect_notify');
         $field = new xmldb_field('data', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'subtype');
@@ -693,7 +671,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012121200) {
-
         // Changing type of field directoryid on table local_campusconnect_crs to char.
         $table = new xmldb_table('local_campusconnect_crs');
         $field = new xmldb_field('directoryid', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'sortorder');
@@ -706,7 +683,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012121400) {
-
         // Changing type of field directoryid on table local_campusconnect_crs to char.
         $table = new xmldb_table('local_campusconnect_pgroup');
         $field = new xmldb_field('cmsgroupid', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'resourceid');
@@ -758,7 +734,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014061800) {
-
         // Define field active to be added to local_campusconnect_part.
         $table = new xmldb_table('local_campusconnect_part');
         $field = new xmldb_field('active', XMLDB_TYPE_INTEGER, '2', null, null, null, '1', 'displayname');
@@ -773,7 +748,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014062300) {
-
         // Define table local_campusconnect_enrex to be created.
         $table = new xmldb_table('local_campusconnect_enrex');
 
@@ -798,7 +772,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014062400) {
-
         // Define field pid to be added to local_campusconnect_part.
         $table = new xmldb_table('local_campusconnect_part');
         $field = new xmldb_field('pid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'mid');
@@ -844,7 +817,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014081900) {
-
         // Define field notifiedecsids to be added to local_campusconnect_enrex.
         $table = new xmldb_table('local_campusconnect_enrex');
         $field = new xmldb_field('notifiedecsids', XMLDB_TYPE_TEXT, null, null, null, null, null, 'status');
@@ -859,7 +831,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014081901) {
-
         $table = new xmldb_table('local_campusconnect_part');
 
         // Define field uselegacy to be added to local_campusconnect_part.
@@ -898,7 +869,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
 
     // Add the personidtype field to the local_campusconnect_mbr table.
     if ($oldversion < 2014082700) {
-
         // Define field personidtype to be added to local_campusconnect_mbr.
         $table = new xmldb_table('local_campusconnect_mbr');
         $field = new xmldb_field('personidtype', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, 'ecs_login', 'personid');
@@ -914,7 +884,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
 
     // Change the personid index to include personidtype as well.
     if ($oldversion < 2014082701) {
-
         // Define index personid (not unique) to be dropped form local_campusconnect_mbr.
         $table = new xmldb_table('local_campusconnect_mbr');
         $index = new xmldb_index('personid', XMLDB_INDEX_NOTUNIQUE, ['personid']);
@@ -929,7 +898,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2014082702) {
-
         // Define index personid (not unique) to be added to local_campusconnect_mbr.
         $table = new xmldb_table('local_campusconnect_mbr');
         $index = new xmldb_index('personid', XMLDB_INDEX_NOTUNIQUE, ['personid', 'personidtype']);
@@ -944,7 +912,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2016111700) {
-
         // Define field orgabbr to be added to local_campusconnect_part.
         $table = new xmldb_table('local_campusconnect_part');
         $field = new xmldb_field('orgabbr', XMLDB_TYPE_TEXT, null, null, null, null, null, 'importfieldmapping');
@@ -959,7 +926,6 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
     }
 
     if ($oldversion < 2024032200) {
-
         // Define field oauth2export to be added to local_campusconnect_part.
         $table = new xmldb_table('local_campusconnect_part');
         $field = new xmldb_field('oauth2export', XMLDB_TYPE_INTEGER, '1', null, null, null, '0', 'orgabbr');

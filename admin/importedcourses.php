@@ -25,11 +25,11 @@
 use local_campusconnect\courselink;
 use local_campusconnect\ecssettings;
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $CFG, $PAGE, $OUTPUT;
 
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 $PAGE->set_url(new moodle_url('/local/campusconnect/admin/importedcourses.php'));
 $PAGE->set_context(context_system::instance());

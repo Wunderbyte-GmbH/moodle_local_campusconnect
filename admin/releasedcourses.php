@@ -25,11 +25,11 @@
 use local_campusconnect\export;
 use local_campusconnect\participantsettings;
 
-require_once(dirname(__FILE__).'/../../../config.php');
+require_once(dirname(__FILE__) . '/../../../config.php');
 
 global $CFG, $PAGE, $OUTPUT, $DB;
 
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 $PAGE->set_url(new moodle_url('/local/campusconnect/admin/releasedcourses.php'));
 $PAGE->set_context(context_system::instance());
@@ -103,7 +103,7 @@ foreach ($exports as $export) {
         $partname = $participant->get_displayname();
         $status = $export->get_status($identifier);
         if ($status != export::STATUS_UPTODATE) {
-            $partname .= ' ('.$strstatus[$status].')';
+            $partname .= ' (' . $strstatus[$status] . ')';
         }
         $part[] = $partname;
     }
