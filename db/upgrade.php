@@ -960,7 +960,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024032200, 'local', 'campusconnect');
     }
 
-    if ($oldversion < 2026101602) {
+    if ($oldversion < 2026112600) {
         // Define table local_campusconnect_catrule to be created.
         $table = new xmldb_table('local_campusconnect_catrule');
 
@@ -990,7 +990,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         }
 
         // Campusconnect savepoint reached.
-        upgrade_plugin_savepoint(true, 2026101602, 'local', 'campusconnect');
+        upgrade_plugin_savepoint(true, 2026112600, 'local', 'campusconnect');
     }
 
     return true;
