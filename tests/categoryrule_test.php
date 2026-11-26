@@ -162,6 +162,7 @@ final class categoryrule_test extends advanced_testcase {
     /**
      * Date range: both the from and the to day are included.
      *
+     * @dataProvider date_range_provider
      * @param string $coursedate
      * @param bool $expected
      */
