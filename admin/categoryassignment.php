@@ -39,72 +39,10 @@ $id = optional_param('id', 0, PARAM_INT);
 $PAGE->set_url(new moodle_url('/local/campusconnect/admin/categoryassignment.php'));
 admin_externalpage_setup('campusconnectcategoryassignment');
 
-require_login();
-require_capability('moodle/site:config', context_system::instance());
-
-/**
- * Class to handle category form on settings page for campus connect
- *
- * @package    local_campusconnect
- * @copyright  2012 Synergy Learning
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class campusconnect_category_form extends moodleform {
-    /**
-     * Form definition
-     *
-     * @return void
-     *
-     */
-    public function definition() {
-        $mform = $this->_form;
-
-        $mform->addElement('header', 'categoryassignment', get_string('categoryassignment', 'local_campusconnect'));
-
-        $cats = [];
-        $categories = \core_course_category::get(0)->get_children();
-        foreach ($categories as $category) {
-            $cats[$category->id] = $category->name;
-        }
-        $mform->addElement('select', 'importcat', get_string('importcat', 'local_campusconnect'), $cats);
-
-        $mform->addElement('select', 'attributename', get_string('attributename', 'local_campusconnect'), [
-            '1' => 'Community', '2' => 'Participant ID',
-        ]);
-
-        $radioarray = [];
-        $radioarray[] = $mform->createElement(
-            'radio',
-            'cc_mapping',
-            '',
-            get_string('fixedvalue', 'local_campusconnect'),
-            'mapping_fixed',
-            'onclick=cc_switch_mapping_fixed()'
-        );
-        $radioarray[] = $mform->createElement(
-            'radio',
-            'cc_mapping',
-            '',
-            get_string('daterange', 'local_campusconnect'),
-            'mapping_date',
-            'onclick=cc_switch_mapping_date()'
-        );
-        $mform->addGroup($radioarray, 'radioar', get_string('mappingtype', 'local_campusconnect'), ' ', false);
-        $mform->setDefault('cc_mapping', 'mapping_fixed');
-
-        $mform->addElement('text', 'attribute', get_string('attribute', 'local_campusconnect'));
-        $mform->setType('crstitle', PARAM_TEXT);
-
-        $mform->addElement('date_selector', 'daterangefrom', get_string('from'));
-        $mform->addElement('date_selector', 'daterangeto', get_string('to'));
-
-        $mform->disabledIf('attribute', 'cc_mapping', 'eq', 'mapping_date');
-        $mform->disabledIf('daterangefrom', 'cc_mapping', 'eq', 'mapping_fixed');
-        ;
-        $mform->disabledIf('daterangeto', 'cc_mapping', 'eq', 'mapping_fixed');
-
-        $this->add_action_buttons();
-    }
+$rule = null;
+if ($id) {
+    $rule = categoryrule::get_rule($id);
+    $ecsid = (int)$rule->ecsid;
 }
 
 $ecslist = ecssettings::list_ecs(false);
