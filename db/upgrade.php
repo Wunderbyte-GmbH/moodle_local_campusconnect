@@ -990,7 +990,7 @@ function xmldb_local_campusconnect_upgrade($oldversion) {
         }
 
         // Campusconnect savepoint reached.
-        upgrade_plugin_savepoint(true, 2026101602, 'local', 'campusconnect');
+        upgrade_plugin_savepoint(true, 2025101401, 'local', 'campusconnect');
     }
 
     return true;
